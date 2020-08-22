@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class Service {
 	private String name;
 	private float amount;

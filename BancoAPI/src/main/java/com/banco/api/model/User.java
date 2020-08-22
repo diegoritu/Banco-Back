@@ -2,7 +2,6 @@ package com.banco.api.model;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class User {
 	private int idUsr;
 	private String cuitCuilCdi;

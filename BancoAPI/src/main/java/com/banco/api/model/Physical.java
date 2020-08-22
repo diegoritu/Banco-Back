@@ -4,7 +4,6 @@ import java.sql.Date;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class Physical extends User {
 	private String dni;
 	private Account savings; //Caja de Ahorro

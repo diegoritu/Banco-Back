@@ -2,7 +2,6 @@ package com.banco.api.model;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class Legal extends User {
 	private String businessName;
 	private Account savings; //Caja de Ahorro

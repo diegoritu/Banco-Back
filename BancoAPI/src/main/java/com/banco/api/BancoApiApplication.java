@@ -10,7 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class BancoApiApplication {
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(BancoApiApplication.class, args);
+		SpringApplication.run(BancoApiApplication.class, args);
 	}
 
 }

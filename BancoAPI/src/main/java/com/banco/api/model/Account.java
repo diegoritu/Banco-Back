@@ -4,7 +4,6 @@ import java.util.TreeMap;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class Account {
 	private String accountNumber;
 	private float balance; //Saldo

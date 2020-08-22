@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class Movement {
 	private int idMovement;
 	private MovementType movementType;
