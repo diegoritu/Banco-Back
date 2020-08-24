@@ -6,21 +6,22 @@ import org.springframework.stereotype.Component;
 
 public class Physical extends User {
 	private String dni;
-	private Account savings; //Caja de Ahorro
-	private Account checking; //Cuenta Corriente
+	private Savings savings; //Caja de Ahorro
+	private Checking checking; //Cuenta Corriente
 	private Date birthday;
 	private String name;
-	private int idPhysical;
+	private String mobilePhone;
+
 	
 	public Physical(int id, String cuitCuilCdi, String usr, String address, String phone, String mobilePhone,
-			boolean active, String dni, Account savings, Account checking, Date birthday, String name, int idPhysical) {
-		super(id, cuitCuilCdi, usr, address, phone, mobilePhone, active);
+			boolean active, String dni, Savings savings,Checking  checking, Date birthday, String name, int idPhysical) {
+		super(id, cuitCuilCdi, usr, address, phone, active);
 		this.dni = dni;
 		this.savings = savings;
 		this.checking = checking;
 		this.birthday = birthday;
 		this.name = name;
-		this.idPhysical = idPhysical;
+		this.mobilePhone = mobilePhone;
 	}
 	
 	public String getDni() {
@@ -32,13 +33,13 @@ public class Physical extends User {
 	public Account getSavings() {
 		return savings;
 	}
-	public void setSavings(Account savings) {
+	public void setSavings(Savings savings) {
 		this.savings = savings;
 	}
 	public Account getChecking() {
 		return checking;
 	}
-	public void setChecking(Account checking) {
+	public void setChecking(Checking checking) {
 		this.checking = checking;
 	}
 	public Date getBirthday() {
@@ -53,10 +54,12 @@ public class Physical extends User {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getIdPhysical() {
-		return idPhysical;
+
+	public String getMobilePhone() {
+		return mobilePhone;
 	}
-	public void setIdPhysical(int idPhysical) {
-		this.idPhysical = idPhysical;
+
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
 	}
 }

@@ -12,12 +12,45 @@ public class Movement {
 	private float amount;
 	private int transactionNumber;
 	private Service service;
-	private Account exitAccount;
-	private Account entryAccount;
 	private String reference;
+	private float entryBalanceBeforeMovement;
+	private float exitBalanceBeforeMovement;
+	private Checking chEntryAccount;
+	private Checking chExitAccount;
+	private Savings saEntryAccount;
+	private Savings saExitAccount;
+	
+	/*
+	 * Constructor without idMovement
+	 */
+	public Movement(MovementType movementType, LocalDateTime dayAndHour, String concept, float amount,
+			int transactionNumber, Service service, String reference, float entryBalanceBeforeMovement,
+			float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
+			Savings saExitAccount) {
+		super();
+		this.movementType = movementType;
+		this.dayAndHour = dayAndHour;
+		this.concept = concept;
+		this.amount = amount;
+		this.transactionNumber = transactionNumber;
+		this.service = service;
+		this.reference = reference;
+		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
+		this.exitBalanceBeforeMovement = exitBalanceBeforeMovement;
+		this.chEntryAccount = chEntryAccount;
+		this.chExitAccount = chExitAccount;
+		this.saEntryAccount = saEntryAccount;
+		this.saExitAccount = saExitAccount;
+	}
+	
+	/*
+	 * Constructor with idMovement
+	 */
 	
 	public Movement(int idMovement, MovementType movementType, LocalDateTime dayAndHour, String concept, float amount,
-			int transactionNumber, Service service, Account exitAccount, Account entryAccount, String reference) {
+			int transactionNumber, Service service, String reference, float entryBalanceBeforeMovement,
+			float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
+			Savings saExitAccount) {
 		super();
 		this.idMovement = idMovement;
 		this.movementType = movementType;
@@ -26,10 +59,16 @@ public class Movement {
 		this.amount = amount;
 		this.transactionNumber = transactionNumber;
 		this.service = service;
-		this.exitAccount = exitAccount;
-		this.entryAccount = entryAccount;
 		this.reference = reference;
+		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
+		this.exitBalanceBeforeMovement = exitBalanceBeforeMovement;
+		this.chEntryAccount = chEntryAccount;
+		this.chExitAccount = chExitAccount;
+		this.saEntryAccount = saEntryAccount;
+		this.saExitAccount = saExitAccount;
 	}
+	
+	
 	public int getIdMovement() {
 		return idMovement;
 	}
@@ -72,23 +111,59 @@ public class Movement {
 	public void setService(Service service) {
 		this.service = service;
 	}
-	public Account getExitAccount() {
-		return exitAccount;
-	}
-	public void setExitAccount(Account exitAccount) {
-		this.exitAccount = exitAccount;
-	}
-	public Account getEntryAccount() {
-		return entryAccount;
-	}
-	public void setEntryAccount(Account entryAccount) {
-		this.entryAccount = entryAccount;
-	}
 	public String getReference() {
 		return reference;
 	}
 	public void setReference(String reference) {
 		this.reference = reference;
+	}
+	
+	public float getEntryBalanceBeforeMovement() {
+		return entryBalanceBeforeMovement;
+	}
+
+	public void setEntryBalanceBeforeMovement(float entryBalanceBeforeMovement) {
+		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
+	}
+
+	public float getExitBalanceBeforeMovement() {
+		return exitBalanceBeforeMovement;
+	}
+
+	public void setExitBalanceBeforeMovement(float exitBalanceBeforeMovement) {
+		this.exitBalanceBeforeMovement = exitBalanceBeforeMovement;
+	}
+
+	public Checking getChEntryAccount() {
+		return chEntryAccount;
+	}
+
+	public void setChEntryAccount(Checking chEntryAccount) {
+		this.chEntryAccount = chEntryAccount;
+	}
+
+	public Checking getChExitAccount() {
+		return chExitAccount;
+	}
+
+	public void setChExitAccount(Checking chExitAccount) {
+		this.chExitAccount = chExitAccount;
+	}
+
+	public Savings getSaEntryAccount() {
+		return saEntryAccount;
+	}
+
+	public void setSaEntryAccount(Savings saEntryAccount) {
+		this.saEntryAccount = saEntryAccount;
+	}
+
+	public Savings getSaExitAccount() {
+		return saExitAccount;
+	}
+
+	public void setSaExitAccount(Savings saExitAccount) {
+		this.saExitAccount = saExitAccount;
 	}
 	
 }

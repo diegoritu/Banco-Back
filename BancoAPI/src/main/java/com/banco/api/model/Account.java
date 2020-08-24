@@ -4,25 +4,20 @@ import java.util.TreeMap;
 
 import org.springframework.stereotype.Component;
 
-public class Account {
+public abstract class Account {
 	private String accountNumber;
 	private float balance; //Saldo
 	private String alias;
 	private TreeMap<Movement,Float> movements;
 	private String cbu;
-	private int idAccount;
-	private AccountType type;
 	
-	public Account(String accountNumber, float balance, String alias, TreeMap<Movement, Float> movements, String cbu,
-			int idAccount, AccountType type) {
+	public Account(String accountNumber, float balance, String alias, TreeMap<Movement, Float> movements, String cbu) {
 		super();
 		this.accountNumber = accountNumber;
 		this.balance = balance;
 		this.alias = alias;
 		this.movements = movements;
 		this.cbu = cbu;
-		this.idAccount = idAccount;
-		this.type = type;
 	}
 	
 	public String getAccountNumber() {
@@ -55,16 +50,10 @@ public class Account {
 	public void setCbu(String cbu) {
 		this.cbu = cbu;
 	}
-	public int getIdAccount() {
-		return idAccount;
-	}
-	public void setIdAccount(int idAccount) {
-		this.idAccount = idAccount;
-	}
-	public AccountType getType() {
-		return type;
-	}
-	public void setType(AccountType type) {
-		this.type = type;
-	}
+	
+	
+	public abstract void deposit();
+
+	public abstract void extract();
+	
 }

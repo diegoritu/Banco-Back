@@ -8,15 +8,16 @@ public class Administrative extends User {
 	private String dni;
 	private Date birthdate;
 	private String name;
-	private int idAdministrative;
+	private String mobilePhone;
+
 	
 	public Administrative(int id, String cuitCuilCdi, String usr, String address, String phone, String mobilePhone,
 			boolean active, String dni, Date birthdate, String name, int idAdministrative) {
-		super(id, cuitCuilCdi, usr, address, phone, mobilePhone, active);
+		super(id, cuitCuilCdi, usr, address, phone, active);
 		this.dni = dni;
 		this.birthdate = birthdate;
 		this.name = name;
-		this.idAdministrative = idAdministrative;
+		this.mobilePhone = mobilePhone;
 	}
 
 	public String getDni() {
@@ -43,11 +44,12 @@ public class Administrative extends User {
 		this.name = name;
 	}
 
-	public int getIdAdministrative() {
-		return idAdministrative;
+	public String getMobilePhone() {
+		return mobilePhone;
 	}
 
-	public void setIdAdministrative(int idAdministrative) {
-		this.idAdministrative = idAdministrative;
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
 	}
+	
 }

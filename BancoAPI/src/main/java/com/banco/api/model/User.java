@@ -4,14 +4,14 @@ import org.springframework.stereotype.Component;
 
 public class User {
 	private int idUsr;
+	private UserType userType;
 	private String cuitCuilCdi;
 	private String usr;
 	private String address;
 	private String phone;
-	private String mobilePhone;
 	private boolean active;
 	
-	public User(int id, String cuitCuilCdi, String usr, String address, String phone, String mobilePhone,
+	public User(int id, String cuitCuilCdi, String usr, String address, String phone,
 			boolean active) {
 		super();
 		this.idUsr = id;
@@ -19,7 +19,6 @@ public class User {
 		this.usr = usr;
 		this.address = address;
 		this.phone = phone;
-		this.mobilePhone = mobilePhone;
 		this.active = active;
 	}
 
@@ -31,12 +30,20 @@ public class User {
 		this.idUsr = id;
 	}
 
-	public String getCUITCUILCDI() {
+	public UserType getUserType() {
+		return userType;
+	}
+
+	public void setUserType(UserType userType) {
+		this.userType = userType;
+	}
+
+	public String getCuitCuilCdi() {
 		return cuitCuilCdi;
 	}
 
-	public void setCUITCUILCDI(String cUITCUILCDI) {
-		cuitCuilCdi = cUITCUILCDI;
+	public void setCuitCuilCdi(String cuitCuilCdi) {
+		this.cuitCuilCdi = cuitCuilCdi;
 	}
 
 	public String getUsr() {
@@ -61,14 +68,6 @@ public class User {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public String getMobilePhone() {
-		return mobilePhone;
-	}
-
-	public void setMobilePhone(String mobilePhone) {
-		this.mobilePhone = mobilePhone;
 	}
 
 	public boolean isActive() {
