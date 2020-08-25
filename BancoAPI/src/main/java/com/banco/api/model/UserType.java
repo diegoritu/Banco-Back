@@ -6,6 +6,6 @@ public enum UserType {
 	/*	Database meanings:
 	 * Physical = 0
 	 * Legal = 1
-	 * Administrative = 3
+	 * Administrative = 2
 	 */
 }

@@ -6,7 +6,7 @@ public enum MovementType {
 	/*	Database meanings:
 	 * Deposit = 0
 	 * Extraction = 1
-	 * CommissionOrMaintenance = 3
-	 * ServicesPay = 4
+	 * CommissionOrMaintenance = 2
+	 * ServicesPay = 3
 	 */
 }
