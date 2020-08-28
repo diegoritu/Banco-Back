@@ -1,20 +1,33 @@
-package com.banco.api.model;
+package com.banco.api.dao.entity;
 
+import javax.persistence.*;
 import java.util.Date;
 
-import org.springframework.stereotype.Component;
+@Entity
+@Table(name = "services")
+public class ServiceEntity {
 
-public class Service {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int idService;
     private String name;
     private float amount;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date due;
-    private int idService;
 
-    public Service(String name, float amount, Date due, int idService) {
+    public ServiceEntity(int idService, String name, float amount, Date due) {
         super();
+        this.idService = idService;
         this.name = name;
         this.amount = amount;
         this.due = due;
+    }
+
+    public int getIdService() {
+        return idService;
+    }
+
+    public void setIdService(int idService) {
         this.idService = idService;
     }
 
@@ -40,13 +53,5 @@ public class Service {
 
     public void setDue(Date due) {
         this.due = due;
-    }
-
-    public int getIdService() {
-        return idService;
-    }
-
-    public void setIdService(int idService) {
-        this.idService = idService;
     }
 }

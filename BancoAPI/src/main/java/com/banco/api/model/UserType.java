@@ -1,11 +1,10 @@
 package com.banco.api.model;
 
+/*	Database meanings:
+ * PHYSICAL = 0
+ * LEGAL = 1
+ * ADMINISTRATIVE = 2
+ */
 public enum UserType {
-	Physical, Legal, Administrative;
-	
-	/*	Database meanings:
-	 * Physical = 0
-	 * Legal = 1
-	 * Administrative = 2
-	 */
+    PHYSICAL, LEGAL, ADMINISTRATIVE
 }

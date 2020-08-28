@@ -5,51 +5,51 @@ import java.util.Date;
 import org.springframework.stereotype.Component;
 
 public class Administrative extends User {
-	private String dni;
-	private Date birthdate;
-	private String name;
-	private String mobilePhone;
+    private String dni;
+    private Date birthdate;
+    private String name;
+    private String mobilePhone;
 
-	
-	public Administrative(int id, String cuitCuilCdi, String usr, String address, String phone, String mobilePhone,
-			boolean active, String dni, Date birthdate, String name, int idAdministrative) {
-		super(id, cuitCuilCdi, usr, address, phone, active);
-		this.dni = dni;
-		this.birthdate = birthdate;
-		this.name = name;
-		this.mobilePhone = mobilePhone;
-	}
 
-	public String getDni() {
-		return dni;
-	}
+    public Administrative(int id, String cuitCuilCdi, String usr, String address, String phone, String mobilePhone,
+                          boolean active, String dni, Date birthdate, String name, int idAdministrative) {
+        super(id, cuitCuilCdi, usr, address, phone, active);
+        this.dni = dni;
+        this.birthdate = birthdate;
+        this.name = name;
+        this.mobilePhone = mobilePhone;
+    }
 
-	public void setDni(String dni) {
-		this.dni = dni;
-	}
+    public String getDni() {
+        return dni;
+    }
 
-	public Date getBirthdate() {
-		return birthdate;
-	}
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
 
-	public void setBirthdate(Date birthdate) {
-		this.birthdate = birthdate;
-	}
+    public Date getBirthdate() {
+        return birthdate;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getMobilePhone() {
-		return mobilePhone;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setMobilePhone(String mobilePhone) {
-		this.mobilePhone = mobilePhone;
-	}
-	
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+    }
+
 }

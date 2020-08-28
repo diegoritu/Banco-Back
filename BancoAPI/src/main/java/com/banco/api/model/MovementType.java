@@ -1,12 +1,11 @@
 package com.banco.api.model;
 
+/*	Database meanings:
+ * DEPOSIT = 0
+ * EXTRACTION = 1
+ * COMMISSION_OR_MAINTENANCE = 2
+ * SERVICES_PAYMENT = 3
+ */
 public enum MovementType {
-	Deposit, Extraction, CommissionOrMaintenance, ServicesPay;
-	
-	/*	Database meanings:
-	 * Deposit = 0
-	 * Extraction = 1
-	 * CommissionOrMaintenance = 2
-	 * ServicesPay = 3
-	 */
+    DEPOSIT, EXTRACTION, COMMISSION_OR_MAINTENANCE, SERVICES_PAYMENT
 }
