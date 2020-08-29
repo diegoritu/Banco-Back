@@ -2,87 +2,133 @@ package com.banco.api.model;
 
 import java.time.LocalDateTime;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+
+@Entity
+@Table(name = "movements")
 public class Movement {
+	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int idMovement;
-    private MovementType movementType;
+	
+	/*	Database meanings for movementType:
+	 * DEPOSIT = 0
+	 * EXTRACTION = 1
+	 * COMMISSION = 2
+	 * MAINTENANCE = 3
+	 * SERVICES_PAYMENT = 4
+	 */
+    private int movementType;
+    
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime dayAndHour;
     private String concept;
     private float amount;
     private int transactionNumber;
+    
+    @OneToOne
+    @JoinColumn(name = "idService")
+    @Column(name = "idService")
     private Service service;
+    
     private String reference;
     private float entryBalanceBeforeMovement;
     private float exitBalanceBeforeMovement;
+   
+    @ManyToOne
+    @JoinColumn(name = "idAccount")
+    @Column(name = "idEntryAccount")
     private Checking chEntryAccount;
+    
+    @ManyToOne
+    @JoinColumn(name = "idAccount")
+    @Column(name = "idExitAccount")
     private Checking chExitAccount;
+    
+    @ManyToOne
+    @JoinColumn(name = "idAccount")
+    @Column(name = "idEntryAccount")
     private Savings saEntryAccount;
+    
+    @ManyToOne
+    @JoinColumn(name = "idAccount")
+    @Column(name = "idExitAccount")
     private Savings saExitAccount;
 
     /*
      * Constructor without idMovement
      */
-    public Movement(MovementType movementType, LocalDateTime dayAndHour, String concept, float amount,
-                    int transactionNumber, Service service, String reference, float entryBalanceBeforeMovement,
-                    float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
-                    Savings saExitAccount) {
-        super();
-        this.movementType = movementType;
-        this.dayAndHour = dayAndHour;
-        this.concept = concept;
-        this.amount = amount;
-        this.transactionNumber = transactionNumber;
-        this.service = service;
-        this.reference = reference;
-        this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
-        this.exitBalanceBeforeMovement = exitBalanceBeforeMovement;
-        this.chEntryAccount = chEntryAccount;
-        this.chExitAccount = chExitAccount;
-        this.saEntryAccount = saEntryAccount;
-        this.saExitAccount = saExitAccount;
-    }
+    
+    public Movement(int movementType, LocalDateTime dayAndHour, String concept, float amount, int transactionNumber,
+			Service service, String reference, float entryBalanceBeforeMovement, float exitBalanceBeforeMovement,
+			Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount, Savings saExitAccount) {
+		super();
+		this.movementType = movementType;
+		this.dayAndHour = dayAndHour;
+		this.concept = concept;
+		this.amount = amount;
+		this.transactionNumber = transactionNumber;
+		this.service = service;
+		this.reference = reference;
+		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
+		this.exitBalanceBeforeMovement = exitBalanceBeforeMovement;
+		this.chEntryAccount = chEntryAccount;
+		this.chExitAccount = chExitAccount;
+		this.saEntryAccount = saEntryAccount;
+		this.saExitAccount = saExitAccount;
+	}
 
     /*
      * Constructor with idMovement
      */
 
-    public Movement(int idMovement, MovementType movementType, LocalDateTime dayAndHour, String concept, float amount,
-                    int transactionNumber, Service service, String reference, float entryBalanceBeforeMovement,
-                    float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
-                    Savings saExitAccount) {
-        super();
-        this.idMovement = idMovement;
-        this.movementType = movementType;
-        this.dayAndHour = dayAndHour;
-        this.concept = concept;
-        this.amount = amount;
-        this.transactionNumber = transactionNumber;
-        this.service = service;
-        this.reference = reference;
-        this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
-        this.exitBalanceBeforeMovement = exitBalanceBeforeMovement;
-        this.chEntryAccount = chEntryAccount;
-        this.chExitAccount = chExitAccount;
-        this.saEntryAccount = saEntryAccount;
-        this.saExitAccount = saExitAccount;
-    }
+    public Movement(int idMovement, int movementType, LocalDateTime dayAndHour, String concept, float amount,
+			int transactionNumber, Service service, String reference, float entryBalanceBeforeMovement,
+			float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
+			Savings saExitAccount) {
+		super();
+		this.idMovement = idMovement;
+		this.movementType = movementType;
+		this.dayAndHour = dayAndHour;
+		this.concept = concept;
+		this.amount = amount;
+		this.transactionNumber = transactionNumber;
+		this.service = service;
+		this.reference = reference;
+		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
+		this.exitBalanceBeforeMovement = exitBalanceBeforeMovement;
+		this.chEntryAccount = chEntryAccount;
+		this.chExitAccount = chExitAccount;
+		this.saEntryAccount = saEntryAccount;
+		this.saExitAccount = saExitAccount;
+	}
 
 
     public int getIdMovement() {
         return idMovement;
     }
 
-    public void setIdMovement(int idMovement) {
+	public void setIdMovement(int idMovement) {
         this.idMovement = idMovement;
     }
 
-    public MovementType getMovementType() {
+    public int getMovementType() {
         return movementType;
     }
 
-    public void setMovementType(MovementType movementType) {
-        this.movementType = movementType;
+    public void setMovementType(int movementType) {
+    	this.movementType = movementType;
     }
 
     public LocalDateTime getDayAndHour() {

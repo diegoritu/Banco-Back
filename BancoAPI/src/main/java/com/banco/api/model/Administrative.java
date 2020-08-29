@@ -2,11 +2,17 @@ package com.banco.api.model;
 
 import java.util.Date;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.Entity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+@Entity
 public class Administrative extends User {
     private String dni;
+    
+    @Temporal(TemporalType.TIMESTAMP)
     private Date birthdate;
+    
     private String name;
     private String mobilePhone;
 

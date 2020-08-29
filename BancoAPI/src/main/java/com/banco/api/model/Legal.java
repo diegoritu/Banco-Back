@@ -1,10 +1,22 @@
 package com.banco.api.model;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
+@Entity
 public class Legal extends User {
     private String businessName;
+    
+    @OneToOne
+    @JoinColumn(name = "idAccount")
+    @Column(name = "idSavingsAccount")
     private Savings savings; //Caja de Ahorro
+    
+    @OneToOne
+    @JoinColumn(name = "idAccount")
+    @Column(name = "idCheckingAccount")
     private Checking checking; //Cuenta Corriente
 
     public Legal(int id, String cuitCuilCdi, String usr, String address, String phone,

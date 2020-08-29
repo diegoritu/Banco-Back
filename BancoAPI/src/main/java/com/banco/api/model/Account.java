@@ -1,26 +1,44 @@
 package com.banco.api.model;
 
-import java.util.TreeMap;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "accounts")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 public abstract class Account {
+	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+	private int idAccount;
+	
     private String accountNumber;
     private float balance; //Saldo
     private String alias;
-    private TreeMap<Movement, Float> movements;
     private String cbu;
+    
+    /*	Database meanings for accountType:
+     * CHECKINGACCOUNT = 0
+     * SAVINGSACCOUNT = 1
+     */
+    private int accountType;
 
-    public Account(String accountNumber, float balance, String alias, TreeMap<Movement, Float> movements, String cbu) {
-        super();
-        this.accountNumber = accountNumber;
-        this.balance = balance;
-        this.alias = alias;
-        this.movements = movements;
-        this.cbu = cbu;
-    }
+    public Account(String accountNumber, float balance, String alias, String cbu,
+			int accountType) {
+		super();
+		this.accountNumber = accountNumber;
+		this.balance = balance;
+		this.alias = alias;
+		this.cbu = cbu;
+		this.accountType = accountType;
+	}
 
-    public String getAccountNumber() {
+	public String getAccountNumber() {
         return accountNumber;
     }
 
@@ -44,14 +62,6 @@ public abstract class Account {
         this.alias = alias;
     }
 
-    public TreeMap<Movement, Float> getMovements() {
-        return movements;
-    }
-
-    public void setMovements(TreeMap<Movement, Float> movements) {
-        this.movements = movements;
-    }
-
     public String getCbu() {
         return cbu;
     }
@@ -60,8 +70,15 @@ public abstract class Account {
         this.cbu = cbu;
     }
 
+    public int getAccountType() {
+		return accountType;
+	}
 
-    public abstract void deposit();
+	public void setAccountType(int accountType) {
+		this.accountType = accountType;
+	}
+
+	public abstract void deposit();
 
     public abstract void extract();
 

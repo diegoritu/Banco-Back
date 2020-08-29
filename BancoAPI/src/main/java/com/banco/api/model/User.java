@@ -1,10 +1,27 @@
 package com.banco.api.model;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "users")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 public class User {
+	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int idUsr;
-    private UserType userType;
+	/*	Database meanings for userType:
+	 * PHYSICAL = 0
+	 * LEGAL = 1
+	 * ADMINISTRATIVE = 2
+	 */
+    private int userType;
+    
     private String cuitCuilCdi;
     private String usr;
     private String address;
@@ -30,11 +47,11 @@ public class User {
         this.idUsr = id;
     }
 
-    public UserType getUserType() {
+    public int getUserType() {
         return userType;
     }
 
-    public void setUserType(UserType userType) {
+    public void setUserType(int userType) {
         this.userType = userType;
     }
 

@@ -2,13 +2,31 @@ package com.banco.api.model;
 
 import java.sql.Date;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+
+@Entity
 public class Physical extends User {
     private String dni;
+    
+    @OneToOne
+    @JoinColumn(name = "idAccount")
+    @Column(name = "idSavingsAccount")
     private Savings savings; //Caja de Ahorro
+    
+    @OneToOne
+    @JoinColumn(name = "idAccount")
+    @Column(name = "idCheckingAccount")
     private Checking checking; //Cuenta Corriente
+    
+    @Temporal(TemporalType.TIMESTAMP)
     private Date birthday;
+    
     private String name;
     private String mobilePhone;
 
@@ -32,23 +50,23 @@ public class Physical extends User {
         this.dni = dni;
     }
 
-    public Account getSavings() {
-        return savings;
-    }
+    public Savings getSavings() {
+		return savings;
+	}
 
-    public void setSavings(Savings savings) {
-        this.savings = savings;
-    }
+	public void setSavings(Savings savings) {
+		this.savings = savings;
+	}
 
-    public Account getChecking() {
-        return checking;
-    }
+	public Checking getChecking() {
+		return checking;
+	}
 
-    public void setChecking(Checking checking) {
-        this.checking = checking;
-    }
+	public void setChecking(Checking checking) {
+		this.checking = checking;
+	}
 
-    public Date getBirthday() {
+	public Date getBirthday() {
         return birthday;
     }
 

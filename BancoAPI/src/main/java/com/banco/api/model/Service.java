@@ -2,12 +2,26 @@ package com.banco.api.model;
 
 import java.util.Date;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+
+@Entity
+@Table(name="services")
 public class Service {
     private String name;
     private float amount;
+    
+    @Temporal(TemporalType.TIMESTAMP)
     private Date due;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int idService;
 
     public Service(String name, float amount, Date due, int idService) {

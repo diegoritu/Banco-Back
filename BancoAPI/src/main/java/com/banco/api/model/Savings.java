@@ -1,17 +1,19 @@
 package com.banco.api.model;
 
-import java.util.TreeMap;
 
+import javax.persistence.Entity;
+
+@Entity
 public class Savings extends Account {
     private float interestRate;
 
-    public Savings(String accountNumber, float balance, String alias, TreeMap<Movement, Float> movements, String cbu,
-                   float interestRate) {
-        super(accountNumber, balance, alias, movements, cbu);
-        this.interestRate = interestRate;
-    }
+    public Savings(String accountNumber, float balance, String alias, String cbu, int accountType,
+			float interestRate) {
+		super(accountNumber, balance, alias, cbu, accountType);
+		this.interestRate = interestRate;
+	}
 
-    public float getInterestRate() {
+	public float getInterestRate() {
         return interestRate;
     }
 
