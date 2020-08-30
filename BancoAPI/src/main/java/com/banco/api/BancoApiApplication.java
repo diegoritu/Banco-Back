@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableJpaRepositories(basePackages="com.banco.api.repository")
-@EntityScan(basePackages="com.banco.api.model.internal")
 public class BancoApiApplication {
 
     public static void main(String[] args) {

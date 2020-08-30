@@ -3,6 +3,7 @@ package com.banco.api.service.user;
 import com.banco.api.dto.request.UserRequest;
 import com.banco.api.dto.user.UserDTO;
 import com.banco.api.model.internal.user.User;
+import org.springframework.stereotype.Service;
 
 public abstract class UserService<T extends User, D extends UserDTO, R extends UserRequest> {
 
