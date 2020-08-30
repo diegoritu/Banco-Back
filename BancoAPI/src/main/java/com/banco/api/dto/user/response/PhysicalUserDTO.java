@@ -1,7 +1,8 @@
-package com.banco.api.dto.user;
+package com.banco.api.dto.user.response;
 
 import com.banco.api.dto.account.CheckingDTO;
 import com.banco.api.dto.account.SavingsDTO;
+import com.banco.api.dto.user.UserDTO;
 
 public class PhysicalUserDTO extends UserDTO {
 
@@ -9,7 +10,8 @@ public class PhysicalUserDTO extends UserDTO {
     private SavingsDTO savings; //Caja de Ahorro
     private CheckingDTO checking; //Cuenta Corriente
     private String birthDate;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String mobilePhone;
 
     public PhysicalUserDTO() {
@@ -17,13 +19,15 @@ public class PhysicalUserDTO extends UserDTO {
 
     public PhysicalUserDTO(int userId, String userType, String cuitCuilCdi, String username, String address,
                            String phone, boolean active,
-                           String dni, SavingsDTO savings, CheckingDTO checking, String birthDate, String name, String mobilePhone) {
+                           String dni, SavingsDTO savings, CheckingDTO checking, String birthDate, String firstName,
+                           String lastName, String mobilePhone) {
         super(userId, userType, cuitCuilCdi, username, address, phone, active);
         this.dni = dni;
         this.savings = savings;
         this.checking = checking;
         this.birthDate = birthDate;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.mobilePhone = mobilePhone;
     }
 
@@ -59,12 +63,20 @@ public class PhysicalUserDTO extends UserDTO {
         this.birthDate = birthDate;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getMobilePhone() {
@@ -82,7 +94,8 @@ public class PhysicalUserDTO extends UserDTO {
                 ", savings=" + savings +
                 ", checking=" + checking +
                 ", birthDate='" + birthDate + '\'' +
-                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", mobilePhone='" + mobilePhone + '\'' +
                 '}';
     }

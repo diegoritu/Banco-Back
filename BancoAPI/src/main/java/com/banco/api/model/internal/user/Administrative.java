@@ -1,15 +1,14 @@
-package com.banco.api.model.user;
+package com.banco.api.model.internal.user;
 
 import com.banco.api.adapter.DateUtils;
 import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.user.AdministrativeUserDTO;
 import com.banco.api.dto.user.UserType;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.util.Date;
 
 @Entity
 public class Administrative extends User implements Externalizable<AdministrativeUserDTO> {
@@ -18,19 +17,21 @@ public class Administrative extends User implements Externalizable<Administrativ
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date birthdate;
-
-    private String name;
+    private String firstName;
+    private String lastName;
     private String mobilePhone;
 
     public Administrative() {
+        this.userType = UserType.ADMINISTRATIVE.getValue();
     }
 
     public Administrative(int id, String cuitCuilCdi, String username, String address, String phone, boolean active,
-                          String dni, Date birthdate, String name, String mobilePhone) {
+                          String dni, Date birthdate, String firstName, String lastName, String mobilePhone) {
         super(id, cuitCuilCdi, username, address, phone, active);
         this.dni = dni;
         this.birthdate = birthdate;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.mobilePhone = mobilePhone;
         this.userType = UserType.ADMINISTRATIVE.getValue();
     }
@@ -51,12 +52,20 @@ public class Administrative extends User implements Externalizable<Administrativ
         this.birthdate = birthdate;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getMobilePhone() {
@@ -72,7 +81,8 @@ public class Administrative extends User implements Externalizable<Administrativ
         return "Administrative{" +
                 "dni='" + dni + '\'' +
                 ", birthdate=" + birthdate +
-                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", mobilePhone='" + mobilePhone + '\'' +
                 '}';
     }
@@ -90,7 +100,8 @@ public class Administrative extends User implements Externalizable<Administrativ
         view.setBirthDate(DateUtils.format(this.getBirthdate()));
         view.setDni(this.getDni());
         view.setMobilePhone(this.getMobilePhone());
-        view.setName(this.getName());
+        view.setFirstName(this.getFirstName());
+        view.setLastName(this.getLastName());
         return view;
     }
 }

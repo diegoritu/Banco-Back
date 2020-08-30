@@ -1,21 +1,18 @@
-package com.banco.api.model.user;
+package com.banco.api.model.internal.user;
 
 import com.banco.api.adapter.DateUtils;
 import com.banco.api.adapter.Externalizable;
-import com.banco.api.adapter.Internalizable;
-import com.banco.api.dto.user.PhysicalUserDTO;
-import com.banco.api.model.account.Checking;
-import com.banco.api.model.account.Savings;
 import com.banco.api.dto.user.UserType;
+import com.banco.api.dto.user.response.PhysicalUserDTO;
+import com.banco.api.model.internal.account.Checking;
+import com.banco.api.model.internal.account.Savings;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 
 @Entity
-public class Physical
-        extends User
-        implements Internalizable<PhysicalUserDTO>, Externalizable<PhysicalUserDTO> {
+public class Physical extends User implements Externalizable<PhysicalUserDTO> {
 
     private String dni;
 
@@ -30,20 +27,26 @@ public class Physical
     private Checking checking; //Cuenta Corriente
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date birthday;
+    private Date birthDate;
 
-    private String name;
+    private String firstName;
+    private String lastName;
     private String mobilePhone;
 
+    public Physical() {
+        this.userType = UserType.PHYSICAL.getValue();
+    }
 
     public Physical(int id, String cuitCuilCdi, String usr, String address, String phone, String mobilePhone,
-                    boolean active, String dni, Savings savings, Checking checking, Date birthday, String name) {
+                    boolean active, String dni, Savings savings, Checking checking, Date birthDate, String firstName,
+                    String lastName) {
         super(id, cuitCuilCdi, usr, address, phone, active);
         this.dni = dni;
         this.savings = savings;
         this.checking = checking;
-        this.birthday = birthday;
-        this.name = name;
+        this.birthDate = birthDate;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.mobilePhone = mobilePhone;
         this.userType = UserType.PHYSICAL.getValue();
     }
@@ -72,20 +75,28 @@ public class Physical
         this.checking = checking;
     }
 
-    public Date getBirthday() {
-        return birthday;
+    public Date getBirthDate() {
+        return birthDate;
     }
 
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getMobilePhone() {
@@ -95,19 +106,6 @@ public class Physical
     public void setMobilePhone(String mobilePhone) {
         this.mobilePhone = mobilePhone;
     }
-
-    @Override
-    public String toString() {
-        return "Physical{" +
-                "dni='" + dni + '\'' +
-                ", savings=" + savings +
-                ", checking=" + checking +
-                ", birthday=" + birthday +
-                ", name='" + name + '\'' +
-                ", mobilePhone='" + mobilePhone + '\'' +
-                '}';
-    }
-
 
     @Override
     public PhysicalUserDTO toView() {
@@ -121,21 +119,10 @@ public class Physical
         view.setDni(this.getDni());
         view.setSavings(this.getSavings().toView());
         view.setChecking(this.getChecking().toView());
-        view.setBirthDate(DateUtils.format(this.getBirthday()));
-        view.setName(this.getName());
+        view.setBirthDate(DateUtils.format(this.getBirthDate()));
+        view.setFirstName(this.getFirstName());
+        view.setLastName(this.getLastName());
         view.setMobilePhone(this.getMobilePhone());
         return view;
-    }
-
-    @Override
-    public void fromView(PhysicalUserDTO view) {
-        this.setAddress(view.getAddress());
-        this.setCuitCuilCdi(view.getCuitCuilCdi());
-        this.setPhone(view.getPhone());
-        this.setUsername(view.getUsername());
-        this.setDni(view.getDni());
-        this.setBirthday(DateUtils.parse(view.getBirthDate())); //TODO definir tipo de fecha
-        this.setName(view.getName());
-        this.setMobilePhone(view.getMobilePhone());
     }
 }

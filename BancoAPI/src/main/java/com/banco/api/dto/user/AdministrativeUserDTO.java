@@ -4,7 +4,8 @@ public class AdministrativeUserDTO extends UserDTO {
 
     private String dni;
     private String birthDate;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String mobilePhone;
 
     public AdministrativeUserDTO() {
@@ -12,11 +13,12 @@ public class AdministrativeUserDTO extends UserDTO {
 
     public AdministrativeUserDTO(int userId, String userType, String cuitCuilCdi, String username, String address,
                                  String phone, boolean active,
-                                 String dni, String birthDate, String name, String mobilePhone) {
+                                 String dni, String birthDate, String firstName, String lastName, String mobilePhone) {
         super(userId, userType, cuitCuilCdi, username, address, phone, active);
         this.dni = dni;
         this.birthDate = birthDate;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.mobilePhone = mobilePhone;
     }
 
@@ -36,12 +38,20 @@ public class AdministrativeUserDTO extends UserDTO {
         this.birthDate = birthDate;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getMobilePhone() {
@@ -57,7 +67,8 @@ public class AdministrativeUserDTO extends UserDTO {
         return "AdministrativeUserDTO{" +
                 "dni='" + dni + '\'' +
                 ", birthDate='" + birthDate + '\'' +
-                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", mobilePhone='" + mobilePhone + '\'' +
                 '}';
     }

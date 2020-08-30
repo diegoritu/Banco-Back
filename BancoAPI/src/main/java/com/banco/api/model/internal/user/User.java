@@ -1,12 +1,6 @@
-package com.banco.api.model.user;
+package com.banco.api.model.internal.user;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -26,12 +20,12 @@ public class User {
     private String username;
     private String address;
     private String phone;
-    private boolean active;
+    protected boolean active;
 
     public User() {
     }
 
-    public User(String cuitCuilCdi, String username, String address, String phone) {
+    public User(String cuitCuilCdi, String username, String address, String phone, String mobilePhone) {
         super();
         this.cuitCuilCdi = cuitCuilCdi;
         this.username = username;

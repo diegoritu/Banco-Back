@@ -1,17 +1,14 @@
-package com.banco.api.model.account;
+package com.banco.api.model.internal.account;
 
 
 import com.banco.api.adapter.Externalizable;
-import com.banco.api.adapter.Internalizable;
 import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.account.SavingsDTO;
 
 import javax.persistence.Entity;
 
 @Entity
-public class Savings
-        extends Account
-        implements Internalizable<SavingsDTO>, Externalizable<SavingsDTO> {
+public class Savings extends Account implements Externalizable<SavingsDTO> {
 
     private float interestRate;
 
@@ -59,16 +56,5 @@ public class Savings
         view.setBalance(this.getBalance());
         view.setCbu(this.getCbu());
         return view;
-    }
-
-    @Override
-    public void fromView(SavingsDTO view) {
-        this.setInterestRate(view.getInterestRate());
-        this.setIdAccount(view.getId());
-        this.setAccountNumber(view.getAccountNumber());
-        this.setAccountType(AccountType.valueOf(view.getAccountType()).getValue());
-        this.setAlias(view.getAlias());
-        this.setBalance(view.getBalance());
-        this.setCbu(view.getCbu());
     }
 }

@@ -1,4 +1,4 @@
-package com.banco.api.model.account;
+package com.banco.api.model.internal.account;
 
 
 import javax.persistence.Entity;

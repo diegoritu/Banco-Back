@@ -1,5 +1,6 @@
 package com.banco.api.adapter;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,5 +27,9 @@ public class DateUtils {
 
     public static String format(Date date) {
         return dateFormatter.format(date);
+    }
+
+    public static DateTime getDateTime() {
+        return DateTime.now(); //timezone?
     }
 }

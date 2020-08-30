@@ -1,17 +1,14 @@
-package com.banco.api.model.account;
+package com.banco.api.model.internal.account;
 
 
 import com.banco.api.adapter.Externalizable;
-import com.banco.api.adapter.Internalizable;
 import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.account.CheckingDTO;
 
 import javax.persistence.Entity;
 
 @Entity
-public class Checking
-        extends Account
-        implements Internalizable<CheckingDTO>, Externalizable<CheckingDTO> {
+public class Checking extends Account implements Externalizable<CheckingDTO> {
 
     private float maxOverdraft; //Monto máximo para girar en descubierto
 
@@ -52,15 +49,5 @@ public class Checking
         view.setBalance(this.getBalance());
         view.setCbu(this.getCbu());
         return view;
-    }
-
-    @Override
-    public void fromView(CheckingDTO view) {
-        this.setMaxOverdraft(view.getMaxOverdraft());
-        this.setAccountNumber(view.getAccountNumber());
-        this.setAccountType(AccountType.valueOf(view.getAccountType()).getValue());
-        this.setAlias(view.getAlias());
-        this.setBalance(view.getBalance());
-        this.setCbu(view.getCbu());
     }
 }
