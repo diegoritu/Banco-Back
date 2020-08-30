@@ -1,5 +1,8 @@
 package com.banco.api.model;
 
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
+
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -227,4 +230,23 @@ public class Movement {
         this.saExitAccount = saExitAccount;
     }
 
+    @Override
+    public String toString() {
+        return "Movement{" +
+                "idMovement=" + idMovement +
+                ", movementType=" + movementType +
+                ", dayAndHour=" + dayAndHour +
+                ", concept='" + concept + '\'' +
+                ", amount=" + amount +
+                ", transactionNumber=" + transactionNumber +
+                ", service=" + service +
+                ", reference='" + reference + '\'' +
+                ", entryBalanceBeforeMovement=" + entryBalanceBeforeMovement +
+                ", exitBalanceBeforeMovement=" + exitBalanceBeforeMovement +
+                ", chEntryAccount=" + chEntryAccount +
+                ", chExitAccount=" + chExitAccount +
+                ", saEntryAccount=" + saEntryAccount +
+                ", saExitAccount=" + saExitAccount +
+                '}';
+    }
 }

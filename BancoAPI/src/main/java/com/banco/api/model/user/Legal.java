@@ -1,4 +1,8 @@
-package com.banco.api.model;
+package com.banco.api.model.user;
+
+import com.banco.api.model.account.Account;
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,4 +55,12 @@ public class Legal extends User {
         this.checking = checking;
     }
 
+    @Override
+    public String toString() {
+        return "Legal{" +
+                "businessName='" + businessName + '\'' +
+                ", savings=" + savings +
+                ", checking=" + checking +
+                '}';
+    }
 }

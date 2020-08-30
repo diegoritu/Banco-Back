@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
 	
 //	@Autowired
-//	UserRepository userDao;
+//	UserBaseRepository userDao;
 //
 //	@Autowired
 //	ServiceRepository serviceDao;

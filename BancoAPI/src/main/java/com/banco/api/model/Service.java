@@ -63,4 +63,14 @@ public class Service {
     public void setIdService(int idService) {
         this.idService = idService;
     }
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "name='" + name + '\'' +
+                ", amount=" + amount +
+                ", due=" + due +
+                ", idService=" + idService +
+                '}';
+    }
 }

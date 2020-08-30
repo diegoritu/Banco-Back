@@ -1,4 +1,4 @@
-package com.banco.api.model;
+package com.banco.api.model.account;
 
 
 import javax.persistence.Entity;
@@ -38,7 +38,15 @@ public abstract class Account {
 		this.accountType = accountType;
 	}
 
-	public String getAccountNumber() {
+    public int getIdAccount() {
+        return idAccount;
+    }
+
+    public void setIdAccount(int idAccount) {
+        this.idAccount = idAccount;
+    }
+
+    public String getAccountNumber() {
         return accountNumber;
     }
 

@@ -1,4 +1,4 @@
-package com.banco.api.model;
+package com.banco.api.model.user;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,37 +14,49 @@ import javax.persistence.Table;
 public class User {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int idUsr;
+    private int idUser;
 	/*	Database meanings for userType:
 	 * PHYSICAL = 0
 	 * LEGAL = 1
 	 * ADMINISTRATIVE = 2
 	 */
-    private int userType;
+    protected int userType;
     
     private String cuitCuilCdi;
-    private String usr;
+    private String username;
     private String address;
     private String phone;
     private boolean active;
 
-    public User(int id, String cuitCuilCdi, String usr, String address, String phone,
+    public User() {
+    }
+
+    public User(String cuitCuilCdi, String username, String address, String phone) {
+        super();
+        this.cuitCuilCdi = cuitCuilCdi;
+        this.username = username;
+        this.address = address;
+        this.phone = phone;
+        this.active = true;
+    }
+
+    public User(int id, String cuitCuilCdi, String username, String address, String phone,
                 boolean active) {
         super();
-        this.idUsr = id;
+        this.idUser = id;
         this.cuitCuilCdi = cuitCuilCdi;
-        this.usr = usr;
+        this.username = username;
         this.address = address;
         this.phone = phone;
         this.active = active;
     }
 
     public int getId() {
-        return idUsr;
+        return idUser;
     }
 
     public void setId(int id) {
-        this.idUsr = id;
+        this.idUser = id;
     }
 
     public int getUserType() {
@@ -63,12 +75,12 @@ public class User {
         this.cuitCuilCdi = cuitCuilCdi;
     }
 
-    public String getUsr() {
-        return usr;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUsr(String usr) {
-        this.usr = usr;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getAddress() {
@@ -95,7 +107,16 @@ public class User {
         this.active = active;
     }
 
-    public void ay() {
-        System.out.println("EYYY");
+    @Override
+    public String toString() {
+        return "User{" +
+                "idUser=" + idUser +
+                ", userType=" + userType +
+                ", cuitCuilCdi='" + cuitCuilCdi + '\'' +
+                ", username='" + username + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", active=" + active +
+                '}';
     }
 }
