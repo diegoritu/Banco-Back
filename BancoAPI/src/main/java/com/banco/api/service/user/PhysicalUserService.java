@@ -1,9 +1,9 @@
 package com.banco.api.service.user;
 
 import com.banco.api.adapter.DateUtils;
-import com.banco.api.dto.request.PhysicalUserRequest;
-import com.banco.api.dto.user.response.PhysicalUserDTO;
-import com.banco.api.model.internal.user.Physical;
+import com.banco.api.dto.user.request.PhysicalUserRequest;
+import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

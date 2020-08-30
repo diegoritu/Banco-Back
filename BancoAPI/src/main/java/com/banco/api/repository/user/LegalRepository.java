@@ -1,6 +1,6 @@
 package com.banco.api.repository.user;
 
-import com.banco.api.model.internal.user.Legal;
+import com.banco.api.model.user.Legal;
 import org.springframework.stereotype.Repository;
 
 @Repository

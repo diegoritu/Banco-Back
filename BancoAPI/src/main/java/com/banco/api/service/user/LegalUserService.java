@@ -1,8 +1,8 @@
 package com.banco.api.service.user;
 
-import com.banco.api.dto.request.LegalUserRequest;
+import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.LegalUserDTO;
-import com.banco.api.model.internal.user.Legal;
+import com.banco.api.model.user.Legal;
 import com.banco.api.repository.user.LegalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

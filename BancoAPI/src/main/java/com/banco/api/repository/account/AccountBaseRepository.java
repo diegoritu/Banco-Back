@@ -1,6 +1,6 @@
 package com.banco.api.repository.account;
 
-import com.banco.api.model.internal.account.Account;
+import com.banco.api.model.account.Account;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 

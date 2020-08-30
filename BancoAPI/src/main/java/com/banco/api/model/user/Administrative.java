@@ -1,4 +1,4 @@
-package com.banco.api.model.internal.user;
+package com.banco.api.model.user;
 
 import com.banco.api.adapter.DateUtils;
 import com.banco.api.adapter.Externalizable;

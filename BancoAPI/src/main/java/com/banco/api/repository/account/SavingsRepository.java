@@ -1,6 +1,6 @@
 package com.banco.api.repository.account;
 
-import com.banco.api.model.internal.account.Savings;
+import com.banco.api.model.account.Savings;
 import org.springframework.stereotype.Repository;
 
 @Repository

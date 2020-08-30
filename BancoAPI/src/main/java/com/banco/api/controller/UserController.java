@@ -1,9 +1,9 @@
 package com.banco.api.controller;
 
-import com.banco.api.dto.request.LegalUserRequest;
-import com.banco.api.dto.request.PhysicalUserRequest;
+import com.banco.api.dto.user.request.LegalUserRequest;
+import com.banco.api.dto.user.request.PhysicalUserRequest;
 import com.banco.api.dto.user.LegalUserDTO;
-import com.banco.api.dto.user.response.PhysicalUserDTO;
+import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import org.slf4j.Logger;

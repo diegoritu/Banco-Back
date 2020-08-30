@@ -1,6 +1,6 @@
 package com.banco.api.repository;
 
-import com.banco.api.model.internal.Service;
+import com.banco.api.model.Service;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.banco.api.model.internal;
+package com.banco.api.model;
 
 import java.util.Date;
 

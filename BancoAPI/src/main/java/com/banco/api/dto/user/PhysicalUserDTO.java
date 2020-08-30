@@ -1,4 +1,4 @@
-package com.banco.api.dto.user.response;
+package com.banco.api.dto.user;
 
 import com.banco.api.dto.account.CheckingDTO;
 import com.banco.api.dto.account.SavingsDTO;

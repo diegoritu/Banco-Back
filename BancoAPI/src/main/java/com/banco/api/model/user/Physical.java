@@ -1,11 +1,11 @@
-package com.banco.api.model.internal.user;
+package com.banco.api.model.user;
 
 import com.banco.api.adapter.DateUtils;
 import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.user.UserType;
-import com.banco.api.dto.user.response.PhysicalUserDTO;
-import com.banco.api.model.internal.account.Checking;
-import com.banco.api.model.internal.account.Savings;
+import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
 
 import javax.persistence.*;
 import java.util.Date;

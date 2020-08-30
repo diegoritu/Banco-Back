@@ -1,4 +1,4 @@
-package com.banco.api.dto.request;
+package com.banco.api.dto.user.request;
 
 public class LegalUserRequest extends UserRequest {
 

@@ -1,4 +1,4 @@
-package com.banco.api.model.internal.account;
+package com.banco.api.model.account;
 
 
 import com.banco.api.adapter.Externalizable;
