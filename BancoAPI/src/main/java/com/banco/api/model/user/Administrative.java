@@ -5,18 +5,20 @@ import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.user.AdministrativeUserDTO;
 import com.banco.api.dto.user.UserType;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
+@DiscriminatorValue("Administrative")
 public class Administrative extends User implements Externalizable<AdministrativeUserDTO> {
 
     private String dni;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date birthdate;
+    private Date birthday;
     private String firstName;
     private String lastName;
     private String mobilePhone;
@@ -29,7 +31,7 @@ public class Administrative extends User implements Externalizable<Administrativ
                           String dni, Date birthdate, String firstName, String lastName, String mobilePhone) {
         super(id, cuitCuilCdi, username, address, phone, active);
         this.dni = dni;
-        this.birthdate = birthdate;
+        this.birthday = birthdate;
         this.firstName = firstName;
         this.lastName = lastName;
         this.mobilePhone = mobilePhone;
@@ -45,11 +47,11 @@ public class Administrative extends User implements Externalizable<Administrativ
     }
 
     public Date getBirthdate() {
-        return birthdate;
+        return birthday;
     }
 
     public void setBirthdate(Date birthdate) {
-        this.birthdate = birthdate;
+        this.birthday = birthdate;
     }
 
     public String getFirstName() {
@@ -80,7 +82,7 @@ public class Administrative extends User implements Externalizable<Administrativ
     public String toString() {
         return "Administrative{" +
                 "dni='" + dni + '\'' +
-                ", birthdate=" + birthdate +
+                ", birthdate=" + birthday +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", mobilePhone='" + mobilePhone + '\'' +

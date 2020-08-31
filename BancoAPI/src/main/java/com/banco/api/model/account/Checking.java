@@ -5,9 +5,11 @@ import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.account.CheckingDTO;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
+@DiscriminatorValue("Checking")
 public class Checking extends Account implements Externalizable<CheckingDTO> {
 
     private float maxOverdraft; //Monto máximo para girar en descubierto

@@ -5,9 +5,11 @@ import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.account.SavingsDTO;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
+@DiscriminatorValue("Savings")
 public class Savings extends Account implements Externalizable<SavingsDTO> {
 
     private float interestRate;

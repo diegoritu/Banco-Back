@@ -1,9 +1,11 @@
 package com.banco.api.model;
 
+import com.banco.api.model.account.Account;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +18,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Type;
 
 
 @Entity
@@ -34,39 +38,40 @@ public class Movement {
 	 */
     private int movementType;
     
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    @Type(type="timestamp")
     private LocalDateTime dayAndHour;
     private String concept;
     private float amount;
     private int transactionNumber;
     
+    //@Column(name = "idService")
     @OneToOne
     @JoinColumn(name = "idService")
-    @Column(name = "idService")
     private Service service;
     
     private String reference;
     private float entryBalanceBeforeMovement;
     private float exitBalanceBeforeMovement;
    
+   // @Column(name = "idEntryAccount")
     @ManyToOne
-    @JoinColumn(name = "idAccount")
-    @Column(name = "idEntryAccount")
     private Checking chEntryAccount;
-    
     @ManyToOne
-    @JoinColumn(name = "idAccount")
-    @Column(name = "idExitAccount")
     private Checking chExitAccount;
     
     @ManyToOne
-    @JoinColumn(name = "idAccount")
-    @Column(name = "idEntryAccount")
-    private Savings saEntryAccount;
+    @JoinColumn(name = "idEntryAccount")
+    private Account entryAccount;
+
+    //   @Column(name = "idExitAccount")
+    @ManyToOne
+    @JoinColumn(name = "idExitAccount")
+    private Account exitAccount;
     
     @ManyToOne
-    @JoinColumn(name = "idAccount")
-    @Column(name = "idExitAccount")
+    private Savings saEntryAccount;
+    @ManyToOne
     private Savings saExitAccount;
 
     /*

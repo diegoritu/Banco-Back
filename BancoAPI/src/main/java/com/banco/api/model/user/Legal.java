@@ -7,23 +7,25 @@ import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
+@DiscriminatorValue("Legal")
 public class Legal extends User implements Externalizable<LegalUserDTO> {
 
     private String businessName;
 
     @OneToOne
-    @JoinColumn(name = "idAccount")
-    @Column(name = "idSavingsAccount")
+    @JoinColumn(name = "idSavingsAccount")
+    //@Column(name = "idSavingsAccount")
     private Savings savings; //Caja de Ahorro
 
     @OneToOne
-    @JoinColumn(name = "idAccount")
-    @Column(name = "idCheckingAccount")
+    @JoinColumn(name = "idCheckingAccount")
+    //@Column(name = "idCheckingAccount")
     private Checking checking; //Cuenta Corriente
 
     public Legal() {

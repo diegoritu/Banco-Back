@@ -12,22 +12,23 @@ import java.util.Date;
 
 
 @Entity
+@DiscriminatorValue("Physical")
 public class Physical extends User implements Externalizable<PhysicalUserDTO> {
 
     private String dni;
 
     @OneToOne
-    @JoinColumn(name = "idAccount")
-    @Column(name = "idSavingsAccount")
+    @JoinColumn(name = "idSavingsAccount")
+  //  @Column(name = "idSavingsAccount")
     private Savings savings; //Caja de Ahorro
 
     @OneToOne
-    @JoinColumn(name = "idAccount")
-    @Column(name = "idCheckingAccount")
+    @JoinColumn(name = "idCheckingAccount")
+   // @Column(name = "idCheckingAccount")
     private Checking checking; //Cuenta Corriente
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date birthDate;
+    private Date birthday;
 
     private String firstName;
     private String lastName;
@@ -44,7 +45,7 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
         this.dni = dni;
         this.savings = savings;
         this.checking = checking;
-        this.birthDate = birthDate;
+        this.birthday = birthDate;
         this.firstName = firstName;
         this.lastName = lastName;
         this.mobilePhone = mobilePhone;
@@ -76,11 +77,11 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
     }
 
     public Date getBirthDate() {
-        return birthDate;
+        return birthday;
     }
 
     public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
+        this.birthday = birthDate;
     }
 
     public String getFirstName() {
