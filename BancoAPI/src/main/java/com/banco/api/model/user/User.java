@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="User", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name="userType", discriminatorType = DiscriminatorType.STRING)
 public class User {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -15,10 +15,13 @@ public class User {
 	 * LEGAL = 1
 	 * ADMINISTRATIVE = 2
 	 */
-    protected int userType;
+    protected int userTypeNumber;
     
     private String cuitCuilCdi;
+    
+    @Column(name = "usr")
     private String username;
+    
     private String address;
     private String phone;
     protected boolean active;
@@ -55,11 +58,11 @@ public class User {
     }
 
     public int getUserType() {
-        return userType;
+        return userTypeNumber;
     }
 
     public void setUserType(int userType) {
-        this.userType = userType;
+        this.userTypeNumber = userType;
     }
 
     public String getCuitCuilCdi() {
@@ -106,7 +109,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "idUser=" + idUser +
-                ", userType=" + userType +
+                ", userType=" + userTypeNumber +
                 ", cuitCuilCdi='" + cuitCuilCdi + '\'' +
                 ", username='" + username + '\'' +
                 ", address='" + address + '\'' +

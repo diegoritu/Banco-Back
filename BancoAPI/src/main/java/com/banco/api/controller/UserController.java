@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,14 +29,32 @@ public class UserController {
 
     @PostMapping("/physical")
     public ResponseEntity<PhysicalUserDTO> createPhysical(@RequestBody PhysicalUserRequest request) {
-        LOGGER.info("Creating physical user {}", request.toString());
-        return new ResponseEntity<>(physicalUserService.createUser(request), HttpStatus.CREATED);
+        
+    	if(physicalUserService.existsUser(request.getUsername()) == false)
+    	{
+	    	LOGGER.info("Creating physical user {}", request.toString());
+	        return new ResponseEntity<>(physicalUserService.createUser(request), HttpStatus.CREATED);
+    	}
+    	else 
+    	{
+	        return new ResponseEntity<>(HttpStatus.IM_USED);
+   		
+    	}
     }
-
     @PostMapping("/legal")
     public ResponseEntity<LegalUserDTO> createLegal(@RequestBody LegalUserRequest request) {
-        LOGGER.info("Creating legal user {}", request.toString());
-        return new ResponseEntity<>(legalUserService.createUser(request), HttpStatus.CREATED);
+        
+    	if(legalUserService.existsUser(request.getUsername()) == false)
+    	{
+        	LOGGER.info("Creating legal user {}", request.toString());
+            return new ResponseEntity<>(legalUserService.createUser(request), HttpStatus.CREATED);
+    	}
+    	else 
+    	{
+	        return new ResponseEntity<>(HttpStatus.IM_USED);
+   		
+    	}
+
     }
 
 }

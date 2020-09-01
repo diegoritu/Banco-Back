@@ -35,7 +35,7 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
     private String mobilePhone;
 
     public Physical() {
-        this.userType = UserType.PHYSICAL.getValue();
+        this.userTypeNumber = UserType.PHYSICAL.getValue();
     }
 
     public Physical(int id, String cuitCuilCdi, String usr, String address, String phone, String mobilePhone,
@@ -49,7 +49,7 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
         this.firstName = firstName;
         this.lastName = lastName;
         this.mobilePhone = mobilePhone;
-        this.userType = UserType.PHYSICAL.getValue();
+        this.userTypeNumber = UserType.PHYSICAL.getValue();
     }
 
     public String getDni() {
@@ -118,8 +118,21 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
         view.setUsername(this.getUsername());
         view.setUserType(UserType.valueOf(this.getUserType()).toString());
         view.setDni(this.getDni());
-        view.setSavings(this.getSavings().toView());
-        view.setChecking(this.getChecking().toView());
+        view.setId(this.getId());
+
+        if(this.getSavings() == null) {
+        	view.setSavings(null);
+        }
+        else {
+            view.setSavings(this.getSavings().toView());       	
+        }
+        
+        if(this.getChecking() == null) {
+            view.setChecking(null);
+        }
+        else {
+            view.setChecking(this.getChecking().toView());
+        }
         view.setBirthDate(DateUtils.format(this.getBirthDate()));
         view.setFirstName(this.getFirstName());
         view.setLastName(this.getLastName());

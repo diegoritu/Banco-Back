@@ -24,7 +24,7 @@ public class Administrative extends User implements Externalizable<Administrativ
     private String mobilePhone;
 
     public Administrative() {
-        this.userType = UserType.ADMINISTRATIVE.getValue();
+        this.userTypeNumber = UserType.ADMINISTRATIVE.getValue();
     }
 
     public Administrative(int id, String cuitCuilCdi, String username, String address, String phone, boolean active,
@@ -35,7 +35,7 @@ public class Administrative extends User implements Externalizable<Administrativ
         this.firstName = firstName;
         this.lastName = lastName;
         this.mobilePhone = mobilePhone;
-        this.userType = UserType.ADMINISTRATIVE.getValue();
+        this.userTypeNumber = UserType.ADMINISTRATIVE.getValue();
     }
 
     public String getDni() {

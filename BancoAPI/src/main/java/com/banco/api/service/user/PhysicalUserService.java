@@ -22,7 +22,8 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         user.setBirthDate(DateUtils.parse(request.getBirthDate()));
         user.setDni(request.getDni());
         user.setMobilePhone(request.getMobilePhone());
-
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
         //TODO: crear caja de ahorro, y cuenta corriente si aplica
         //user.setSavings(savingsAccount);
         //user.setChecking(checkingAccount);
@@ -30,4 +31,19 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         Physical result = physicalRepository.save(user);
         return result.toView();
     }
+    
+    public boolean existsUser(String username) {
+
+        Physical result = physicalRepository.findByUsername(username);
+        if(result != null)
+        {
+        	return true;
+        }
+        else 
+        {
+            return false;
+
+        }
+    }
+
 }
