@@ -14,9 +14,8 @@ public class Checking extends Account implements Externalizable<CheckingDTO> {
 
     private float maxOverdraft; //Monto máximo para girar en descubierto
 
-    public Checking(String accountNumber, float balance, String alias, String cbu, int accountType,
-			float maxOverdraft) {
-		super(accountNumber, balance, alias, cbu, accountType);
+    public Checking(float balance, String alias, int accountType, float maxOverdraft) {
+		super(balance, alias, accountType);
 		this.maxOverdraft = maxOverdraft;
 	}
 

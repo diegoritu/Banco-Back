@@ -1,6 +1,9 @@
 package com.banco.api.model.account;
 
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -31,17 +34,32 @@ public abstract class Account {
      */
     private int accountType;
 
-    public Account(String accountNumber, float balance, String alias, String cbu,
-			int accountType) {
+    public Account(float balance, String alias, int accountType) {
 		super();
-		this.accountNumber = accountNumber;
+		this.accountNumber = generateAccountNumber();
 		this.balance = balance;
 		this.alias = alias;
-		this.cbu = cbu;
+		this.cbu = generateCbu();
 		this.accountType = accountType;
 	}
 
-    public int getIdAccount() {
+    private String generateCbu() {
+		String first = Integer.toString(Math.abs(ThreadLocalRandom.current().nextInt(((99999999 - 10000000) + 1) + 10000000)));
+		String last = Integer.toString(Math.abs(new Random().nextInt(((10-1)+1)+1)));
+		String cbu = first + accountNumber + last;
+		return cbu;
+	}
+
+    //Una vez creado AccountService verificar que no se genere uno ya existente.
+	private String generateAccountNumber() {
+		//do {
+		String aN = Long.toString(Math.abs(ThreadLocalRandom.current().nextLong(((9999999999999L - 1000000000000L) + 1) + 1000000000000L)));
+		/*}
+		while(aN exista como numero de cuenta)*/
+		return aN;
+	}
+
+	public int getIdAccount() {
         return idAccount;
     }
 

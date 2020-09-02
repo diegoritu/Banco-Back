@@ -14,13 +14,18 @@ public class Savings extends Account implements Externalizable<SavingsDTO> {
 
     private float interestRate;
 
-    public Savings(String accountNumber, float balance, String alias, String cbu,
+    public Savings(float balance, String alias,
                    float interestRate) {
-        super(accountNumber, balance, alias, cbu, AccountType.SAVINGS.getValue());
+    	super(balance, alias, AccountType.SAVINGS.getValue());
         this.interestRate = interestRate;
     }
+    
+	private String generateAccountNumber() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    public float getInterestRate() {
+	public float getInterestRate() {
         return interestRate;
     }
 
