@@ -5,18 +5,18 @@ public abstract class AccountDTO {
     private int id;
     private String accountNumber;
     private float balance;
-    private String alias;
+    private boolean active;
     private String cbu;
     private String accountType;
 
     public AccountDTO() {
     }
 
-    public AccountDTO(int id, String accountNumber, float balance, String alias, String cbu, String accountType) {
+    public AccountDTO(int id, String accountNumber, float balance, boolean active, String cbu, String accountType) {
         this.id = id;
         this.accountNumber = accountNumber;
         this.balance = balance;
-        this.alias = alias;
+        this.active = active;
         this.cbu = cbu;
         this.accountType = accountType;
     }
@@ -45,15 +45,15 @@ public abstract class AccountDTO {
         this.balance = balance;
     }
 
-    public String getAlias() {
-        return alias;
-    }
+    public boolean isActive() {
+		return active;
+	}
 
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
-    public String getCbu() {
+	public String getCbu() {
         return cbu;
     }
 
@@ -75,9 +75,9 @@ public abstract class AccountDTO {
                 "id=" + id +
                 ", accountNumber='" + accountNumber + '\'' +
                 ", balance=" + balance +
-                ", alias='" + alias + '\'' +
                 ", cbu='" + cbu + '\'' +
                 ", accountType='" + accountType + '\'' +
+                ", active='" + active + '\'' +
                 '}';
     }
 }

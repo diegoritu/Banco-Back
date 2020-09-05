@@ -2,6 +2,11 @@ package com.banco.api.model.user;
 
 import javax.persistence.*;
 
+import com.banco.api.adapter.DateUtils;
+import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.dto.user.UserDTO;
+import com.banco.api.dto.user.UserType;
+
 @Entity
 @Table(name = "users")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
@@ -117,4 +122,7 @@ public class User {
                 ", active=" + active +
                 '}';
     }
+    
+
+
 }

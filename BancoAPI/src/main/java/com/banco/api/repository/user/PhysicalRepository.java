@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PhysicalRepository extends UserBaseRepository<Physical> {
 
+	Physical findByUsernameAndUserTypeNumber(String username, int userTypeNumber);
+
 }

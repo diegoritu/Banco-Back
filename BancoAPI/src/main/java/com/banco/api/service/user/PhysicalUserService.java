@@ -34,7 +34,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     
     public boolean existsUser(String username) {
 
-        Physical result = physicalRepository.findByUsername(username);
+        Physical result = physicalRepository.findByUsernameAndUserTypeNumber(username, 0);
         if(result != null)
         {
         	return true;
@@ -45,5 +45,18 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 
         }
     }
+    
+    public Physical findByUsername(String username) {
+
+       Physical physicalUser = physicalRepository.findByUsername(username);
+       return physicalUser;
+    }
+    
+    public PhysicalUserDTO update(Physical physical) {
+
+        Physical physicalUser = physicalRepository.save(physical);
+        return physicalUser.toView();
+     }
+
 
 }

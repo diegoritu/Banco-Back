@@ -3,7 +3,6 @@ package com.banco.api.service.user;
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.model.user.Legal;
-import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.LegalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,5 +40,18 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 
         }
     }
+    
+    public Legal findByUsername(String username) {
+
+        Legal legalUser = legalRepository.findByUsernameAndUserTypeNumber(username, 1);
+        return legalUser;
+     }
+     
+     public LegalUserDTO update(Legal legal) {
+
+    	 Legal legalUser = legalRepository.save(legal);
+         return legalUser.toView();
+      }
+
 
 }

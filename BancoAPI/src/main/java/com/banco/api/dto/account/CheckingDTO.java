@@ -8,9 +8,9 @@ public class CheckingDTO extends AccountDTO {
         super();
     }
 
-    public CheckingDTO(int id, String accountNumber, float balance, String alias, String cbu, String accountType,
+    public CheckingDTO(int id, String accountNumber, float balance, boolean active, String cbu, String accountType,
                        float maxOverdraft) {
-        super(id, accountNumber, balance, alias, cbu, accountType);
+        super(id, accountNumber, balance, active, cbu, accountType);
         this.maxOverdraft = maxOverdraft;
     }
 

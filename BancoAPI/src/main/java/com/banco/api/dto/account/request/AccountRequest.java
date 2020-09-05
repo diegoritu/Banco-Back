@@ -6,7 +6,7 @@ public class AccountRequest implements Serializable{
 	
 	private String accountNumber;
     private float balance;
-    private String alias;
+    private boolean active;
     private String cbu;
     private int accountType;
     
@@ -26,12 +26,15 @@ public class AccountRequest implements Serializable{
 	public void setBalance(float balance) {
 		this.balance = balance;
 	}
-	public String getAlias() {
-		return alias;
+
+	public boolean isActive() {
+		return active;
 	}
-	public void setAlias(String alias) {
-		this.alias = alias;
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
+
 	public String getCbu() {
 		return cbu;
 	}
@@ -50,9 +53,9 @@ public class AccountRequest implements Serializable{
 		return "AccountRequest{" +
                 "accountNumber='" + accountNumber + '\'' +
                 ", balance='" + balance + '\'' +
-                ", alias='" + alias + '\'' +
                 ", cbu='" + cbu + '\'' +
                 ", accountType=" + accountType +
+                ", active='" + active + '\'' +
                 '}';
 	}
     

@@ -14,9 +14,8 @@ public class Savings extends Account implements Externalizable<SavingsDTO> {
 
     private float interestRate;
 
-    public Savings(float balance, String alias,
-                   float interestRate) {
-    	super(balance, alias, AccountType.SAVINGS.getValue());
+    public Savings(float balance, float interestRate) {
+    	super(balance, AccountType.SAVINGS.getValue());
         this.interestRate = interestRate;
     }
     
@@ -59,7 +58,7 @@ public class Savings extends Account implements Externalizable<SavingsDTO> {
         view.setId(this.getIdAccount());
         view.setAccountNumber(this.getAccountNumber());
         view.setAccountType(AccountType.valueOf(this.getAccountType()).toString());
-        view.setAlias(this.getAlias());
+        view.setActive(this.isActive());
         view.setBalance(this.getBalance());
         view.setCbu(this.getCbu());
         return view;

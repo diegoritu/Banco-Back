@@ -8,9 +8,9 @@ public class SavingsDTO extends AccountDTO {
         super();
     }
 
-    public SavingsDTO(int id, String accountNumber, float balance, String alias, String cbu, String accountType,
+    public SavingsDTO(int id, String accountNumber, float balance, boolean active, String cbu, String accountType,
                       float interestRate) {
-        super(id, accountNumber, balance, alias, cbu, accountType);
+        super(id, accountNumber, balance, active, cbu, accountType);
         this.interestRate = interestRate;
     }
 

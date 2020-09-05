@@ -6,8 +6,13 @@ import com.banco.api.dto.user.UserType;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
+import com.banco.api.repository.account.CheckingRepository;
+import com.banco.api.repository.user.PhysicalRepository;
 
 import javax.persistence.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Date;
 
 
@@ -107,7 +112,8 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
     public void setMobilePhone(String mobilePhone) {
         this.mobilePhone = mobilePhone;
     }
-
+    
+    
     @Override
     public PhysicalUserDTO toView() {
         PhysicalUserDTO view = new PhysicalUserDTO();

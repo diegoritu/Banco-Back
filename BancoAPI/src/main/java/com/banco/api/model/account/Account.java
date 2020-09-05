@@ -25,7 +25,7 @@ public abstract class Account {
 	
     private String accountNumber;
     private float balance; //Saldo
-    private String alias;
+    private boolean active;
     private String cbu;
     
     /*	Database meanings for accountType:
@@ -34,11 +34,11 @@ public abstract class Account {
      */
     private int accountType;
 
-    public Account(float balance, String alias, int accountType) {
+    public Account(float balance, int accountType) {
 		super();
 		this.accountNumber = generateAccountNumber();
 		this.balance = balance;
-		this.alias = alias;
+		this.active = true;
 		this.cbu = generateCbu();
 		this.accountType = accountType;
 	}
@@ -83,15 +83,16 @@ public abstract class Account {
         this.balance = balance;
     }
 
-    public String getAlias() {
-        return alias;
-    }
 
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
+    public boolean isActive() {
+		return active;
+	}
 
-    public String getCbu() {
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getCbu() {
         return cbu;
     }
 
