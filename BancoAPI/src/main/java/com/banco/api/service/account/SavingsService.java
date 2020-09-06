@@ -10,7 +10,7 @@ import com.banco.api.repository.account.SavingsRepository;
 
 
 @Service
-public abstract class SavingsService extends AccountService<Savings, SavingsDTO, SavingsRequest> {
+public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsRequest> {
 
     @Autowired
     SavingsRepository savingsRepository;
@@ -22,6 +22,12 @@ public abstract class SavingsService extends AccountService<Savings, SavingsDTO,
         Savings result = savingsRepository.save(account);
         return result;
     }
+
+	@Override
+	protected SavingsDTO createAccount(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 
     

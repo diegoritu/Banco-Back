@@ -10,7 +10,7 @@ import com.banco.api.model.account.Checking;
 import com.banco.api.repository.account.CheckingRepository;
 
 @Service
-public abstract class CheckingService extends AccountService<Checking, CheckingDTO, CheckingRequest> {
+public class CheckingService extends AccountService<Checking, CheckingDTO, CheckingRequest> {
 
     @Autowired
     CheckingRepository checkingRepository;
@@ -22,6 +22,12 @@ public abstract class CheckingService extends AccountService<Checking, CheckingD
         Checking result = checkingRepository.save(account);
         return result;
     }
+
+	@Override
+	protected CheckingDTO createAccount(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     
 }
