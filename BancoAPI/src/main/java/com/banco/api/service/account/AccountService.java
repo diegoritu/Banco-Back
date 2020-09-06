@@ -5,9 +5,16 @@ import com.banco.api.dto.account.AccountDTO;
 import com.banco.api.dto.account.request.AccountRequest;
 import com.banco.api.model.account.Account;
 import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
+import com.banco.api.repository.account.AccountBaseRepository;
+import com.banco.api.repository.account.CheckingRepository;
+import com.banco.api.repository.account.SavingsRepository;
 
 public abstract class AccountService<T extends Account, D extends AccountDTO, R extends AccountRequest>{
     protected abstract D createAccount(String username);
+    
+
+    AccountBaseRepository<Account> accountBaseRepository;
     
     protected void mapAccount(T account, R accountRequest) {
     	account.setAccountNumber(accountRequest.getAccountNumber());
@@ -16,7 +23,19 @@ public abstract class AccountService<T extends Account, D extends AccountDTO, R 
     	account.setBalance(accountRequest.getBalance());
     	account.setCbu(accountRequest.getCbu());
     }
-
+    
+    public boolean existsAccountNumber(String accountNumber) {
+    	boolean result;
+    	Account account = accountBaseRepository.findByAccountNumber(accountNumber);
+    	
+    	if(account == null) {
+    		result = true;
+    	}
+    	else {
+    		result = false;
+    	}
+    	return result;
+    }
     
     protected abstract T createAccount();
 

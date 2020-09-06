@@ -19,6 +19,10 @@ public class CheckingService extends AccountService<Checking, CheckingDTO, Check
     public Checking createAccount() {
         Checking account = new Checking(0, 0, 0);
         
+    	while(existsAccountNumber(account.getAccountNumber())) {
+            account = new Checking(0, 0, 0);
+        }
+    	
         Checking result = checkingRepository.save(account);
         return result;
     }

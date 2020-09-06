@@ -14,6 +14,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.banco.api.service.account.AccountService;
+
 @Entity
 @Table(name = "accounts")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
@@ -50,13 +54,9 @@ public abstract class Account {
 		return cbu;
 	}
 
-    //Una vez creado AccountService verificar que no se genere uno ya existente.
 	private String generateAccountNumber() {
-		//do {
-		String aN = Long.toString(Math.abs(ThreadLocalRandom.current().nextLong(((9999999999999L - 1000000000000L) + 1) + 1000000000000L)));
-		/*}
-		while(aN exista como numero de cuenta)*/
-		return aN;
+		String accountNumber = Long.toString(Math.abs(ThreadLocalRandom.current().nextLong(((9999999999999L - 1000000000000L) + 1) + 1000000000000L)));
+		return accountNumber;
 	}
 
 	public int getIdAccount() {
