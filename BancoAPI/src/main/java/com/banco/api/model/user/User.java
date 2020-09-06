@@ -13,7 +13,7 @@ import com.banco.api.dto.user.UserType;
 @DiscriminatorColumn(name="userType", discriminatorType = DiscriminatorType.STRING)
 public class User {
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idUser;
 	/*	Database meanings for userType:
 	 * PHYSICAL = 0

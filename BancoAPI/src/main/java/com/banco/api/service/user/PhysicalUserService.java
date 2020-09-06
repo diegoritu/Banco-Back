@@ -3,6 +3,8 @@ package com.banco.api.service.user;
 import com.banco.api.adapter.DateUtils;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
 import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     PhysicalRepository physicalRepository;
 
     @Override
-    public PhysicalUserDTO createUser(PhysicalUserRequest request) {
+    public PhysicalUserDTO createUser(PhysicalUserRequest request, Savings savingsAccount, Checking checkingAccount) {
         Physical user = new Physical();
         this.mapCommonUser(user, request);
         user.setActive(true);
@@ -24,9 +26,12 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         user.setMobilePhone(request.getMobilePhone());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        //TODO: crear caja de ahorro, y cuenta corriente si aplica
-        //user.setSavings(savingsAccount);
-        //user.setChecking(checkingAccount);
+        
+        user.setSavings(savingsAccount);
+        
+        if(checkingAccount != null){
+        	user.setChecking(checkingAccount);
+        }
 
         Physical result = physicalRepository.save(user);
         return result.toView();

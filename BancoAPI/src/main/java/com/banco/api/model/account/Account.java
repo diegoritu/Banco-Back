@@ -24,7 +24,7 @@ import com.banco.api.service.account.AccountService;
 @DiscriminatorColumn(name="Account", discriminatorType = DiscriminatorType.STRING)
 public abstract class Account {
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int idAccount;
 	
     private String accountNumber;

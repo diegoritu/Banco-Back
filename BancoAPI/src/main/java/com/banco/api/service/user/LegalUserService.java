@@ -2,6 +2,8 @@ package com.banco.api.service.user;
 
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.LegalUserDTO;
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import com.banco.api.repository.user.LegalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +16,17 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     LegalRepository legalRepository;
 
     @Override
-    public LegalUserDTO createUser(LegalUserRequest request) {
+    public LegalUserDTO createUser(LegalUserRequest request, Savings savingsAccount, Checking checkingAccount) {
         Legal user = new Legal();
         this.mapCommonUser(user, request);
         user.setActive(true);
         user.setBusinessName(request.getBusinessName());
-        //TODO: crear caja de ahorro, y cuenta corriente si aplica
-        //user.setSavings(savingsAccount);
-        //user.setChecking(checkingAccount);
+        
+        user.setSavings(savingsAccount);
+        
+        if(checkingAccount != null){
+        	user.setChecking(checkingAccount);
+        }
 
         Legal result = legalRepository.save(user);
         return result.toView();

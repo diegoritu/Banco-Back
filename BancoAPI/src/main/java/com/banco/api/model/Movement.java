@@ -26,7 +26,7 @@ import org.hibernate.annotations.Type;
 @Table(name = "movements")
 public class Movement {
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idMovement;
 	
 	/*	Database meanings for movementType:

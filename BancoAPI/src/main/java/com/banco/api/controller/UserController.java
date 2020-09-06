@@ -2,8 +2,12 @@ package com.banco.api.controller;
 
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
 import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.service.account.CheckingService;
+import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import org.slf4j.Logger;
@@ -27,6 +31,10 @@ public class UserController {
     private PhysicalUserService physicalUserService;
     @Autowired
     private LegalUserService legalUserService;
+    @Autowired
+    private SavingsService savingsService;
+    @Autowired
+    private CheckingService checkingService;
 
     @PutMapping("/physical")
     public ResponseEntity<PhysicalUserDTO> createPhysical(@RequestBody PhysicalUserRequest request) {
@@ -34,7 +42,16 @@ public class UserController {
     	if(physicalUserService.existsUser(request.getUsername()) == false)
     	{
 	    	LOGGER.info("Creating physical user {}", request.toString());
-	        return new ResponseEntity<>(physicalUserService.createUser(request), HttpStatus.CREATED);
+	        
+	    	Savings savingsAccount = savingsService.createAccount();
+	    	Checking checkingAccount = null;
+	    	
+	    	if(request.isWithCheckingAccount())
+	    	{
+	    		checkingAccount = checkingService.createAccount();
+	    	}
+	    	
+	    	return new ResponseEntity<>(physicalUserService.createUser(request, savingsAccount, checkingAccount), HttpStatus.CREATED);
     	}
     	else 
     	{
@@ -48,7 +65,17 @@ public class UserController {
     	if(legalUserService.existsUser(request.getUsername()) == false)
     	{
         	LOGGER.info("Creating legal user {}", request.toString());
-            return new ResponseEntity<>(legalUserService.createUser(request), HttpStatus.CREATED);
+        	
+	    	Savings savingsAccount = savingsService.createAccount();
+	    	Checking checkingAccount = null;
+	    	
+	    	if(request.isWithCheckingAccount())
+	    	{
+	    		checkingAccount = checkingService.createAccount();
+	    	}
+
+	    	
+            return new ResponseEntity<>(legalUserService.createUser(request, savingsAccount, checkingAccount), HttpStatus.CREATED);
     	}
     	else 
     	{

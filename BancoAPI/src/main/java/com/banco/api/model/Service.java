@@ -21,7 +21,7 @@ public class Service {
     private Date due;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idService;
 
     public Service(String name, float amount, Date due, int idService) {
