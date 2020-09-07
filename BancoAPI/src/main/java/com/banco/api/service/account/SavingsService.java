@@ -27,6 +27,18 @@ public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsR
         Savings result = savingsRepository.save(account);
         return result;
     }
+    
+    public boolean existsAccountNumber(String accountNumber) {
+    	boolean result;
+    	
+    	if(savingsRepository.findByAccountNumber(accountNumber) == null) {
+    		result = false;
+    	}
+    	else {
+    		result = true;
+    	}
+    	return result;
+    }
 
 	@Override
 	protected SavingsDTO createAccount(String username) {

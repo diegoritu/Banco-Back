@@ -26,6 +26,18 @@ public class CheckingService extends AccountService<Checking, CheckingDTO, Check
         Checking result = checkingRepository.save(account);
         return result;
     }
+    
+    public boolean existsAccountNumber(String accountNumber) {
+    	boolean result;
+    	
+    	if(checkingRepository.findByAccountNumber(accountNumber) == null) {
+    		result = false;
+    	}
+    	else {
+    		result = true;
+    	}
+    	return result;
+    }
 
 	@Override
 	protected CheckingDTO createAccount(String username) {
