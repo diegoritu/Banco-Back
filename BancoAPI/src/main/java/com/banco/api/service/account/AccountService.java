@@ -11,7 +11,6 @@ import com.banco.api.repository.account.CheckingRepository;
 import com.banco.api.repository.account.SavingsRepository;
 
 public abstract class AccountService<T extends Account, D extends AccountDTO, R extends AccountRequest>{
-    protected abstract D createAccount(String username);
     
 
     AccountBaseRepository<Account> accountBaseRepository;

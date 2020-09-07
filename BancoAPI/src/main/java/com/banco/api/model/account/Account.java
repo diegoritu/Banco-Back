@@ -46,6 +46,19 @@ public abstract class Account {
 		this.cbu = generateCbu();
 		this.accountType = accountType;
 	}
+    
+    public Account() 
+    {}
+    
+    public Account(float balance, int accountType, boolean active, String cbu, String accountNumber) {
+		super();
+		this.accountNumber = accountNumber;
+		this.balance = balance;
+		this.active = active;
+		this.cbu = cbu;
+		this.accountType = accountType;
+	}
+
 
     private String generateCbu() {
 		String first = Integer.toString(Math.abs(ThreadLocalRandom.current().nextInt(((99999999 - 10000000) + 1) + 10000000)));

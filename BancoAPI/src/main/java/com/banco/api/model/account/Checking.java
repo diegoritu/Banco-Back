@@ -20,6 +20,16 @@ public class Checking extends Account implements Externalizable<CheckingDTO> {
 		this.maxOverdraft = maxOverdraft;
 	}
     
+    public Checking() 
+    {
+    	super();
+    }
+
+    public Checking(float maxOverdraft, float balance, int accountType, boolean active, String cbu, String accountNumber) {
+    	super(balance, accountType, active, cbu, accountNumber);
+    	this.maxOverdraft = maxOverdraft;
+    }
+    
 	public float getMaxOverdraft() {
         return maxOverdraft;
     }

@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 
 import com.banco.api.dto.account.CheckingDTO;
 import com.banco.api.dto.account.request.CheckingRequest;
+import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.model.account.Checking;
+import com.banco.api.model.user.Physical;
 import com.banco.api.repository.account.CheckingRepository;
 
 @Service
@@ -44,11 +46,24 @@ public class CheckingService extends AccountService<Checking, CheckingDTO, Check
     	return result;
     }
 
-	@Override
-	protected CheckingDTO createAccount(String username) {
-		// TODO Auto-generated method stub
-		return null;
+	public Checking closeAccount(Checking checking) {
+		
+		if(Float.compare(checking.getBalance(), 0) == 0)
+		{
+			checking.setActive(false);
+			Checking result = checkingRepository.save(checking);
+			return result;
+		}
+		else
+		{
+			return checking;
+		}
 	}
+	
+    public Checking update(Checking checking) {
 
-    
+		Checking result = checkingRepository.save(checking);
+		return result;
+     }
+
 }
