@@ -14,15 +14,14 @@ public class Savings extends Account implements Externalizable<SavingsDTO> {
 
     private float interestRate;
 
-    public Savings(float balance, float interestRate) {
+    public Savings() {
+		super(0, 1);
+	}
+
+	public Savings(float balance, float interestRate) {
     	super(balance, AccountType.SAVINGS.getValue());
         this.interestRate = interestRate;
     }
-    
-	private String generateAccountNumber() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	public float getInterestRate() {
         return interestRate;
@@ -33,15 +32,13 @@ public class Savings extends Account implements Externalizable<SavingsDTO> {
     }
 
     @Override
-    public void deposit() {
-        // TODO Auto-generated method stub
-
+    public void deposit(float amount) {
+        setBalance(balance + amount);
     }
 
     @Override
-    public void extract() {
-        // TODO Auto-generated method stub
-
+    public void extract(float amount) {
+        setBalance(balance - amount);
     }
 
     @Override

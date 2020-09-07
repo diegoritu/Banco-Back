@@ -29,13 +29,13 @@ public class Checking extends Account implements Externalizable<CheckingDTO> {
     }
 
     @Override
-    public void deposit() {
+    public void deposit(float amount) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void extract() {
+    public void extract(float amount) {
         // TODO Auto-generated method stub
 
     }

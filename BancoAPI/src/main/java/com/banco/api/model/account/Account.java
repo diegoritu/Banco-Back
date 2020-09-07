@@ -25,18 +25,18 @@ import com.banco.api.service.account.AccountService;
 public abstract class Account {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int idAccount;
+	protected int idAccount;
 	
-    private String accountNumber;
-    private float balance; //Saldo
-    private boolean active;
-    private String cbu;
+	protected String accountNumber;
+	protected float balance; //Saldo
+	protected boolean active;
+	protected String cbu;
     
     /*	Database meanings for accountType:
      * CHECKINGACCOUNT = 0
      * SAVINGSACCOUNT = 1
      */
-    private int accountType;
+	protected int accountType;
 
     public Account(float balance, int accountType) {
 		super();
@@ -108,8 +108,8 @@ public abstract class Account {
 		this.accountType = accountType;
 	}
 
-	public abstract void deposit();
+	public abstract void deposit(float amount);
 
-    public abstract void extract();
+    public abstract void extract(float amount);
 
 }

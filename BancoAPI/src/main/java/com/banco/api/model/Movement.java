@@ -39,8 +39,8 @@ public class Movement {
     private int movementType;
     
     @Column
-    @Type(type="timestamp")
-    private LocalDateTime dayAndHour;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dayAndHour;
     private String concept;
     private float amount;
     private int transactionNumber;
@@ -78,7 +78,7 @@ public class Movement {
      * Constructor without idMovement
      */
     
-    public Movement(int movementType, LocalDateTime dayAndHour, String concept, float amount, int transactionNumber,
+    public Movement(int movementType, Date dayAndHour, String concept, float amount, int transactionNumber,
 			Service service, String reference, float entryBalanceBeforeMovement, float exitBalanceBeforeMovement,
 			Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount, Savings saExitAccount) {
 		super();
@@ -101,7 +101,7 @@ public class Movement {
      * Constructor with idMovement
      */
 
-    public Movement(int idMovement, int movementType, LocalDateTime dayAndHour, String concept, float amount,
+    public Movement(int idMovement, int movementType, Date dayAndHour, String concept, float amount,
 			int transactionNumber, Service service, String reference, float entryBalanceBeforeMovement,
 			float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
 			Savings saExitAccount) {
@@ -123,7 +123,11 @@ public class Movement {
 	}
 
 
-    public int getIdMovement() {
+    public Movement() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public int getIdMovement() {
         return idMovement;
     }
 
@@ -139,11 +143,11 @@ public class Movement {
     	this.movementType = movementType;
     }
 
-    public LocalDateTime getDayAndHour() {
+    public Date getDayAndHour() {
         return dayAndHour;
     }
 
-    public void setDayAndHour(LocalDateTime dayAndHour) {
+    public void setDayAndHour(Date dayAndHour) {
         this.dayAndHour = dayAndHour;
     }
 

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.banco.api.dto.account.SavingsDTO;
 import com.banco.api.dto.account.request.SavingsRequest;
-import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.repository.account.SavingsRepository;
 
@@ -37,6 +36,11 @@ public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsR
     	else {
     		result = true;
     	}
+    	return result;
+    }
+    
+    public Savings findByAccountNumber(String accountNumber) {
+    	Savings result = savingsRepository.findByAccountNumber(accountNumber);
     	return result;
     }
 

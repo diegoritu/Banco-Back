@@ -38,6 +38,11 @@ public class CheckingService extends AccountService<Checking, CheckingDTO, Check
     	}
     	return result;
     }
+    
+    public Checking findByAccountNumber(String accountNumber) {
+    	Checking result = checkingRepository.findByAccountNumber(accountNumber);
+    	return result;
+    }
 
 	@Override
 	protected CheckingDTO createAccount(String username) {
