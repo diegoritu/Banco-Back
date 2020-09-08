@@ -8,6 +8,7 @@ import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
 import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.dto.user.UserDTO;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.user.LegalUserService;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -126,5 +128,60 @@ public class UserController {
     }
 
     
+    //FALTA PROBARLO Y VERIFICAR QUE LOS BALANCES DE LAS CUENTAS DEN 0
+    @DeleteMapping("/disableUser")
+    public ResponseEntity<UserDTO> disableUser(@RequestParam String username) {
+        
+    	if(physicalUserService.existsUser(username))
+    	{
+    		Physical physical = physicalUserService.findByUsername(username);
+    		
+    		Savings savings = physical.getSavings();
+    		
+    		savings.setActive(false);
+    		savingsService.update(savings);
+    		
+    		Checking checking = physical.getChecking();
+    		
+    		if(checking != null && checking.isActive()) 
+    		{
+    			checking.setActive(false);
+    			checkingService.update(checking);
+    		}
+
+    		physical.setActive(false);
+    		PhysicalUserDTO result = physicalUserService.update(physical);
+
+	    	return new ResponseEntity<>(result, HttpStatus.OK);
+    	}
+    	else if(legalUserService.existsUser(username))
+    	{
+    		Legal legal = legalUserService.findByUsername(username);
+    		
+    		Savings savings = legal.getSavings();
+    		
+    		savings.setActive(false);
+    		savingsService.update(savings);
+    		
+    		Checking checking = legal.getChecking();
+    		
+    		if(checking != null && checking.isActive()) 
+    		{
+    			checking.setActive(false);
+    			checkingService.update(checking);
+    		}
+
+    		legal.setActive(false);
+    		LegalUserDTO result = legalUserService.update(legal);
+
+	    	return new ResponseEntity<>(result, HttpStatus.OK);
+
+    	}
+    	else 
+    	{
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    }
+
     
 }
