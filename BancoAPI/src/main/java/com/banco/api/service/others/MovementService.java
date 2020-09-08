@@ -17,28 +17,79 @@ public class MovementService {
 	@Autowired
 	MovementRepository movementRepository;
 	
-	public MovementDTO depositAndExtract(DepositAndExtractionRequest request, float balanceBeforeMovement, int accountType, Savings savingsEntry, Checking checkingEntry, int movementType) {
+	public MovementDTO depositAndExtract(float amount, float balanceBeforeMovement, int accountType, Savings savings, Checking checking, int movementType) {
 		MovementDTO movementDTO = new MovementDTO();
 		Movement result = new Movement();
         Date now = new Date();
 		movementDTO.setMovementType(movementType);
 		movementDTO.setDayAndHour(now.toString());
-		movementDTO.setAmount(request.getAmount());
-		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovement);
+		movementDTO.setAmount(amount);
 		
 		result.setMovementType(movementType);
 		result.setDayAndHour(now);
-		result.setAmount(request.getAmount());
-		result.setEntryBalanceBeforeMovement(balanceBeforeMovement);
-		
-		if(accountType == 0) {
-			movementDTO.setSaEntryAccount(savingsEntry.toView());
-			result.setSaEntryAccount(savingsEntry);
+		result.setAmount(amount);
+		if(movementType == 0) {
+			if(accountType == 0) {
+				movementDTO.setSaEntryAccount(savings.toView());
+				movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovement);
+				result.setSaEntryAccount(savings);
+				result.setEntryBalanceBeforeMovement(balanceBeforeMovement);				
+			}
+			else {
+				movementDTO.setChEntryAccount(checking.toView());
+				movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovement);
+				result.setChEntryAccount(checking);
+				result.setEntryBalanceBeforeMovement(balanceBeforeMovement);
+			}
 		}
 		else {
-			movementDTO.setChEntryAccount(checkingEntry.toView());
-			result.setChEntryAccount(checkingEntry);
+			if(accountType == 0) {
+				movementDTO.setSaExitAccount(savings.toView());
+				movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovement);
+				result.setSaExitAccount(savings);
+				result.setExitBalanceBeforeMovement(balanceBeforeMovement);				
+			}
+			else {
+				movementDTO.setChExitAccount(checking.toView());
+				movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovement);
+				result.setChExitAccount(checking);
+				result.setExitBalanceBeforeMovement(balanceBeforeMovement);
+			}
 		}
+		movementRepository.save(result);		
+		return movementDTO;
+	}
+	
+	public MovementDTO transferBetweenOwnAccounts(float amount, float balanceBeforeMovementFrom, float balanceBeforeMovementTo, Savings savingsFrom, Savings savingsTo, Checking checkingFrom, Checking checkingTo, boolean accountTypes) {
+		MovementDTO movementDTO = new MovementDTO();
+		Movement result = new Movement();
+		Date now = new Date();
+		
+		movementDTO.setDayAndHour(now.toString());
+		movementDTO.setAmount(amount);
+		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementFrom);
+		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementTo);
+		movementDTO.setMovementType(5);
+		
+		result.setMovementType(5);
+		result.setDayAndHour(now);
+		result.setAmount(amount);
+		result.setEntryBalanceBeforeMovement(balanceBeforeMovementFrom);
+		result.setExitBalanceBeforeMovement(balanceBeforeMovementTo);
+		
+		if(accountTypes) { //From savings to checking
+			movementDTO.setSaExitAccount(savingsFrom.toView());
+			movementDTO.setChEntryAccount(checkingTo.toView());
+			result.setChEntryAccount(checkingTo);
+			result.setSaExitAccount(savingsFrom);
+		}
+		else { //From checking to savings
+			movementDTO.setChExitAccount(checkingFrom.toView());
+			movementDTO.setSaEntryAccount(savingsTo.toView());
+			result.setChExitAccount(checkingFrom);
+			result.setSaEntryAccount(savingsTo);
+		}
+		
 		movementRepository.save(result);		
 		return movementDTO;
 	}

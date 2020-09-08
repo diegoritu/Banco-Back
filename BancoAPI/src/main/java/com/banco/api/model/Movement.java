@@ -35,6 +35,8 @@ public class Movement {
 	 * COMMISSION = 2
 	 * MAINTENANCE = 3
 	 * SERVICES_PAYMENT = 4
+	 * TRANSFER_BETWEEN_OWN_ACCOUNTS = 5
+	 * TRANSFER_TO_OTHER_ACCOUNTS = 6
 	 */
     private int movementType;
     
@@ -59,16 +61,6 @@ public class Movement {
     private Checking chEntryAccount;
     @ManyToOne
     private Checking chExitAccount;
-    
-    @ManyToOne
-    @JoinColumn(name = "idEntryAccount")
-    private Account entryAccount;
-
-    //   @Column(name = "idExitAccount")
-    @ManyToOne
-    @JoinColumn(name = "idExitAccount")
-    private Account exitAccount;
-    
     @ManyToOne
     private Savings saEntryAccount;
     @ManyToOne
