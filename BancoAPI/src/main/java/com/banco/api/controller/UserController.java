@@ -137,45 +137,64 @@ public class UserController {
     		Physical physical = physicalUserService.findByUsername(username);
     		
     		Savings savings = physical.getSavings();
-    		
-    		savings.setActive(false);
-    		savingsService.update(savings);
-    		
-    		Checking checking = physical.getChecking();
-    		
-    		if(checking != null && checking.isActive()) 
+    		Savings savingsResult = savingsService.closeAccount(savings);
+    		if(savingsResult.isActive()) 
     		{
-    			checking.setActive(false);
-    			checkingService.update(checking);
+    			//La caja de ahorro no tiene balance 0, y no se puede cerrar.
+    	        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+   			
     		}
-
-    		physical.setActive(false);
-    		PhysicalUserDTO result = physicalUserService.update(physical);
-
-	    	return new ResponseEntity<>(result, HttpStatus.OK);
+    		else {
+	    		Checking checking = physical.getChecking();
+	    		
+	    		if(checking != null && checking.isActive()) 
+	    		{
+	        		Checking checkingResult = checkingService.closeAccount(checking);
+	        		if(checkingResult.isActive()) 
+	        		{
+	        			//La cuenta corriente no tiene balance 0, y no se puede cerrar.
+	        	        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+	       			
+	        		}
+	    		}
+	
+	    		physical.setActive(false);
+	    		PhysicalUserDTO result = physicalUserService.update(physical);
+	
+		    	return new ResponseEntity<>(result, HttpStatus.OK);
+    		}
     	}
     	else if(legalUserService.existsUser(username))
     	{
     		Legal legal = legalUserService.findByUsername(username);
     		
     		Savings savings = legal.getSavings();
-    		
-    		savings.setActive(false);
-    		savingsService.update(savings);
-    		
-    		Checking checking = legal.getChecking();
-    		
-    		if(checking != null && checking.isActive()) 
+    		Savings savingsResult = savingsService.closeAccount(savings);
+    		if(savingsResult.isActive()) 
     		{
-    			checking.setActive(false);
-    			checkingService.update(checking);
+    			//La caja de ahorro no tiene balance 0, y no se puede cerrar.
+    	        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+   			
     		}
-
-    		legal.setActive(false);
-    		LegalUserDTO result = legalUserService.update(legal);
-
-	    	return new ResponseEntity<>(result, HttpStatus.OK);
-
+    		else {
+	    		Checking checking = legal.getChecking();
+	    		
+	    		if(checking != null && checking.isActive()) 
+	    		{
+	        		Checking checkingResult = checkingService.closeAccount(checking);
+	        		if(checkingResult.isActive()) 
+	        		{
+	        			//La cuenta corriente no tiene balance 0, y no se puede cerrar.
+	        	        return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+	       			
+	        		}
+	    		}
+	
+	    		legal.setActive(false);
+	    		LegalUserDTO result = legalUserService.update(legal);
+	
+		    	return new ResponseEntity<>(result, HttpStatus.OK);
+    		}
     	}
     	else 
     	{

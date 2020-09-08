@@ -50,6 +50,20 @@ public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsR
     	Savings result = savingsRepository.save(savings);
 		return result;
      }
+    
+	public Savings closeAccount(Savings savings) {
+		
+		if(Float.compare(savings.getBalance(), 0) == 0)
+		{
+			savings.setActive(false);
+			Savings result = savingsRepository.save(savings);
+			return result;
+		}
+		else
+		{
+			return savings;
+		}
+	}
 
 
 }
