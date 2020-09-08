@@ -1,9 +1,10 @@
-package com.banco.api.dto.others;
+package com.banco.api.dto.movement;
 
 
 import com.banco.api.dto.account.AccountDTO;
 import com.banco.api.dto.account.CheckingDTO;
 import com.banco.api.dto.account.SavingsDTO;
+import com.banco.api.dto.others.ServiceDTO;
 
 
 public class MovementDTO {

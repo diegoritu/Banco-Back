@@ -122,7 +122,8 @@ public abstract class Account {
 	}
 
 	public abstract void deposit(float amount);
-
-    public abstract void extract(float amount);
+	
+    //Returns true or false depending on whether the extraction can be performed or not.
+    public abstract boolean extract(float amount);
 
 }

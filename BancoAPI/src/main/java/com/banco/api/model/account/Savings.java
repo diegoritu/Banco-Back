@@ -37,8 +37,16 @@ public class Savings extends Account implements Externalizable<SavingsDTO> {
     }
 
     @Override
-    public void extract(float amount) {
-        setBalance(balance - amount);
+    //Returns true or false depending on whether the extraction can be performed or not.
+    public boolean extract(float amount) {
+    	float dif = balance - amount;
+    	if(dif < 0) {
+    		return false;
+    	}
+    	else {
+    		setBalance(balance - amount);
+    		return true;
+    	}
     }
 
     @Override

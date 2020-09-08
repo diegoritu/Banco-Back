@@ -1,15 +1,12 @@
 package com.banco.api.service.others;
 
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.banco.api.dto.account.SavingsDTO;
-import com.banco.api.dto.others.MovementDTO;
-import com.banco.api.dto.others.request.MovementRequest;
+import com.banco.api.dto.movement.MovementDTO;
+import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.model.Movement;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -20,19 +17,17 @@ public class MovementService {
 	@Autowired
 	MovementRepository movementRepository;
 	
-	public MovementDTO deposit(MovementRequest request, float balanceBeforeMovement, int accountType, Savings savingsEntry, Checking checkingEntry) {
+	public MovementDTO depositAndExtract(DepositAndExtractionRequest request, float balanceBeforeMovement, int accountType, Savings savingsEntry, Checking checkingEntry, int movementType) {
 		MovementDTO movementDTO = new MovementDTO();
 		Movement result = new Movement();
         Date now = new Date();
-		movementDTO.setMovementType(0);
+		movementDTO.setMovementType(movementType);
 		movementDTO.setDayAndHour(now.toString());
-		movementDTO.setConcept(request.getConcept());
 		movementDTO.setAmount(request.getAmount());
 		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovement);
 		
-		result.setMovementType(0);
+		result.setMovementType(movementType);
 		result.setDayAndHour(now);
-		result.setConcept(request.getConcept());
 		result.setAmount(request.getAmount());
 		result.setEntryBalanceBeforeMovement(balanceBeforeMovement);
 		

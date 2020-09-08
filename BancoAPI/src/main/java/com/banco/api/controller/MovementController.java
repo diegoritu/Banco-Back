@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.banco.api.dto.others.MovementDTO;
-import com.banco.api.dto.others.request.MovementRequest;
+import com.banco.api.dto.movement.MovementDTO;
+import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.service.account.CheckingService;
@@ -32,23 +32,56 @@ public class MovementController {
     private MovementService movementService;
     
     @PostMapping("/deposit")
-    public ResponseEntity<MovementDTO> deposit(@RequestBody MovementRequest request){
+    public ResponseEntity<MovementDTO> deposit(@RequestBody DepositAndExtractionRequest request){
     	float balanceBeforeMovement;
     	LOGGER.info("Adding movement: {}", request.toString());
     	if(savingsService.existsAccountNumber(request.getAccountNumberEntryAccount())) {
     		Savings savingsEntry = savingsService.findByAccountNumber(request.getAccountNumberEntryAccount());
     		balanceBeforeMovement = savingsEntry.getBalance();
     		savingsEntry.deposit(request.getAmount());
-    		return new ResponseEntity<MovementDTO>(movementService.deposit(request, balanceBeforeMovement, 0, savingsEntry, null),HttpStatus.CREATED);
+    		return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request, balanceBeforeMovement, 0, savingsEntry, null, 0),HttpStatus.OK);
     	}
     	
     	else if(checkingService.existsAccountNumber(request.getAccountNumberEntryAccount())){
     		Checking checkingEntry = checkingService.findByAccountNumber(request.getAccountNumberEntryAccount());
     		balanceBeforeMovement = checkingEntry.getBalance();
     		checkingEntry.deposit(request.getAmount());
-    		return new ResponseEntity<MovementDTO>(movementService.deposit(request, balanceBeforeMovement, 1, null, checkingEntry),HttpStatus.CREATED);
+    		return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request, balanceBeforeMovement, 1, null, checkingEntry, 0),HttpStatus.OK);
     	}
     	
+    	else {
+    		return new ResponseEntity<>(HttpStatus.CONFLICT);
+    	}
+    }
+    
+    @PostMapping("/extract")
+    public ResponseEntity<MovementDTO> extract(@RequestBody DepositAndExtractionRequest request){
+    	float balanceBeforeMovement;
+    	boolean canBePerformed;
+    	LOGGER.info("Adding movement: {}", request.toString());
+    	if(savingsService.existsAccountNumber(request.getAccountNumberEntryAccount())) {
+    		Savings savingsEntry = savingsService.findByAccountNumber(request.getAccountNumberEntryAccount());
+    		balanceBeforeMovement = savingsEntry.getBalance();
+    		canBePerformed = savingsEntry.extract(request.getAmount());
+    		if(canBePerformed) {
+    			return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request, balanceBeforeMovement, 0, savingsEntry, null, 1),HttpStatus.OK);
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+    		}
+    	}
+    	
+    	else if(checkingService.existsAccountNumber(request.getAccountNumberEntryAccount())){
+    		Checking checkingEntry = checkingService.findByAccountNumber(request.getAccountNumberEntryAccount());
+    		balanceBeforeMovement = checkingEntry.getBalance();
+    		canBePerformed = checkingEntry.extract(request.getAmount());
+    		if(canBePerformed) {
+    			return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request, balanceBeforeMovement, 1, null, checkingEntry, 1),HttpStatus.OK);
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+    		}
+    	}
     	else {
     		return new ResponseEntity<>(HttpStatus.CONFLICT);
     	}

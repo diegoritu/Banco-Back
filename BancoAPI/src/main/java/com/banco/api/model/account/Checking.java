@@ -40,14 +40,27 @@ public class Checking extends Account implements Externalizable<CheckingDTO> {
 
     @Override
     public void deposit(float amount) {
-        // TODO Auto-generated method stub
+    	setBalance(balance + amount);
 
     }
 
     @Override
-    public void extract(float amount) {
-        // TODO Auto-generated method stub
-
+    //Returns true or false depending on whether the extraction can be performed or not.
+    public boolean extract(float amount) {
+        float dif = balance - amount;
+        if(dif < 0) {
+        	if(Math.abs(dif) <= maxOverdraft) {
+        		setBalance(balance - amount);
+        		return true;
+        	}
+        	else {
+        		return false;
+        	}
+        }
+        else {
+        	setBalance(balance-amount);
+        	return true;
+        }
     }
 
     @Override
