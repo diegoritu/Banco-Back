@@ -8,4 +8,7 @@ public interface PhysicalRepository extends UserBaseRepository<Physical> {
 
 	Physical findByUsernameAndUserTypeNumber(String username, int userTypeNumber);
 
+	Physical findByDni(String dni);
+
+	Physical findByLastName(String lastName);
 }

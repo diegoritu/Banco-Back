@@ -44,16 +44,14 @@ public class AccountController {
     private SavingsService savingsService;
 
     
-    @PostMapping("/newChecking")
+    @PostMapping("/new-checking")
     public ResponseEntity<CheckingDTO> createChecking(@RequestParam String username) {
     	
     	boolean existsUserLegal = legalUserService.existsUser(username);
     	boolean existsUserPhysical = physicalUserService.existsUser(username);
 
-    	if(existsUserLegal || existsUserPhysical) 
-    	{
-    		if(existsUserPhysical) 
-    		{
+
+		if (existsUserPhysical) {
     			//Physical
     			Physical physicalUser = physicalUserService.findByUsername(username);
     			if(physicalUser.getChecking() != null) 
@@ -72,35 +70,32 @@ public class AccountController {
     					Checking result = checkingService.update(checking);
         		        return new ResponseEntity<>(result.toView(), HttpStatus.CREATED);
 
-    				}
-    			}
-    			else 
-    			{
-    		    	LOGGER.info("Creating checking account {}", username);
-    		    	Checking checking = checkingService.createAccount();
-    		    	
-    		    	physicalUser.setChecking(checking);
-    		    	
-    		    	PhysicalUserDTO physicalResult = physicalUserService.update(physicalUser);
-    		    	
-    		        return new ResponseEntity<>(checking.toView(), HttpStatus.CREATED);
+				}
+			} else {
+				LOGGER.info("Creating checking account {}", username);
+				Checking checking = checkingService.createAccount();
 
-    			}
-    		}
-    		else if(existsUserLegal) 
-    		{
+				physicalUser.setChecking(checking);
+
+				PhysicalUserDTO physicalResult = physicalUserService.update(physicalUser);
+
+				return new ResponseEntity<>(checking.toView(), HttpStatus.CREATED);
+
+			}
+
+		} else if (existsUserLegal) {
     			//Legal
     			Legal legalUser = legalUserService.findByUsername(username);
-    			if(legalUser.getChecking() != null) 
+    			if(legalUser.getChecking() != null)
     			{
     				Checking checking = legalUser.getChecking();
-    				
-    				if(checking.isActive()) 
+
+    				if(checking.isActive())
     				{
         				//Error
         		        return new ResponseEntity<>(HttpStatus.OK);
     				}
-    				else 
+    				else
     				{
         		    	LOGGER.info("Opening checking account {}", username);
     					checking.setActive(true);
@@ -109,46 +104,34 @@ public class AccountController {
 
     				}
     			}
-    			else 
+    			else
     			{
     		    	LOGGER.info("Creating checking account {}", username);
     		    	Checking checking = checkingService.createAccount();
-    		    	
+
     		    	legalUser.setChecking(checking);
-    		    	
+
     		    	LegalUserDTO legalResult = legalUserService.update(legalUser);
-    		    	
+
     		        return new ResponseEntity<>(checking.toView(), HttpStatus.CREATED);
 
     			}
-    		}
-    		else 
-    		{
-    			//Error: Es usuario administrativo, y por lo tanto no tiene ninguna cuenta asociada
-		        return new ResponseEntity<>(HttpStatus.OK);
-
-    		}
-    	}
-    	else
-    	{
-    		//Error
-	        return new ResponseEntity<>(HttpStatus.OK);
-
-    	}
+		} else {
+		 	LOGGER.error("Could not create new checking account. Physical or legal user not found with username: %s", username);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 
     }
 
     
-    @DeleteMapping("/closeChecking")
+    @DeleteMapping("/close-checking")
     public ResponseEntity<CheckingDTO> closeChecking(@RequestParam String username) {
     	
     	boolean existsUserLegal = legalUserService.existsUser(username);
     	boolean existsUserPhysical = physicalUserService.existsUser(username);
 
-    	if(existsUserLegal || existsUserPhysical) 
-    	{
-    		if(existsUserPhysical) 
-    		{
+
+		if (existsUserPhysical) {
     			//Physical
     			Physical physicalUser = physicalUserService.findByUsername(username);
     			if(physicalUser.getChecking() != null) 
@@ -176,9 +159,7 @@ public class AccountController {
 
 
     			}
-    		}
-    		else if(existsUserLegal) 
-    		{
+		} else if (existsUserLegal) {
     			//Legal
     			Legal legalUser = legalUserService.findByUsername(username);
     			if(legalUser.getChecking() != null) 
@@ -205,56 +186,38 @@ public class AccountController {
 
 
     			}
-    		}
-    		else 
-    		{
-    			//Error: Es usuario administrativo, y por lo tanto no tiene ninguna cuenta asociada
+    		} else {
+    			//Error: Es usuario administrativo, y por lo tanto no tiene ninguna cuenta asociada. O no existe un usuario con tal username
+				LOGGER.error("Could not create new checking account. Physical or legal user not found with username: %s", username);
 		        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
     		}
-    	}
-    	else
-    	{
-    		//Error
-	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-    	}
 
     }
 
     
-    @GetMapping("/getCheckingAccount")
+    @GetMapping("/checking")
     public ResponseEntity<CheckingDTO> getCheckingAccount(@RequestParam String accountNumber) {
-        
-    	
-    	if(checkingService.existsAccountNumber(accountNumber) )
-    	{
-    		Checking checking = checkingService.findByAccountNumber(accountNumber);
-    			    	
+		Checking checking = checkingService.findByAccountNumber(accountNumber);
+
+		if (checking != null) {
             return new ResponseEntity<>(checking.toView(), HttpStatus.OK);
-    	}
-    	else 
-    	{
-	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-   		
+    	} else {
+			LOGGER.warn("Checking account not found with account number: %s", accountNumber);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
 
     }
 
-    @GetMapping("/getSavingsAccount")
+    @GetMapping("/savings")
     public ResponseEntity<SavingsDTO> getSavingsAccount(@RequestParam String accountNumber) {
-        
+        Savings savings = savingsService.findByAccountNumber(accountNumber);
     	
-    	if(savingsService.existsAccountNumber(accountNumber))
-    	{
-    		Savings savings = savingsService.findByAccountNumber(accountNumber);
-    			    	
+    	if (savings != null) {
             return new ResponseEntity<>(savings.toView(), HttpStatus.OK);
-    	}
-    	else 
-    	{
-	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-   		
+    	} else {
+			LOGGER.warn("Savings account not found with account number: %s", accountNumber);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
 
     }

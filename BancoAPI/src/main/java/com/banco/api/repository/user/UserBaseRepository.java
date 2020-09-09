@@ -9,7 +9,9 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface UserBaseRepository<T extends User> extends CrudRepository<T, Integer> {
 
-    public T findByUsername(String username);
+    T findByUsername(String username);
+
+    T findBycuitCuilCdi(String cuitCuilCdi);
 
 	/*public boolean existsByUsername(String username);
 

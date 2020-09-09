@@ -2,17 +2,12 @@ package com.banco.api.model.user;
 
 import com.banco.api.adapter.DateUtils;
 import com.banco.api.adapter.Externalizable;
-import com.banco.api.dto.user.UserType;
 import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.dto.user.UserType;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
-import com.banco.api.repository.account.CheckingRepository;
-import com.banco.api.repository.user.PhysicalRepository;
 
 import javax.persistence.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.Date;
 
 

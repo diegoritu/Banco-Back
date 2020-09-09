@@ -30,15 +30,7 @@ public class CheckingService extends AccountService<Checking, CheckingDTO, Check
     }
     
     public boolean existsAccountNumber(String accountNumber) {
-    	boolean result;
-    	
-    	if(checkingRepository.findByAccountNumber(accountNumber) == null) {
-    		result = false;
-    	}
-    	else {
-    		result = true;
-    	}
-    	return result;
+    	return findByAccountNumber(accountNumber) != null;
     }
     
     public Checking findByAccountNumber(String accountNumber) {

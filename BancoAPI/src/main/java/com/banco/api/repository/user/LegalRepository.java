@@ -9,4 +9,6 @@ public interface LegalRepository extends UserBaseRepository<Legal> {
 
 	Legal findByUsernameAndUserTypeNumber(String username, int userTypeNumber);
 
+	Legal findByBusinessName(String businessName);
+
 }
