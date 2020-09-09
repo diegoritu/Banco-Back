@@ -42,7 +42,7 @@ public class UserController {
     @Autowired
     private CheckingService checkingService;
 
-    @PutMapping("/physical")
+    @PostMapping("/physical")
     public ResponseEntity<PhysicalUserDTO> createPhysical(@RequestBody PhysicalUserRequest request) {
         
     	if(physicalUserService.existsUser(request.getUsername()) == false)
@@ -65,7 +65,7 @@ public class UserController {
    		
     	}
     }
-    @PutMapping("/legal")
+    @PostMapping("/legal")
     public ResponseEntity<LegalUserDTO> createLegal(@RequestBody LegalUserRequest request) {
         
     	if(legalUserService.existsUser(request.getUsername()) == false)

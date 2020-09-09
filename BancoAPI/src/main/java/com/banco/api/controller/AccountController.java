@@ -43,7 +43,7 @@ public class AccountController {
     private SavingsService savingsService;
 
     
-    @PutMapping("/newChecking")
+    @PostMapping("/newChecking")
     public ResponseEntity<CheckingDTO> createChecking(@RequestParam String username) {
     	
     	boolean existsUserLegal = legalUserService.existsUser(username);
