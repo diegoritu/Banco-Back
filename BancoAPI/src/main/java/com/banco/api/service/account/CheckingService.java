@@ -37,6 +37,15 @@ public class CheckingService extends AccountService<Checking, CheckingDTO, Check
     	Checking result = checkingRepository.findByAccountNumber(accountNumber);
     	return result;
     }
+    
+    public boolean existsCbu(String cbu) {
+    	return findByCbu(cbu) != null;
+    }
+    
+    public Checking findByCbu(String cbu) {
+    	Checking result = checkingRepository.findByCbu(cbu);
+    	return result;
+    }
 
 	public Checking closeAccount(Checking checking) {
 		

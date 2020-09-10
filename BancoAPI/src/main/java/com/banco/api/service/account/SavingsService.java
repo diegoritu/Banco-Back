@@ -45,6 +45,23 @@ public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsR
     	return result;
     }
     
+    public boolean existsCbu(String cbu) {
+    	boolean result;
+    	
+    	if(savingsRepository.findByCbu(cbu) == null) {
+    		result = false;
+    	}
+    	else {
+    		result = true;
+    	}
+    	return result;
+    }
+    
+    public Savings findByCbu(String cbu) {
+    	Savings result = savingsRepository.findByCbu(cbu);
+    	return result;
+    }
+    
     public Savings update(Savings savings) {
 
     	Savings result = savingsRepository.save(savings);

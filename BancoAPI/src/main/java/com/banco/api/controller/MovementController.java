@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
+import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.service.account.CheckingService;
@@ -88,7 +89,7 @@ public class MovementController {
     	}
     }
     
-    @PostMapping("/transferenceBetweenOwnAccounts")
+    @PostMapping("/transferBetweenOwnAccounts")
     public ResponseEntity<MovementDTO> transferBetweenOwnAccounts(@RequestBody TransferBetweenOwnAccountsRequest request){
     	float balanceBeforeMovementFrom;
     	float balanceBeforeMovementTo;
@@ -124,7 +125,7 @@ public class MovementController {
     		return new ResponseEntity<>(HttpStatus.CONFLICT);
     	}
     	
-    	if(fromSavings == true) {
+    	if(fromSavings) {
     		canBePerformed = savingsFrom.extract(request.getAmount());
     		if(canBePerformed) {
     			checkingTo.deposit(request.getAmount());
@@ -145,5 +146,99 @@ public class MovementController {
     		}
     	}	
     }
+    
+    @PostMapping("/transferToOtherAccounts")
+    public ResponseEntity<MovementDTO> transferToOtherAccounts(@RequestBody TransferToOtherAccountsRequest request){
+    	float balanceBeforeMovementFrom;
+    	float balanceBeforeMovementTo;
+    	Savings savingsFrom = null;
+    	Checking checkingFrom = null;
+    	Savings savingsTo = null;
+    	Checking checkingTo = null;
+    	boolean canBePerformed;
+    	int whereFrom = 0; // 1 = from savings to savings; 2= from savings to checking; 3= from checking to savings; 4= from checking to checking.
+
+    	if(savingsService.existsAccountNumber(request.getAccountNumberFrom())) {
+    		savingsFrom = savingsService.findByAccountNumber(request.getAccountNumberFrom());
+    		balanceBeforeMovementFrom = savingsFrom.getBalance();
+    	}  	
+    	else if(checkingService.existsAccountNumber(request.getAccountNumberFrom())){
+    		checkingFrom = checkingService.findByAccountNumber(request.getAccountNumberFrom());
+    		balanceBeforeMovementFrom = checkingFrom.getBalance();
+    	}
+    	else {
+    		return new ResponseEntity<>(HttpStatus.CONFLICT);
+    	}
+    	if(savingsService.existsCbu(request.getCbuTo())) {
+    		savingsTo = savingsService.findByCbu(request.getCbuTo());
+    		balanceBeforeMovementTo = savingsTo.getBalance();
+    	}
+    	else if(checkingService.existsCbu(request.getCbuTo())) {
+    		checkingTo = checkingService.findByCbu(request.getCbuTo());
+    		balanceBeforeMovementTo = checkingTo.getBalance();
+    	}
+    	else {
+    		return new ResponseEntity<>(HttpStatus.CONFLICT);
+    	}
+    	
+    	if(savingsFrom != null && savingsTo != null) {
+    		whereFrom = 1;
+    	}
+    	else if(savingsFrom != null && checkingTo != null) {
+    		whereFrom = 2;
+    	}
+    	else if(checkingFrom != null && savingsTo != null) {
+    		whereFrom = 3;
+    	}
+    	else if(checkingFrom != null && checkingTo != null) {
+    		whereFrom = 4;
+    	}
+    	
+    	switch (whereFrom) {
+		case 1: //From savings to savings
+			canBePerformed = savingsFrom.extract(request.getAmount());
+    		if(canBePerformed) {
+    			savingsTo.deposit(request.getAmount());
+    			return new ResponseEntity<MovementDTO>(movementService.transferToOtherAccounts(request.getAmount(), balanceBeforeMovementFrom, balanceBeforeMovementTo, savingsFrom, savingsTo, checkingFrom, checkingTo, whereFrom, request.getReference()),HttpStatus.OK);
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+    		}
+		
+		case 2: //From savings to checking
+			canBePerformed = savingsFrom.extract(request.getAmount());
+    		if(canBePerformed) {
+    			checkingTo.deposit(request.getAmount());
+    			return new ResponseEntity<MovementDTO>(movementService.transferToOtherAccounts(request.getAmount(), balanceBeforeMovementFrom, balanceBeforeMovementTo, savingsFrom, savingsTo, checkingFrom, checkingTo, whereFrom, request.getReference()),HttpStatus.OK);
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+    		}
+    	
+		case 3: //From checking to savings
+			canBePerformed = checkingFrom.extract(request.getAmount());
+    		if(canBePerformed) {
+    			savingsTo.deposit(request.getAmount());
+    			return new ResponseEntity<MovementDTO>(movementService.transferToOtherAccounts(request.getAmount(), balanceBeforeMovementFrom, balanceBeforeMovementTo, savingsFrom, savingsTo, checkingFrom, checkingTo, whereFrom, request.getReference()),HttpStatus.OK);
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+    		}
+
+		case 4: //From checking to checking
+			canBePerformed = checkingFrom.extract(request.getAmount());
+    		if(canBePerformed) {
+    			checkingTo.deposit(request.getAmount());
+    			return new ResponseEntity<MovementDTO>(movementService.transferToOtherAccounts(request.getAmount(), balanceBeforeMovementFrom, balanceBeforeMovementTo, savingsFrom, savingsTo, checkingFrom, checkingTo, whereFrom, request.getReference()),HttpStatus.OK);
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+    		}
+    		
+		default:
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}    
+    }
 }
+
 

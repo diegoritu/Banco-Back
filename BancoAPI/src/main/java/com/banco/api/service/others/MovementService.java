@@ -94,4 +94,60 @@ public class MovementService {
 		return movementDTO;
 	}
 	
+	public MovementDTO transferToOtherAccounts(float amount, float balanceBeforeMovementFrom, float balanceBeforeMovementTo, Savings savingsFrom, Savings savingsTo, Checking checkingFrom, Checking checkingTo, int whereFrom, String reference) {
+		MovementDTO movementDTO = new MovementDTO();
+		Movement result = new Movement();
+		Date now = new Date();
+		
+		movementDTO.setDayAndHour(now.toString());
+		movementDTO.setAmount(amount);
+		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementFrom);
+		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementTo);
+		movementDTO.setMovementType(6);
+		movementDTO.setReference(reference);
+		
+		result.setReference(reference);
+		result.setMovementType(6);
+		result.setDayAndHour(now);
+		result.setAmount(amount);
+		result.setEntryBalanceBeforeMovement(balanceBeforeMovementFrom);
+		result.setExitBalanceBeforeMovement(balanceBeforeMovementTo);
+		
+		switch (whereFrom) {
+		case 1: //From savings to savings
+			movementDTO.setSaExitAccount(savingsFrom.toView());
+			movementDTO.setSaEntryAccount(savingsTo.toView());
+			result.setSaEntryAccount(savingsTo);
+			result.setSaExitAccount(savingsFrom);
+			break;
+		
+		case 2: //From savings to checking
+			movementDTO.setSaExitAccount(savingsFrom.toView());
+			movementDTO.setChEntryAccount(checkingTo.toView());
+			result.setSaExitAccount(savingsFrom);
+			result.setChEntryAccount(checkingTo);
+			break;
+		
+		case 3: //From checking to savings
+			movementDTO.setChExitAccount(checkingFrom.toView());
+			movementDTO.setSaEntryAccount(savingsTo.toView());
+			result.setChExitAccount(checkingFrom);
+			result.setSaEntryAccount(savingsTo);
+			break;
+		
+		case 4: //From checking to checking
+			movementDTO.setChExitAccount(checkingFrom.toView());
+			movementDTO.setChEntryAccount(checkingTo.toView());
+			result.setChExitAccount(checkingFrom);
+			result.setChEntryAccount(checkingTo);
+			break;
+			
+		default:
+			break;
+		}
+		
+		movementRepository.save(result);		
+		return movementDTO;
+	}
+	
 }
