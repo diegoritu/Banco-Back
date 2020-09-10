@@ -4,6 +4,7 @@ import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.UserDTO;
 import com.banco.api.dto.user.request.LegalUserRequest;
+import com.banco.api.dto.user.request.LoginRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
 import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.model.account.Checking;
@@ -63,6 +64,31 @@ public class UserController {
                     .status(HttpStatus.IM_USED)
                     .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
         }
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody LoginRequest request) {
+    	if(physicalUserService.findByUsername(request.getUsername()) != null) {
+    		if(physicalUserService.login(request.getUsername(), request.getPassword())) {
+    	        LOGGER.info("Successfully logued with credentials: {}", request.toString());
+                return new ResponseEntity<>(HttpStatus.OK);
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.CONFLICT);
+    		}
+    	}
+    	else if(legalUserService.findByUsername(request.getUsername()) != null) {
+    		if(legalUserService.login(request.getUsername(), request.getPassword())) {
+    			LOGGER.info("Successfully logued with credentials: {}", request.toString());
+    			return new ResponseEntity<>(HttpStatus.OK);
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.CONFLICT);
+    		}
+    	}
+    	else {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
     }
 
 	@GetMapping("/physical")

@@ -9,6 +9,12 @@ import com.banco.api.model.user.Legal;
 import com.banco.api.repository.user.LegalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import javax.xml.bind.DatatypeConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,9 +46,11 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
             Checking checkingAccount = checkingService.createAccount();
             user.setChecking(checkingAccount);
         }
-
-        Legal result = legalRepository.save(user);
-        return result.toView();
+        LegalUserDTO result = user.toView();
+        user.hashPassword(user.getPassword());
+        Legal saved = legalRepository.save(user);
+        result.setId(saved.getId());
+        return result;
     }
 
     public boolean existsUser(String username) {
@@ -71,5 +79,27 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         }
         return user != null ? user.toView() : null;
     }
-
+    
+    public boolean login(String username, String password) {
+		Legal user = findByUsername(username);
+		boolean result = false;
+		
+		String hashedPass = null;
+    	MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+			md.update(password.getBytes());
+	        byte[] digest = md.digest();
+	        hashedPass = DatatypeConverter.printHexBinary(digest).toUpperCase();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(user.getPassword().equals(hashedPass)) {
+			result = true;
+		}
+		
+		return result;
+	}
 }

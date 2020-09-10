@@ -29,6 +29,7 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
     private Checking checking; //Cuenta Corriente
 
     public Legal() {
+    	super();
         this.userTypeNumber = UserType.LEGAL.getValue();
     }
 
@@ -84,6 +85,8 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
         view.setPhone(this.getPhone());
         view.setUsername(this.getUsername());
         view.setUserType(UserType.valueOf(this.getUserType()).toString());
+        view.setPassword(this.getPassword());
+        view.setFirstLogin(this.isFirstLogin());
         
         if(this.getSavings() == null) {
         	view.setSavings(null);

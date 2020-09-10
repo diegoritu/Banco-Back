@@ -13,90 +13,103 @@ public class PhysicalUserDTO extends UserDTO {
     private String firstName;
     private String lastName;
     private String mobilePhone;
+    private boolean firstLogin;
+    private String password;
 
     public PhysicalUserDTO() {
     }
 
-    public PhysicalUserDTO(int userId, String userType, String cuitCuilCdi, String username, String address,
-                           String phone, boolean active,
-                           String dni, SavingsDTO savings, CheckingDTO checking, String birthDate, String firstName,
-                           String lastName, String mobilePhone) {
-        super(userId, userType, cuitCuilCdi, username, address, phone, active);
-        this.dni = dni;
-        this.savings = savings;
-        this.checking = checking;
-        this.birthDate = birthDate;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.mobilePhone = mobilePhone;
-    }
+	public PhysicalUserDTO(String dni, SavingsDTO savings, CheckingDTO checking, String birthDate, String firstName,
+			String lastName, String mobilePhone, boolean firstLogin, String password) {
+		super();
+		this.dni = dni;
+		this.savings = savings;
+		this.checking = checking;
+		this.birthDate = birthDate;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mobilePhone = mobilePhone;
+		this.firstLogin = firstLogin;
+		this.password = password;
+	}
 
-    public String getDni() {
-        return dni;
-    }
+	public String getDni() {
+		return dni;
+	}
 
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
+	public void setDni(String dni) {
+		this.dni = dni;
+	}
 
-    public SavingsDTO getSavings() {
-        return savings;
-    }
+	public SavingsDTO getSavings() {
+		return savings;
+	}
 
-    public void setSavings(SavingsDTO savings) {
-        this.savings = savings;
-    }
+	public void setSavings(SavingsDTO savings) {
+		this.savings = savings;
+	}
 
-    public CheckingDTO getChecking() {
-        return checking;
-    }
+	public CheckingDTO getChecking() {
+		return checking;
+	}
 
-    public void setChecking(CheckingDTO checking) {
-        this.checking = checking;
-    }
+	public void setChecking(CheckingDTO checking) {
+		this.checking = checking;
+	}
 
-    public String getBirthDate() {
-        return birthDate;
-    }
+	public String getBirthDate() {
+		return birthDate;
+	}
 
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
+	public void setBirthDate(String birthDate) {
+		this.birthDate = birthDate;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public String getMobilePhone() {
-        return mobilePhone;
-    }
+	public String getMobilePhone() {
+		return mobilePhone;
+	}
 
-    public void setMobilePhone(String mobilePhone) {
-        this.mobilePhone = mobilePhone;
-    }
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
+	}
 
-    @Override
-    public String toString() {
-        return "PhysicalUserDTO{" +
-                "dni='" + dni + '\'' +
-                ", savings=" + savings +
-                ", checking=" + checking +
-                ", birthDate='" + birthDate + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", mobilePhone='" + mobilePhone + '\'' +
-                '}';
-    }
+	public boolean isFirstLogin() {
+		return firstLogin;
+	}
+
+	public void setFirstLogin(boolean firstLogin) {
+		this.firstLogin = firstLogin;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
+	public String toString() {
+		return "PhysicalUserDTO [dni=" + dni + ", savings=" + savings + ", checking=" + checking + ", birthDate="
+				+ birthDate + ", firstName=" + firstName + ", lastName=" + lastName + ", mobilePhone=" + mobilePhone
+				+ ", firstLogin=" + firstLogin + ", password=" + password + "]";
+	}
+
 }

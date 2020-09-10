@@ -35,6 +35,7 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
     private String mobilePhone;
 
     public Physical() {
+    	super();
         this.userTypeNumber = UserType.PHYSICAL.getValue();
     }
 
@@ -120,7 +121,9 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
         view.setUserType(UserType.valueOf(this.getUserType()).toString());
         view.setDni(this.getDni());
         view.setId(this.getId());
-
+        view.setPassword(this.getPassword());
+        view.setFirstLogin(this.isFirstLogin());
+        
         if(this.getSavings() == null) {
         	view.setSavings(null);
         }

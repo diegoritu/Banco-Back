@@ -10,6 +10,12 @@ import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import javax.xml.bind.DatatypeConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +51,11 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
             Checking checkingAccount = checkingService.createAccount();
             user.setChecking(checkingAccount);
         }
-
-        Physical result = physicalRepository.save(user);
-        return result.toView();
+        PhysicalUserDTO result = user.toView();
+        user.hashPassword(user.getPassword());
+        Physical saved = physicalRepository.save(user);
+        result.setId(saved.getId());
+        return result;
     }
     
     public boolean existsUser(String username) {
@@ -78,4 +86,27 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         }
         return user != null ? user.toView() : null;
     }
+
+	public boolean login(String username, String password) {
+		Physical user = findByUsername(username);
+		boolean result = false;
+		
+		String hashedPass = null;
+    	MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+			md.update(password.getBytes());
+	        byte[] digest = md.digest();
+	        hashedPass = DatatypeConverter.printHexBinary(digest).toUpperCase();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(user.getPassword().equals(hashedPass)) {
+			result = true;
+		}
+		
+		return result;
+	}
 }

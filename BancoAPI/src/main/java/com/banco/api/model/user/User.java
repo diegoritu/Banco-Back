@@ -1,11 +1,21 @@
 package com.banco.api.model.user;
 
-import javax.persistence.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import com.banco.api.adapter.DateUtils;
-import com.banco.api.dto.user.PhysicalUserDTO;
-import com.banco.api.dto.user.UserDTO;
-import com.banco.api.dto.user.UserType;
+import javax.persistence.*;
+import javax.xml.bind.DatatypeConverter;
+
 
 @Entity
 @Table(name = "users")
@@ -14,7 +24,7 @@ import com.banco.api.dto.user.UserType;
 public class User {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idUser;
+	protected int idUser;
 	/*	Database meanings for userType:
 	 * PHYSICAL = 0
 	 * LEGAL = 1
@@ -22,16 +32,21 @@ public class User {
 	 */
     protected int userTypeNumber;
     
-    private String cuitCuilCdi;
+    protected String cuitCuilCdi;
     
     @Column(name = "usr")
-    private String username;
+    protected String username;
     
-    private String address;
-    private String phone;
+    protected String address;
+    protected String phone;
     protected boolean active;
+    protected boolean firstLogin;
+    protected String password;
 
     public User() {
+    	this.active = true;
+        this.firstLogin = true;
+        this.password = generatePassword();
     }
 
     public User(String cuitCuilCdi, String username, String address, String phone, String mobilePhone) {
@@ -41,9 +56,11 @@ public class User {
         this.address = address;
         this.phone = phone;
         this.active = true;
+        this.firstLogin = true;
+        this.password = generatePassword();
     }
 
-    public User(int id, String cuitCuilCdi, String username, String address, String phone,
+	public User(int id, String cuitCuilCdi, String username, String address, String phone,
                 boolean active) {
         super();
         this.idUser = id;
@@ -52,8 +69,40 @@ public class User {
         this.address = address;
         this.phone = phone;
         this.active = active;
+        this.firstLogin = true;
+        this.password = generatePassword();
     }
 
+	private String generatePassword() {
+    	final int BASE_LENGHT = 10;
+    	int randomAdditional = new Random().nextInt(6);
+    	String lettersLower = "abcdefghijklmnopqrstuvwxyz";
+    	String lettersUpper = lettersLower.toUpperCase();
+    	String numbers = "123456789";
+    	//String symbols = "!#$&/()=?*"; 
+    	String joinOfThings = lettersLower + lettersUpper + numbers /*+ simbols*/;
+    	List<String> letters = Arrays.asList(joinOfThings.split(""));
+    	Collections.shuffle(letters);
+    	String pass = letters.stream().collect(Collectors.joining()).substring(0, BASE_LENGHT + randomAdditional);
+    	
+        return pass;
+    }
+    
+    public void hashPassword(String pass) {
+    	String hashedPass = null;
+    	MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+			md.update(pass.getBytes());
+	        byte[] digest = md.digest();
+	        hashedPass = DatatypeConverter.printHexBinary(digest).toUpperCase();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		setPassword(hashedPass);
+    }
+	
     public int getId() {
         return idUser;
     }
@@ -110,7 +159,23 @@ public class User {
         this.active = active;
     }
 
-    @Override
+    public boolean isFirstLogin() {
+		return firstLogin;
+	}
+
+	public void setFirstLogin(boolean firstLogin) {
+		this.firstLogin = firstLogin;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
     public String toString() {
         return "User{" +
                 "idUser=" + idUser +
