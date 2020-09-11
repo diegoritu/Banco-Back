@@ -7,11 +7,17 @@ public class PhysicalUserRequest extends UserRequest {
     private String birthDate;
     private String dni;
     private String mobilePhone;
+    private boolean withCheckingAccount;
 
     public PhysicalUserRequest() {
     }
 
-    public String getFirstName() {
+    
+    public boolean isWithCheckingAccount() {
+		return withCheckingAccount;
+	}
+
+	public String getFirstName() {
         return firstName;
     }
 

@@ -6,6 +6,7 @@ import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
+import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.LegalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
@@ -24,13 +25,17 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     @Autowired
     LegalRepository legalRepository;
     @Autowired
+    private PhysicalUserService physicalUserService;
+    @Autowired
+    private AdministrativeUserService administrativeUserService;
+    @Autowired
     private SavingsService savingsService;
     @Autowired
     private CheckingService checkingService;
 
     @Override
     public LegalUserDTO createUser(LegalUserRequest request) {
-        if (this.existsUser(request.getUsername())) {
+        if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername()) || administrativeUserService.existsUser(request.getUsername())) {
             throw new DuplicatedUsernameException("Username already exists");
         }
 
@@ -80,9 +85,9 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         return user != null ? user.toView() : null;
     }
     
-    public boolean login(String username, String password) {
+    public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)
 		Legal user = findByUsername(username);
-		boolean result = false;
+		byte result = 2;
 		
 		String hashedPass = null;
     	MessageDigest md;
@@ -97,7 +102,14 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 		}
 		
 		if(user.getPassword().equals(hashedPass)) {
-			result = true;
+			if(user.isFirstLogin()) {
+				user.setFirstLogin(false);
+				update(user);
+				result = 3;
+			}
+			else {
+				result = 1;
+			}
 		}
 		
 		return result;

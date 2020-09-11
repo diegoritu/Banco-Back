@@ -3,6 +3,7 @@ package com.banco.api.controller;
 import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.UserDTO;
+import com.banco.api.dto.user.request.AdministrativeUserRequest;
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.request.LoginRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
@@ -14,6 +15,7 @@ import com.banco.api.model.user.Physical;
 import com.banco.api.model.user.User;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
+import com.banco.api.service.user.AdministrativeUserService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import org.slf4j.Logger;
@@ -32,7 +34,9 @@ public class UserController {
     private PhysicalUserService physicalUserService;
     @Autowired
     private LegalUserService legalUserService;
-
+    @Autowired
+    private AdministrativeUserService administrativeUserService;
+    
     @Autowired
     private SavingsService savingsService;
     @Autowired
@@ -44,6 +48,20 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(physicalUserService.createUser(request), HttpStatus.CREATED);
+        } catch (DuplicatedUsernameException ex) {
+            LOGGER.warn(ex.getLocalizedMessage());
+            return ResponseEntity
+                    .status(HttpStatus.IM_USED)
+                    .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
+        }
+    }
+    
+    @PostMapping("/administrative")
+    public ResponseEntity createAdministrative(@RequestBody AdministrativeUserRequest request) {
+		LOGGER.info("Create administrative user operation started. {}", request.toString());
+
+        try {
+            return new ResponseEntity<>(administrativeUserService.createUser(request), HttpStatus.CREATED);
         } catch (DuplicatedUsernameException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
             return ResponseEntity
@@ -69,18 +87,40 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest request) {
     	if(physicalUserService.findByUsername(request.getUsername()) != null) {
-    		if(physicalUserService.login(request.getUsername(), request.getPassword())) {
+    		Physical user = physicalUserService.findByUsername(request.getUsername());
+    		if(physicalUserService.login(request.getUsername(), request.getPassword()) == 1) {
     	        LOGGER.info("Successfully logued with credentials: {}", request.toString());
                 return new ResponseEntity<>(HttpStatus.OK);
+    		}
+    		else if(physicalUserService.login(request.getUsername(), request.getPassword()) == 3) {
+    			LOGGER.info("First login successful with credentials: {}", request.toString());
+                return new ResponseEntity<>(HttpStatus.ACCEPTED); // First Login
     		}
     		else {
     			return new ResponseEntity<>(HttpStatus.CONFLICT);
     		}
     	}
     	else if(legalUserService.findByUsername(request.getUsername()) != null) {
-    		if(legalUserService.login(request.getUsername(), request.getPassword())) {
+    		if(legalUserService.login(request.getUsername(), request.getPassword()) == 1) {
     			LOGGER.info("Successfully logued with credentials: {}", request.toString());
     			return new ResponseEntity<>(HttpStatus.OK);
+    		}
+    		else if(legalUserService.login(request.getUsername(), request.getPassword()) == 3) {
+    			LOGGER.info("First login successful with credentials: {}", request.toString());
+                return new ResponseEntity<>(HttpStatus.ACCEPTED); // First Login
+    		}
+    		else {
+    			return new ResponseEntity<>(HttpStatus.CONFLICT);
+    		}
+    	}
+    	else if(administrativeUserService.findByUsername(request.getUsername()) != null) {
+    		if(administrativeUserService.login(request.getUsername(), request.getPassword()) == 1) {
+    			LOGGER.info("Successfully logued with credentials: {}", request.toString());
+    			return new ResponseEntity<>(HttpStatus.OK);
+    		}
+    		else if(administrativeUserService.login(request.getUsername(), request.getPassword()) == 3) {
+    			LOGGER.info("First login successful with credentials: {}", request.toString());
+                return new ResponseEntity<>(HttpStatus.ACCEPTED); // First Login
     		}
     		else {
     			return new ResponseEntity<>(HttpStatus.CONFLICT);

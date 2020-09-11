@@ -8,7 +8,6 @@ public class UserRequest implements Serializable {
     private String cuitCuilCdi;
     private String address;
     private String phone;
-    private boolean withCheckingAccount;
     
     public UserRequest() {
     }
@@ -45,19 +44,10 @@ public class UserRequest implements Serializable {
 		this.phone = phone;
 	}
 
-	public boolean isWithCheckingAccount() {
-		return withCheckingAccount;
-	}
-
-	public void setWithCheckingAccount(boolean withCheckingAccount) {
-		this.withCheckingAccount = withCheckingAccount;
-	}
-	
 	@Override
 	public String toString() {
 		return "UserRequest [username=" + username + ", cuitCuilCdi=" + cuitCuilCdi + ", address=" + address
-				+ ", phone=" + phone + ", withCheckingAccount=" + withCheckingAccount +  "]";
+				+ ", phone=" + phone + "]";
 	}
-
     
 }

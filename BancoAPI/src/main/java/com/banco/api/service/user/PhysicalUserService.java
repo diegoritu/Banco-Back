@@ -25,13 +25,17 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     @Autowired
     PhysicalRepository physicalRepository;
     @Autowired
+    private LegalUserService legalUserService;
+    @Autowired
+    private AdministrativeUserService administrativeUserService;
+    @Autowired
     private SavingsService savingsService;
     @Autowired
     private CheckingService checkingService;
 
     @Override
     public PhysicalUserDTO createUser(PhysicalUserRequest request) {
-        if (existsUser(request.getUsername())) {
+        if (existsUser(request.getUsername()) || legalUserService.existsUser(request.getUsername()) || administrativeUserService.existsUser(request.getUsername())) {
             throw new DuplicatedUsernameException("Username already exists");
         }
 
@@ -87,9 +91,9 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         return user != null ? user.toView() : null;
     }
 
-	public boolean login(String username, String password) {
+	public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)
 		Physical user = findByUsername(username);
-		boolean result = false;
+		byte result = 2;
 		
 		String hashedPass = null;
     	MessageDigest md;
@@ -104,7 +108,14 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 		}
 		
 		if(user.getPassword().equals(hashedPass)) {
-			result = true;
+			if(user.isFirstLogin()) {
+				user.setFirstLogin(false);
+				update(user);
+				result = 3;
+			}
+			else {
+				result = 1;
+			}
 		}
 		
 		return result;
