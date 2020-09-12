@@ -5,6 +5,8 @@ import com.banco.api.dto.account.request.SavingsRequest;
 import com.banco.api.model.account.Savings;
 import com.banco.api.repository.account.SavingsRepository;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import java.util.List;
 
 @Service
 public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsRequest> {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SavingsService.class);
 
 	private static final Float ANUAL_INTEREST_RATE = 15F;
 
@@ -49,7 +53,9 @@ public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsR
     }
 
     public List<Savings> findAll() {
-    	return Lists.newArrayList(savingsRepository.findAll());
+    	List<Savings> result = Lists.newArrayList(savingsRepository.findAll());
+    	LOGGER.info("Find all savings account. Found: {}", result);
+    	return result;
 	}
     
     public boolean existsCbu(String cbu) {

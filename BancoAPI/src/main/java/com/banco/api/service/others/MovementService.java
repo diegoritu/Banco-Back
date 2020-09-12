@@ -1,34 +1,33 @@
 package com.banco.api.service.others;
 
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.banco.api.dto.movement.MovementDTO;
-import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
+import com.banco.api.dto.movement.MovementType;
 import com.banco.api.model.Movement;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.repository.MovementRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class MovementService {
 	@Autowired
 	MovementRepository movementRepository;
 	
-	public MovementDTO depositAndExtract(float amount, float balanceBeforeMovement, int accountType, Savings savings, Checking checking, int movementType) {
+	public MovementDTO depositAndExtract(float amount, float balanceBeforeMovement, int accountType, Savings savings, Checking checking, MovementType movementType) {
 		MovementDTO movementDTO = new MovementDTO();
 		Movement result = new Movement();
         Date now = new Date();
-		movementDTO.setMovementType(movementType);
+		movementDTO.setMovementType(movementType.getValue());
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setAmount(amount);
 		
-		result.setMovementType(movementType);
+		result.setMovementType(movementType.getValue());
 		result.setDayAndHour(now);
 		result.setAmount(amount);
-		if(movementType == 0) {
+		if(MovementType.DEPOSIT.equals(movementType) || MovementType.INTERESTS.equals(movementType)) {
 			if(accountType == 0) {
 				movementDTO.setSaEntryAccount(savings.toView());
 				movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovement);

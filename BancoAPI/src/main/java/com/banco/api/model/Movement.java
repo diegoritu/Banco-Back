@@ -1,25 +1,10 @@
 package com.banco.api.model;
 
-import com.banco.api.model.account.Account;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 
-import java.time.LocalDateTime;
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.Type;
 
 
 @Entity
@@ -37,6 +22,7 @@ public class Movement {
 	 * SERVICES_PAYMENT = 4
 	 * TRANSFER_BETWEEN_OWN_ACCOUNTS = 5
 	 * TRANSFER_TO_OTHER_ACCOUNTS = 6
+	 * INTERESTS = 7
 	 */
     private int movementType;
     

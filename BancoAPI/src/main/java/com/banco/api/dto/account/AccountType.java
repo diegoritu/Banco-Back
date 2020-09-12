@@ -20,8 +20,8 @@ public enum AccountType {
     }
 
     static {
-        for (AccountType userType : AccountType.values()) {
-            map.put(userType.value, userType);
+        for (AccountType accountType : AccountType.values()) {
+            map.put(accountType.value, accountType);
         }
     }
 
