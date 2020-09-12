@@ -81,7 +81,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         } else if (LegalSearchField.BUSINESS_NAME.equalsIgnoreCase(field)) {
             user = legalRepository.findByBusinessName(term);
         } else if (LegalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            user = legalRepository.findBycuitCuilCdi(term);
+            user = legalRepository.findByCuitCuilCdi(term);
         }
         return user != null ? user.toView() : null;
     }

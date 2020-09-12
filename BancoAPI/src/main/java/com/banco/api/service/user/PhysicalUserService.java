@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, PhysicalUserRequest> {
 
     @Autowired
-    PhysicalRepository physicalRepository;
+    private PhysicalRepository physicalRepository;
     @Autowired
     private LegalUserService legalUserService;
     @Autowired
@@ -86,7 +86,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         } else if (PhysicalSearchField.DNI.equalsIgnoreCase(field)) {
             user = physicalRepository.findByDni(term);
         } else if (PhysicalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            user = physicalRepository.findBycuitCuilCdi(term);
+            user = physicalRepository.findByCuitCuilCdi(term);
         } else if (PhysicalSearchField.LAST_NAME.equalsIgnoreCase(field)) {
             user = physicalRepository.findByLastName(term);
         }

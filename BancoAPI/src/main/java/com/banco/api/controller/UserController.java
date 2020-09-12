@@ -15,7 +15,6 @@ import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
-import com.banco.api.model.user.User;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.user.AdministrativeUserService;
