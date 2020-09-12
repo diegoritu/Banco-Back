@@ -1,7 +1,10 @@
 package com.banco.api.service.user;
 
+import com.banco.api.adapter.DateUtils;
 import com.banco.api.dto.user.LegalUserDTO;
+import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.request.LegalUserRequest;
+import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
 import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -113,5 +116,21 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 		}
 		
 		return result;
+	}
+
+	public LegalUserDTO modify(LegalUserModificationRequest request) {
+		if(!request.getUsername().equals(request.getOldUsername())) {
+			if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername()) || administrativeUserService.existsUser(request.getUsername())) {
+	            throw new DuplicatedUsernameException("Username already exists");
+	        }
+		}
+		Legal user = findByUsername(request.getOldUsername());
+		user.setUsername(request.getUsername());
+        user.setAddress(request.getAddress());
+        user.setPhone(request.getPhone());
+        user.setBusinessName(request.getBusinessName());
+        Legal saved = legalRepository.save(user);
+        LegalUserDTO result = saved.toView();
+        return result;
 	}
 }

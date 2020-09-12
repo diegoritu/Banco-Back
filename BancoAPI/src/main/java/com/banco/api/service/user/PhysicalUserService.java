@@ -3,6 +3,7 @@ package com.banco.api.service.user;
 import com.banco.api.adapter.DateUtils;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
+import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
 import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -119,5 +120,24 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 		}
 		
 		return result;
+	}
+
+	public PhysicalUserDTO modify(PhysicalUserModificationRequest request) {
+		if(!request.getUsername().equals(request.getOldUsername())) {
+			if (existsUser(request.getUsername()) || legalUserService.existsUser(request.getUsername()) || administrativeUserService.existsUser(request.getUsername())) {
+	            throw new DuplicatedUsernameException("Username already exists");
+	        }
+		}
+		Physical user = findByUsername(request.getOldUsername());
+		user.setUsername(request.getUsername());
+        user.setAddress(request.getAddress());
+        user.setPhone(request.getPhone());
+        user.setBirthDate(DateUtils.parse(request.getBirthDate()));
+        user.setMobilePhone(request.getMobilePhone());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        Physical saved = physicalRepository.save(user);
+        PhysicalUserDTO result = saved.toView();
+        return result;
 	}
 }

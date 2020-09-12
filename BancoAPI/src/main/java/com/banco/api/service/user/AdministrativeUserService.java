@@ -38,6 +38,7 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
         user.setBirthdate(DateUtils.parse(request.getBirthDate()));
         user.setDni(request.getDni());
         user.setMobilePhone(request.getMobilePhone());
+        user.setPhone(request.getPhone());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
 

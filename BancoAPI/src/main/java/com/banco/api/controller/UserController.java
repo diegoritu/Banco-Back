@@ -7,6 +7,8 @@ import com.banco.api.dto.user.request.AdministrativeUserRequest;
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.request.LoginRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
+import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
+import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
 import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -157,6 +159,35 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    
+    @PostMapping("/physical/modify")
+    public ResponseEntity modifyPhysical(@RequestBody PhysicalUserModificationRequest request) {
+    	try {
+	        LOGGER.info("Modification of physical user operation started. {}", request.toString());
+	        return new ResponseEntity<PhysicalUserDTO>(physicalUserService.modify(request),HttpStatus.OK);
+    	} 
+    	catch (DuplicatedUsernameException ex) {
+	        LOGGER.warn(ex.getLocalizedMessage());
+	        return ResponseEntity
+	                .status(HttpStatus.IM_USED)
+	                .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
+    	}
+    }
+    
+    @PostMapping("/legal/modify")
+    public ResponseEntity modifyLegal(@RequestBody LegalUserModificationRequest request) {
+    	try {
+	        LOGGER.info("Modification of legal user operation started. {}", request.toString());
+	        return new ResponseEntity<LegalUserDTO>(legalUserService.modify(request),HttpStatus.OK);
+    	} 
+    	catch (DuplicatedUsernameException ex) {
+	        LOGGER.warn(ex.getLocalizedMessage());
+	        return ResponseEntity
+	                .status(HttpStatus.IM_USED)
+	                .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
+    	}
+    }
+    
 
     @GetMapping("/physical/search")
     public ResponseEntity<PhysicalUserDTO> searchPhysicalUSer(@RequestParam String field, @RequestParam String term) {
