@@ -1,22 +1,9 @@
 package com.banco.api.model.account;
 
 
+import javax.persistence.*;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.banco.api.service.account.AccountService;
 
 @Entity
 @Table(name = "accounts")
