@@ -2,6 +2,7 @@ package com.banco.api.service.user;
 
 import com.banco.api.adapter.DateUtils;
 import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
 import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
 import com.banco.api.exception.DuplicatedUsernameException;
@@ -139,5 +140,11 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         Physical saved = physicalRepository.save(user);
         PhysicalUserDTO result = saved.toView();
         return result;
+	}
+	
+	public void changePassword(ChangePasswordRequest request) {
+		Physical user = findByUsername(request.getUsername());
+		user.hashPassword(request.getPassword());	
+		physicalRepository.save(user);
 	}
 }

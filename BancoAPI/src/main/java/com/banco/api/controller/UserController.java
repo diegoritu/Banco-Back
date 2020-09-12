@@ -4,6 +4,7 @@ import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.UserDTO;
 import com.banco.api.dto.user.request.AdministrativeUserRequest;
+import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.request.LoginRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
@@ -131,6 +132,23 @@ public class UserController {
     	else {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+    }
+    
+    @PostMapping("/changePassword")
+    public ResponseEntity changePassword(@RequestBody ChangePasswordRequest request){
+    	if(legalUserService.existsUser(request.getUsername())) {
+    		legalUserService.changePassword(request);
+    		LOGGER.info("Successfully changed password: {}", request.toString());
+			return new ResponseEntity<>(HttpStatus.OK);
+    	}
+    	else if(physicalUserService.existsUser(request.getUsername())) {
+    		physicalUserService.changePassword(request);
+    		LOGGER.info("Successfully changed password: {}", request.toString());
+			return new ResponseEntity<>(HttpStatus.OK);
+    	}
+    	else {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+    	}
     }
 
 	@GetMapping("/physical")

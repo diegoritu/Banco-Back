@@ -1,15 +1,13 @@
 package com.banco.api.service.user;
 
-import com.banco.api.adapter.DateUtils;
 import com.banco.api.dto.user.LegalUserDTO;
-import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
 import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
-import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.LegalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
@@ -132,5 +130,11 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         Legal saved = legalRepository.save(user);
         LegalUserDTO result = saved.toView();
         return result;
+	}
+
+	public void changePassword(ChangePasswordRequest request) {
+		Legal user = findByUsername(request.getUsername());
+		user.hashPassword(request.getPassword());
+		legalRepository.save(user);
 	}
 }
