@@ -233,7 +233,6 @@ public class UserController {
     }
 
 
-    //FALTA PROBARLO Y VERIFICAR QUE LOS BALANCES DE LAS CUENTAS DEN 0
     @DeleteMapping("/disable-user")
     public ResponseEntity<UserDTO> disableUser(@RequestParam String username) {
 
@@ -307,5 +306,23 @@ public class UserController {
     	}
     }
 
+    @PutMapping("/reset-password")
+    public ResponseEntity<UserDTO> resetPassword(@RequestParam String username) {
+
+    	if(physicalUserService.existsUser(username))
+    	{
+    		PhysicalUserDTO result = physicalUserService.resetPassword(username);
+		    return new ResponseEntity<>(result, HttpStatus.OK);
+    	}
+    	else if(legalUserService.existsUser(username))
+    	{
+    		LegalUserDTO result = legalUserService.resetPassword(username);
+		    return new ResponseEntity<>(result, HttpStatus.OK);
+    	}
+    	else
+    	{
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    	}
+    }
 
 }

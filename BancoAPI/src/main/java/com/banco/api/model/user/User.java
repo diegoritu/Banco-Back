@@ -187,7 +187,13 @@ public class User {
                 ", active=" + active +
                 '}';
     }
-    
+	
+	public void resetPassword() {
+		
+		this.password = generatePassword();
+		this.firstLogin = true;
+		
+	}
 
 
 }

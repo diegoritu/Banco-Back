@@ -137,4 +137,14 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 		user.hashPassword(request.getPassword());
 		legalRepository.save(user);
 	}
+
+	public LegalUserDTO resetPassword(String username) {
+		Legal user = findByUsername(username);
+		user.resetPassword();
+		LegalUserDTO result = user.toView();
+        user.hashPassword(user.getPassword());
+        Legal saved = legalRepository.save(user);
+		
+		return result;
+	}
 }

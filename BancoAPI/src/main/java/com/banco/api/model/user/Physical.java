@@ -143,4 +143,5 @@ public class Physical extends User implements Externalizable<PhysicalUserDTO> {
         view.setMobilePhone(this.getMobilePhone());
         return view;
     }
+
 }
