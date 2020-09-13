@@ -13,6 +13,8 @@ import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
+import com.banco.api.utils.CollectionUtils;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, PhysicalUserRequest> {
@@ -87,20 +91,23 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         return physicalUser.toView();
     }
 
-    public PhysicalUserDTO search(String field, String term) {
-        Physical user = null;
+    public List<PhysicalUserDTO> search(String field, String term) {
+        List<Physical> users = Lists.newArrayList();
         if (PhysicalSearchField.USERNAME.equalsIgnoreCase(field)) {
-            //TODO: find tuples containing term
-            user = findByUsername(term);
+            CollectionUtils.safeAdd(users, physicalRepository.findByUsernameContainingIgnoreCase(term));
         } else if (PhysicalSearchField.DNI.equalsIgnoreCase(field)) {
-            user = physicalRepository.findByDni(term);
+            CollectionUtils.safeAdd(users, physicalRepository.findByDni(term));
         } else if (PhysicalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            user = physicalRepository.findByCuitCuilCdi(term);
+            CollectionUtils.safeAdd(users, physicalRepository.findByCuitCuilCdi(term));
         } else if (PhysicalSearchField.FULL_NAME.equalsIgnoreCase(field)) {
-            //TODO: find tuples containing term
-            user = physicalRepository.findByLastName(term);
+            //TODO: split term into words and search
+//            CollectionUtils.safeAdd(users, physicalRepository.findByFirstNameContainingIgnoreCase(term));
+//            CollectionUtils.safeAdd(users, physicalRepository.findByLastNameContainingIgnoreCase(term));
         }
-        return user != null ? user.toView() : null;
+        return users
+                .stream()
+                .map(Physical::toView)
+                .collect(Collectors.toList());
     }
 
 	public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)

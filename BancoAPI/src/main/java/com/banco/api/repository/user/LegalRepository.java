@@ -11,4 +11,6 @@ public interface LegalRepository extends UserBaseRepository<Legal> {
 
 	Legal findByBusinessName(String businessName);
 
+	Legal findByBusinessNameContainingIgnoreCase(String businessName);
+
 }

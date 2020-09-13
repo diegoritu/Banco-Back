@@ -23,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -203,29 +205,17 @@ public class UserController {
     
 
     @GetMapping("/physical/search")
-    public ResponseEntity<PhysicalUserDTO> searchPhysicalUSer(@RequestParam String field, @RequestParam String term) {
+    public ResponseEntity<List<PhysicalUserDTO>> searchPhysicalUSer(@RequestParam String field, @RequestParam String term) {
         LOGGER.info("Search physical user operation started. Field: %s, term: %s", field, term);
-        PhysicalUserDTO user = physicalUserService.search(field, term);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            String message = String.format("Physical user not found with field: %s and search term %s", field, term);
-            LOGGER.info(message);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        List<PhysicalUserDTO> users = physicalUserService.search(field, term);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/legal/search")
-    public ResponseEntity<LegalUserDTO> searchLegalUser(@RequestParam String field, @RequestParam String term) {
+    public ResponseEntity<List<LegalUserDTO>> searchLegalUser(@RequestParam String field, @RequestParam String term) {
         LOGGER.info("Search legal user operation started. Field: %s, term: %s", field, term);
-        LegalUserDTO user = legalUserService.search(field, term);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            String message = String.format("Legal user not found with field: %s and search term %s", field, term);
-            LOGGER.info(message);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        List<LegalUserDTO> users = legalUserService.search(field, term);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
 

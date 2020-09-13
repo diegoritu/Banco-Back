@@ -12,6 +12,8 @@ import com.banco.api.model.user.Legal;
 import com.banco.api.repository.user.LegalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
+import com.banco.api.utils.CollectionUtils;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUserRequest> {
@@ -82,16 +86,19 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         return legalUser.toView();
     }
 
-    public LegalUserDTO search(String field, String term) {
-        Legal user = null;
+    public List<LegalUserDTO> search(String field, String term) {
+        List<Legal> users = Lists.newArrayList();
         if (LegalSearchField.USERNAME.equalsIgnoreCase(field)) {
-            user = findByUsername(term);
+            CollectionUtils.safeAdd(users, legalRepository.findByUsernameContainingIgnoreCase(term));
         } else if (LegalSearchField.BUSINESS_NAME.equalsIgnoreCase(field)) {
-            user = legalRepository.findByBusinessName(term);
+            CollectionUtils.safeAdd(users, legalRepository.findByBusinessNameContainingIgnoreCase(term));
         } else if (LegalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            user = legalRepository.findByCuitCuilCdi(term);
+            CollectionUtils.safeAdd(users, legalRepository.findByCuitCuilCdi(term));
         }
-        return user != null ? user.toView() : null;
+        return users
+                .stream()
+                .map(Legal::toView)
+                .collect(Collectors.toList());
     }
 
     public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)
