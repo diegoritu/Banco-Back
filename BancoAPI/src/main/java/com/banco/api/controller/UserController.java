@@ -3,14 +3,10 @@ package com.banco.api.controller;
 import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.UserDTO;
-import com.banco.api.dto.user.request.AdministrativeUserRequest;
-import com.banco.api.dto.user.request.ChangePasswordRequest;
-import com.banco.api.dto.user.request.LegalUserRequest;
-import com.banco.api.dto.user.request.LoginRequest;
-import com.banco.api.dto.user.request.PhysicalUserRequest;
+import com.banco.api.dto.user.request.*;
 import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
 import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
-import com.banco.api.exception.DuplicatedUsernameException;
+import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
@@ -50,7 +46,7 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(physicalUserService.createUser(request), HttpStatus.CREATED);
-        } catch (DuplicatedUsernameException ex) {
+        } catch (InvalidUserRequestException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
             return ResponseEntity
                     .status(HttpStatus.IM_USED)
@@ -64,7 +60,7 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(administrativeUserService.createUser(request), HttpStatus.CREATED);
-        } catch (DuplicatedUsernameException ex) {
+        } catch (InvalidUserRequestException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
             return ResponseEntity
                     .status(HttpStatus.IM_USED)
@@ -78,7 +74,7 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(legalUserService.createUser(request), HttpStatus.CREATED);
-        } catch (DuplicatedUsernameException ex) {
+        } catch (InvalidUserRequestException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
             return ResponseEntity
                     .status(HttpStatus.IM_USED)
@@ -183,7 +179,7 @@ public class UserController {
 	        LOGGER.info("Modification of physical user operation started. {}", request.toString());
 	        return new ResponseEntity<PhysicalUserDTO>(physicalUserService.modify(request),HttpStatus.OK);
     	} 
-    	catch (DuplicatedUsernameException ex) {
+    	catch (InvalidUserRequestException ex) {
 	        LOGGER.warn(ex.getLocalizedMessage());
 	        return ResponseEntity
 	                .status(HttpStatus.IM_USED)
@@ -197,7 +193,7 @@ public class UserController {
 	        LOGGER.info("Modification of legal user operation started. {}", request.toString());
 	        return new ResponseEntity<LegalUserDTO>(legalUserService.modify(request),HttpStatus.OK);
     	} 
-    	catch (DuplicatedUsernameException ex) {
+    	catch (InvalidUserRequestException ex) {
 	        LOGGER.warn(ex.getLocalizedMessage());
 	        return ResponseEntity
 	                .status(HttpStatus.IM_USED)

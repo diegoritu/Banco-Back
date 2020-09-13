@@ -4,6 +4,7 @@ public class LegalUserRequest extends UserRequest {
 
     private String businessName;
     private boolean withCheckingAccount;
+    private Float maxOverdraft;
 
     public LegalUserRequest() {
     }
@@ -15,6 +16,8 @@ public class LegalUserRequest extends UserRequest {
 	public boolean isWithCheckingAccount() {
 		return withCheckingAccount;
 	}
-    
-    
+
+    public Float getMaxOverdraft() {
+        return maxOverdraft;
+    }
 }

@@ -23,12 +23,11 @@ public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsR
 	@Autowired
 	SavingsRepository savingsRepository;
 
-    @Override
     public Savings createAccount() {
-        Savings account = new Savings(0, ANUAL_INTEREST_RATE);
+        Savings account = new Savings(ANUAL_INTEREST_RATE);
         
         while(existsAccountNumber(account.getAccountNumber())) {
-            account = new Savings(0, ANUAL_INTEREST_RATE);
+            account = new Savings(ANUAL_INTEREST_RATE);
         }
         
         Savings result = savingsRepository.save(account);

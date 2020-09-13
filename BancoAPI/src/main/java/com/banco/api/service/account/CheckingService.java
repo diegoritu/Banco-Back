@@ -1,6 +1,7 @@
 package com.banco.api.service.account;
 
 
+import com.banco.api.dto.account.AccountType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,13 @@ public class CheckingService extends AccountService<Checking, CheckingDTO, Check
     @Autowired
     CheckingRepository checkingRepository;
 
-    @Override
-    public Checking createAccount() {
-        Checking account = new Checking(0, 0, 0);
-        
+    public Checking createAccount(Float maxOverdraft) {
+        Checking account = new Checking(AccountType.CHECKING.getValue(), maxOverdraft);
+
     	while(existsAccountNumber(account.getAccountNumber())) {
-            account = new Checking(0, 0, 0);
+            account = new Checking(AccountType.CHECKING.getValue(), maxOverdraft);
         }
-    	
+
         Checking result = checkingRepository.save(account);
         return result;
     }

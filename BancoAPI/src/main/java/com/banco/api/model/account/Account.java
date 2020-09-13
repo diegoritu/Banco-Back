@@ -25,27 +25,17 @@ public abstract class Account {
      */
 	protected int accountType;
 
-    public Account(float balance, int accountType) {
+    public Account(int accountType) {
 		super();
 		this.accountNumber = generateAccountNumber();
-		this.balance = balance;
+		this.balance = 0;
 		this.active = true;
 		this.cbu = generateCbu();
 		this.accountType = accountType;
 	}
     
-    public Account() 
-    {}
-    
-    public Account(float balance, int accountType, boolean active, String cbu, String accountNumber) {
-		super();
-		this.accountNumber = accountNumber;
-		this.balance = balance;
-		this.active = active;
-		this.cbu = cbu;
-		this.accountType = accountType;
+    public Account() {
 	}
-
 
     private String generateCbu() {
 		String first = Integer.toString(Math.abs(ThreadLocalRandom.current().nextInt(((99999999 - 10000000) + 1) + 10000000)));

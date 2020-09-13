@@ -7,7 +7,6 @@ import com.banco.api.model.user.User;
 public abstract class UserService<T extends User, D extends UserDTO, R extends UserRequest> {
 
     protected abstract D createUser(R userRequest);
-
     
     protected void mapCommonUser(T user, R userRequest) {
         user.setUsername(userRequest.getUsername());

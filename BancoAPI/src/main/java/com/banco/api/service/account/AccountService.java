@@ -22,7 +22,5 @@ public abstract class AccountService<T extends Account, D extends AccountDTO, R 
     	account.setBalance(accountRequest.getBalance());
     	account.setCbu(accountRequest.getCbu());
     }
-    
-    protected abstract T createAccount();
 
 }

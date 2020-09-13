@@ -15,11 +15,11 @@ public class Savings extends Account implements Externalizable<SavingsDTO> {
     private float interestRate;
 
     public Savings() {
-		super(0, 1);
+		super(AccountType.SAVINGS.getValue());
 	}
 
-	public Savings(float balance, float interestRate) {
-    	super(balance, AccountType.SAVINGS.getValue());
+	public Savings(float interestRate) {
+    	super(AccountType.SAVINGS.getValue());
         this.interestRate = interestRate;
     }
 

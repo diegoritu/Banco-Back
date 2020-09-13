@@ -4,24 +4,27 @@ import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
-import com.banco.api.exception.DuplicatedUsernameException;
+import com.banco.api.exception.CheckingAccountRequestException;
+import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import com.banco.api.repository.user.LegalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import javax.xml.bind.DatatypeConverter;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.DatatypeConverter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 @Service
 public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUserRequest> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LegalUserService.class);
 
     @Autowired
     LegalRepository legalRepository;
@@ -36,8 +39,13 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 
     @Override
     public LegalUserDTO createUser(LegalUserRequest request) {
-        if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername()) || administrativeUserService.existsUser(request.getUsername())) {
-            throw new DuplicatedUsernameException("Username already exists");
+        if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
+                || administrativeUserService.existsUser(request.getUsername())) {
+            throw new InvalidUserRequestException("El nombre de usuario ya existe");
+        }
+
+        if (request.isWithCheckingAccount() && request.getMaxOverdraft() == null) {
+            throw new InvalidUserRequestException("Si requiere cuenta corriente es necesario especificar el monto de descubierto");
         }
 
         Legal user = new Legal();
@@ -49,7 +57,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         user.setSavings(savingsAccount);
 
         if (request.isWithCheckingAccount()) {
-            Checking checkingAccount = checkingService.createAccount();
+            Checking checkingAccount = checkingService.createAccount(request.getMaxOverdraft());
             user.setChecking(checkingAccount);
         }
         LegalUserDTO result = user.toView();
@@ -85,66 +93,88 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         }
         return user != null ? user.toView() : null;
     }
-    
-    public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)
-		Legal user = findByUsername(username);
-		byte result = 2;
-		
-		String hashedPass = null;
-    	MessageDigest md;
-		try {
-			md = MessageDigest.getInstance("MD5");
-			md.update(password.getBytes());
-	        byte[] digest = md.digest();
-	        hashedPass = DatatypeConverter.printHexBinary(digest).toUpperCase();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if(user.getPassword().equals(hashedPass)) {
-			if(user.isFirstLogin()) {
-				user.setFirstLogin(false);
-				update(user);
-				result = 3;
-			}
-			else {
-				result = 1;
-			}
-		}
-		
-		return result;
-	}
 
-	public LegalUserDTO modify(LegalUserModificationRequest request) {
-		if(!request.getUsername().equals(request.getOldUsername())) {
-			if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername()) || administrativeUserService.existsUser(request.getUsername())) {
-	            throw new DuplicatedUsernameException("Username already exists");
-	        }
-		}
-		Legal user = findByUsername(request.getOldUsername());
-		user.setUsername(request.getUsername());
+    public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)
+        Legal user = findByUsername(username);
+        byte result = 2;
+
+        String hashedPass = null;
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+            md.update(password.getBytes());
+            byte[] digest = md.digest();
+            hashedPass = DatatypeConverter.printHexBinary(digest).toUpperCase();
+        } catch (NoSuchAlgorithmException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        if (user.getPassword().equals(hashedPass)) {
+            if (user.isFirstLogin()) {
+                user.setFirstLogin(false);
+                update(user);
+                result = 3;
+            } else {
+                result = 1;
+            }
+        }
+
+        return result;
+    }
+
+    public LegalUserDTO modify(LegalUserModificationRequest request) {
+        if (!request.getUsername().equals(request.getOldUsername())) {
+            if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
+                    || administrativeUserService.existsUser(request.getUsername())) {
+                throw new InvalidUserRequestException("El nombre de usuario ya existe");
+            }
+        }
+        Legal user = findByUsername(request.getOldUsername());
+        user.setUsername(request.getUsername());
         user.setAddress(request.getAddress());
         user.setPhone(request.getPhone());
         user.setBusinessName(request.getBusinessName());
         Legal saved = legalRepository.save(user);
         LegalUserDTO result = saved.toView();
         return result;
-	}
+    }
 
-	public void changePassword(ChangePasswordRequest request) {
-		Legal user = findByUsername(request.getUsername());
-		user.hashPassword(request.getPassword());
-		legalRepository.save(user);
-	}
+    public Checking openCheckingAccount(String username, Float maxOverdraft) {
+        Legal user = findByUsername(username);
+        if (user.getChecking() != null && user.getChecking().isActive())
+            throw new CheckingAccountRequestException("El usuario ya tiene cuenta corriente activa");
 
-	public LegalUserDTO resetPassword(String username) {
-		Legal user = findByUsername(username);
-		user.resetPassword();
-		LegalUserDTO result = user.toView();
+        if (maxOverdraft == null) {
+            throw new CheckingAccountRequestException("Es necesario especificar el descubierto");
+        }
+
+        LOGGER.info("Opening checking account for username: {} with maxOverdraft: {}", username, maxOverdraft);
+        Checking checkingAccount;
+        if (user.getChecking() != null && !user.getChecking().isActive()) {
+            LOGGER.debug("Found checking account for username: {}, but inactive. Activating account with overdraft: {}", username, maxOverdraft);
+            user.getChecking().setActive(true);
+            user.getChecking().setMaxOverdraft(maxOverdraft);
+            checkingAccount = checkingService.update(user.getChecking());
+        } else {
+            checkingAccount = checkingService.createAccount(maxOverdraft);
+        }
+        return checkingAccount;
+    }
+
+    public void changePassword(ChangePasswordRequest request) {
+        Legal user = findByUsername(request.getUsername());
+        user.hashPassword(request.getPassword());
+        legalRepository.save(user);
+    }
+
+    public LegalUserDTO resetPassword(String username) {
+        Legal user = findByUsername(username);
+        user.resetPassword();
+        LegalUserDTO result = user.toView();
         user.hashPassword(user.getPassword());
         Legal saved = legalRepository.save(user);
-		
-		return result;
-	}
+
+        return result;
+    }
 }

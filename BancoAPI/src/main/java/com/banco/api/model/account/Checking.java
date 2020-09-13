@@ -4,7 +4,6 @@ package com.banco.api.model.account;
 import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.account.CheckingDTO;
-import com.banco.api.dto.user.UserType;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -15,19 +14,14 @@ public class Checking extends Account implements Externalizable<CheckingDTO> {
 
     private float maxOverdraft; //Monto máximo para girar en descubierto
 
-    public Checking(float balance, int accountType, float maxOverdraft) {
-		super(balance, accountType);
+    public Checking(int accountType, float maxOverdraft) {
+		super(accountType);
 		this.maxOverdraft = maxOverdraft;
 	}
     
     public Checking() 
     {
     	super();
-    }
-
-    public Checking(float maxOverdraft, float balance, int accountType, boolean active, String cbu, String accountNumber) {
-    	super(balance, accountType, active, cbu, accountNumber);
-    	this.maxOverdraft = maxOverdraft;
     }
     
 	public float getMaxOverdraft() {

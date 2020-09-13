@@ -1,14 +1,14 @@
 package com.banco.api.dto.user.request.modification;
 
 
-public class PhysicalUserModificationRequest  extends UserModificationRequest{
+public class PhysicalUserModificationRequest extends UserModificationRequest {
 	private String firstName;
     private String lastName;
     private String birthDate;
     private String mobilePhone;
-    
+
     public PhysicalUserModificationRequest() {}
-    
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -27,5 +27,5 @@ public class PhysicalUserModificationRequest  extends UserModificationRequest{
 		return "PhysicalUserModificationRequest [firstName=" + firstName + ", lastName=" + lastName + ", birthDate="
 				+ birthDate + ", mobilePhone=" + mobilePhone + "]";
 	}
-	
+
 }

@@ -9,6 +9,7 @@ public class PhysicalUserRequest extends UserRequest {
     private String mobilePhone;
     
     private boolean withCheckingAccount;
+    private Float maxOverdraft;
 
     public PhysicalUserRequest() {
     }
@@ -35,5 +36,9 @@ public class PhysicalUserRequest extends UserRequest {
 
     public String getMobilePhone() {
         return mobilePhone;
+    }
+
+    public Float getMaxOverdraft() {
+        return maxOverdraft;
     }
 }

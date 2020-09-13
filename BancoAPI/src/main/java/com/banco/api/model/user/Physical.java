@@ -13,7 +13,9 @@ import java.util.Date;
 
 @Entity
 @DiscriminatorValue("Physical")
-public class Physical extends User implements Externalizable<PhysicalUserDTO> {
+public class Physical
+        extends User
+        implements Externalizable<PhysicalUserDTO> {
 
     private String dni;
 
