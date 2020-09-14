@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/account")
 public class AccountController {
