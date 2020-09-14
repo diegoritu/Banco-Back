@@ -1,12 +1,12 @@
 package com.banco.api.utils;
 
-import java.util.List;
+import java.util.Collection;
 
 public class CollectionUtils {
 
-    public static <T> void safeAdd(List<T> list, T item) {
+    public static <T> void safeAdd(Collection<T> collection, T item) {
          if (item != null) {
-             list.add(item);
+             collection.add(item);
          }
     }
 }

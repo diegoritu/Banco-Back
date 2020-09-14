@@ -15,6 +15,7 @@ import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.utils.CollectionUtils;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,11 @@ import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.banco.api.utils.CollectionUtils.safeAdd;
 
 @Service
 public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, PhysicalUserRequest> {
@@ -91,23 +96,28 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         return physicalUser.toView();
     }
 
-    public List<PhysicalUserDTO> search(String field, String term) {
-        List<Physical> users = Lists.newArrayList();
+    public Set<PhysicalUserDTO> search(String field, String term) {
+        Set<Physical> users = Sets.newHashSet();
         if (PhysicalSearchField.USERNAME.equalsIgnoreCase(field)) {
-            CollectionUtils.safeAdd(users, physicalRepository.findByUsernameContainingIgnoreCase(term));
+            safeAdd(users, physicalRepository.findByUsernameContainingIgnoreCase(term));
+
         } else if (PhysicalSearchField.DNI.equalsIgnoreCase(field)) {
-            CollectionUtils.safeAdd(users, physicalRepository.findByDni(term));
+            safeAdd(users, physicalRepository.findByDni(term));
+
         } else if (PhysicalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            CollectionUtils.safeAdd(users, physicalRepository.findByCuitCuilCdi(term));
+            safeAdd(users, physicalRepository.findByCuitCuilCdi(term));
+
         } else if (PhysicalSearchField.FULL_NAME.equalsIgnoreCase(field)) {
-            //TODO: split term into words and search
-//            CollectionUtils.safeAdd(users, physicalRepository.findByFirstNameContainingIgnoreCase(term));
-//            CollectionUtils.safeAdd(users, physicalRepository.findByLastNameContainingIgnoreCase(term));
+            String[] words = term.split(" ");
+            Stream.of(words).forEach(word -> {
+                safeAdd(users, physicalRepository.findByFirstNameContainingIgnoreCase(word));
+                safeAdd(users, physicalRepository.findByLastNameContainingIgnoreCase(word));
+            });
         }
         return users
                 .stream()
                 .map(Physical::toView)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
 	public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)

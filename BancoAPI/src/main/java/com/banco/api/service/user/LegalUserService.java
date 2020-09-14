@@ -13,7 +13,7 @@ import com.banco.api.repository.user.LegalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.utils.CollectionUtils;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +22,10 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.banco.api.utils.CollectionUtils.safeAdd;
 
 @Service
 public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUserRequest> {
@@ -86,19 +88,21 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         return legalUser.toView();
     }
 
-    public List<LegalUserDTO> search(String field, String term) {
-        List<Legal> users = Lists.newArrayList();
+    public Set<LegalUserDTO> search(String field, String term) {
+        Set<Legal> users = Sets.newHashSet();
         if (LegalSearchField.USERNAME.equalsIgnoreCase(field)) {
-            CollectionUtils.safeAdd(users, legalRepository.findByUsernameContainingIgnoreCase(term));
+            safeAdd(users, legalRepository.findByUsernameContainingIgnoreCase(term));
+
         } else if (LegalSearchField.BUSINESS_NAME.equalsIgnoreCase(field)) {
-            CollectionUtils.safeAdd(users, legalRepository.findByBusinessNameContainingIgnoreCase(term));
+            safeAdd(users, legalRepository.findByBusinessNameContainingIgnoreCase(term));
+
         } else if (LegalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            CollectionUtils.safeAdd(users, legalRepository.findByCuitCuilCdi(term));
+            safeAdd(users, legalRepository.findByCuitCuilCdi(term));
         }
         return users
                 .stream()
                 .map(Legal::toView)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)

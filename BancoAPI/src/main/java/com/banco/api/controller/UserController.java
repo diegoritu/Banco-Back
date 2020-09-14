@@ -23,7 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
@@ -205,16 +205,16 @@ public class UserController {
     
 
     @GetMapping("/physical/search")
-    public ResponseEntity<List<PhysicalUserDTO>> searchPhysicalUSer(@RequestParam String field, @RequestParam String term) {
+    public ResponseEntity<Set<PhysicalUserDTO>> searchPhysicalUSer(@RequestParam String field, @RequestParam String term) {
         LOGGER.info("Search physical user operation started. Field: %s, term: %s", field, term);
-        List<PhysicalUserDTO> users = physicalUserService.search(field, term);
+        Set<PhysicalUserDTO> users = physicalUserService.search(field, term);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/legal/search")
-    public ResponseEntity<List<LegalUserDTO>> searchLegalUser(@RequestParam String field, @RequestParam String term) {
+    public ResponseEntity<Set<LegalUserDTO>> searchLegalUser(@RequestParam String field, @RequestParam String term) {
         LOGGER.info("Search legal user operation started. Field: %s, term: %s", field, term);
-        List<LegalUserDTO> users = legalUserService.search(field, term);
+        Set<LegalUserDTO> users = legalUserService.search(field, term);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
