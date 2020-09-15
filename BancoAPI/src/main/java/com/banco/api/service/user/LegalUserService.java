@@ -123,12 +123,10 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 
         if (user.getPassword().equals(hashedPass)) {
             if (user.isFirstLogin()) {
-            	LOGGER.info("UHHH, DEFINITIVAMENTE REVENTÓ ACÁ");
                 user.setFirstLogin(false);
                 update(user);
                 result = 3;
             } else {
-            	LOGGER.info("apa, y si fue acá?");
                 result = 1;
             }
         }
