@@ -86,16 +86,16 @@ public class UserController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Integer> login(@RequestBody LoginRequest request) { //0, 1 o 2, según si es persona fisica, juridica o administrativa
     	if(physicalUserService.findByUsername(request.getUsername()) != null) {
     		Physical user = physicalUserService.findByUsername(request.getUsername());
     		if(physicalUserService.login(request.getUsername(), request.getPassword()) == 1) {
     	        LOGGER.info("Successfully logued with credentials: {}", request.toString());
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(0,HttpStatus.OK);
     		}
     		else if(physicalUserService.login(request.getUsername(), request.getPassword()) == 3) {
     			LOGGER.info("First login successful with credentials: {}", request.toString());
-                return new ResponseEntity<>(HttpStatus.ACCEPTED); // First Login
+                return new ResponseEntity<>(0,HttpStatus.ACCEPTED); // First Login
     		}
     		else {
     			return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -104,11 +104,11 @@ public class UserController {
     	else if(legalUserService.findByUsername(request.getUsername()) != null) {
     		if(legalUserService.login(request.getUsername(), request.getPassword()) == 1) {
     			LOGGER.info("Successfully logued with credentials: {}", request.toString());
-    			return new ResponseEntity<>(HttpStatus.OK);
+    			return new ResponseEntity<>(1,HttpStatus.OK);
     		}
     		else if(legalUserService.login(request.getUsername(), request.getPassword()) == 3) {
     			LOGGER.info("First login successful with credentials: {}", request.toString());
-                return new ResponseEntity<>(HttpStatus.ACCEPTED); // First Login
+                return new ResponseEntity<>(1,HttpStatus.ACCEPTED); // First Login
     		}
     		else {
     			return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -117,11 +117,11 @@ public class UserController {
     	else if(administrativeUserService.findByUsername(request.getUsername()) != null) {
     		if(administrativeUserService.login(request.getUsername(), request.getPassword()) == 1) {
     			LOGGER.info("Successfully logued with credentials: {}", request.toString());
-    			return new ResponseEntity<>(HttpStatus.OK);
+    			return new ResponseEntity<>(2,HttpStatus.OK);
     		}
     		else if(administrativeUserService.login(request.getUsername(), request.getPassword()) == 3) {
     			LOGGER.info("First login successful with credentials: {}", request.toString());
-                return new ResponseEntity<>(HttpStatus.ACCEPTED); // First Login
+                return new ResponseEntity<>(2,HttpStatus.ACCEPTED); // First Login
     		}
     		else {
     			return new ResponseEntity<>(HttpStatus.CONFLICT);
