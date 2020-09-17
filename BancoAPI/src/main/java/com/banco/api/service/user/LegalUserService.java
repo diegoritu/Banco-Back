@@ -82,6 +82,10 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         Legal legalUser = legalRepository.findByUsernameAndUserTypeNumber(username, 1);
         return legalUser;
     }
+    public Legal findByActiveUsername(String username) {
+        Legal legalUser = legalRepository.findByUsernameAndUserTypeNumberAndActive(username, 1, true);
+        return legalUser;
+    }
 
     public LegalUserDTO update(Legal legal) {
         Legal legalUser = legalRepository.save(legal);

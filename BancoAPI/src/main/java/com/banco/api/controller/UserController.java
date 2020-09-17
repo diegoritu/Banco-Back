@@ -89,7 +89,7 @@ public class UserController {
     public ResponseEntity<Integer> login(@RequestBody LoginRequest request) { //0, 1 o 2, según si es persona fisica, juridica o administrativa
     	int login = 2;
     	
-    	if(physicalUserService.findByUsername(request.getUsername()) != null) {
+    	if(physicalUserService.findByActiveUsername(request.getUsername()) != null) {
     		login = physicalUserService.login(request.getUsername(), request.getPassword());
 	    	switch (login) {
 			case 1:
@@ -104,10 +104,10 @@ public class UserController {
 				return new ResponseEntity<>(HttpStatus.CONFLICT);			
 	    	}
     	}
-    	else if(legalUserService.findByUsername(request.getUsername()) != null) {
+    	else if(legalUserService.findByActiveUsername(request.getUsername()) != null) {
     		login = legalUserService.login(request.getUsername(), request.getPassword());
     	}
-    	else if(administrativeUserService.findByUsername(request.getUsername()) != null) {
+    	else if(administrativeUserService.findByActiveUsername(request.getUsername()) != null) {
     		login = administrativeUserService.login(request.getUsername(), request.getPassword());
     	}
     	else {

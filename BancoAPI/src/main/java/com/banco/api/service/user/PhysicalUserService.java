@@ -93,6 +93,11 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
        return physicalUser;
     }
     
+    public Physical findByActiveUsername(String username) {
+    	Physical physicalUser = physicalRepository.findByUsernameAndUserTypeNumberAndActive(username, 1, true);
+        return physicalUser;
+    }
+    
     public PhysicalUserDTO update(Physical physical) {
         Physical physicalUser = physicalRepository.save(physical);
         return physicalUser.toView();
@@ -123,7 +128,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     }
 
 	public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)
-		Physical user = findByUsername(username);
+		Physical user = findByActiveUsername(username);
 		byte result = 2;
 		
 		String hashedPass = null;

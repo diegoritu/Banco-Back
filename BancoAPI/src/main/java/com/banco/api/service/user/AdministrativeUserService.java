@@ -13,6 +13,7 @@ import com.banco.api.dto.user.AdministrativeUserDTO;
 import com.banco.api.dto.user.request.AdministrativeUserRequest;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.user.Administrative;
+import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.AdministrativeRepository;
 
 @Service
@@ -59,6 +60,12 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
 		Administrative administrativeUser = administrativeRepository.findByUsername(username);
 		return administrativeUser;
     }
+	
+    public Administrative findByActiveUsername(String username) {
+    	Administrative administrativeUser = administrativeRepository.findByUsernameAndUserTypeNumberAndActive(username, 1, true);
+        return administrativeUser;
+    }
+
     
     public AdministrativeUserDTO update(Administrative administrative) {
     	Administrative administrativeUser = administrativeRepository.save(administrative);
@@ -66,7 +73,7 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
     }
     
     public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)
-    	Administrative user = findByUsername(username);
+    	Administrative user = findByActiveUsername(username);
 		byte result = 2;
 		
 		String hashedPass = null;

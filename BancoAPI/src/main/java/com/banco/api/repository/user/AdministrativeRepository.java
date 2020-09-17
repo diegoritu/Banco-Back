@@ -10,4 +10,6 @@ public interface AdministrativeRepository extends UserBaseRepository<Administrat
 	Administrative findByDni(String dni);
 
 	Administrative findByLastName(String lastName);
+
+	Administrative findByUsernameAndUserTypeNumberAndActive(String username, int userTypeNumber, boolean active);
 }
