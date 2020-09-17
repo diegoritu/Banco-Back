@@ -1,6 +1,7 @@
 package com.banco.api.service.user;
 
 import com.banco.api.adapter.DateUtils;
+import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
@@ -9,6 +10,7 @@ import com.banco.api.exception.CheckingAccountRequestException;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
+import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
 import com.banco.api.service.account.CheckingService;
@@ -199,11 +201,14 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 	}
 
 	public PhysicalUserDTO resetPassword(String username) {
-		Physical user = findByUsername(username);
-		user.resetPassword();
+                
+        Physical user = findByUsername(username);
+        user.resetPassword();
+        PhysicalUserDTO result = user.toView();
         user.hashPassword(user.getPassword());
         Physical saved = physicalRepository.save(user);
-        PhysicalUserDTO result = saved.toView();
+
+        
 		return result;
 	}
 }
