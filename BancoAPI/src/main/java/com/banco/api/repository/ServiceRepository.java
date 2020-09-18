@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ServiceRepository extends CrudRepository<ServicePayment, Integer> {
 	
-	ServicePayment findByIdServicePaymentOrName(String idServicePayment, String name);
+
+	ServicePayment findByIdServicePayment(String idServicePayment);
 
 
 }

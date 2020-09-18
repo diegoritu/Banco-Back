@@ -31,7 +31,7 @@ public class ServiceService {
 	
 	public ServiceDTO createService(CreateServiceRequest request) {
 		ServicePayment result = null;
-		if(!existsByIdServicePaymentOrName(request.getIdServicePayment(), request.getName())) {
+		if(!existsByIdServicePayment(request.getIdServicePayment())) {
 			result = new ServicePayment(request.getName(), request.getAmount(), request.getIdServicePayment(), request.isRegular());
 			Legal vendor = legalUserService.findByActiveUsername(request.getVendorUsername());
 			if(vendor != null) {
@@ -54,11 +54,11 @@ public class ServiceService {
 		return null;
 	}
 	
-	public ServicePayment findServiceByIdServicePaymentOrName(String idServicePayment, String name){
-		return serviceRepository.findByIdServicePaymentOrName(idServicePayment, name);
+	public ServicePayment findServiceByIdServicePayment(String idServicePayment){
+		return serviceRepository.findByIdServicePayment(idServicePayment);
 	}
-	public boolean existsByIdServicePaymentOrName(String idServicePayment, String name) {
-		return findServiceByIdServicePaymentOrName(idServicePayment, name) != null;
+	public boolean existsByIdServicePayment(String idServicePayment) {
+		return findServiceByIdServicePayment(idServicePayment) != null;
 	}
 	
 	
