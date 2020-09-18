@@ -86,7 +86,7 @@ public class UserController {
     }
     
     @PostMapping("/login")
-    public ResponseEntity<Integer> login(@RequestBody LoginRequest request) { //0, 1 o 2, según si es persona fisica, juridica o administrativa
+    public ResponseEntity<UserDTO> login(@RequestBody LoginRequest request) { //0, 1 o 2, según si es persona fisica, juridica o administrativa
     	int login = 2;
     	
     	if(physicalUserService.findByActiveUsername(request.getUsername()) != null) {
@@ -94,38 +94,52 @@ public class UserController {
 	    	switch (login) {
 			case 1:
 				LOGGER.info("Successfully logued with credentials: {}", request.toString());
-	            return new ResponseEntity<>(0,HttpStatus.OK);
+	            return new ResponseEntity<>(physicalUserService.findByUsername(request.getUsername()).toView(),HttpStatus.OK);
 			case 2:
 				return new ResponseEntity<>(HttpStatus.CONFLICT);
 			case 3:
 				LOGGER.info("First login successful with credentials: {}", request.toString());
-	            return new ResponseEntity<>(0,HttpStatus.ACCEPTED); // First Login
+	            return new ResponseEntity<>(physicalUserService.findByUsername(request.getUsername()).toView(),HttpStatus.ACCEPTED); // First Login
 			default:
 				return new ResponseEntity<>(HttpStatus.CONFLICT);			
 	    	}
     	}
     	else if(legalUserService.findByActiveUsername(request.getUsername()) != null) {
     		login = legalUserService.login(request.getUsername(), request.getPassword());
+        	switch (login) {
+    		case 1:
+    			LOGGER.info("Successfully logued with credentials: {}", request.toString());
+                return new ResponseEntity<>(legalUserService.findByUsername(request.getUsername()).toView(),HttpStatus.OK);
+    		case 2:
+    			return new ResponseEntity<>(HttpStatus.CONFLICT);
+    		case 3:
+    			LOGGER.info("First login successful with credentials: {}", request.toString());
+                return new ResponseEntity<>(legalUserService.findByUsername(request.getUsername()).toView(),HttpStatus.ACCEPTED); // First Login
+    		default:
+    			return new ResponseEntity<>(HttpStatus.CONFLICT);			
+        	}
+
     	}
     	else if(administrativeUserService.findByActiveUsername(request.getUsername()) != null) {
     		login = administrativeUserService.login(request.getUsername(), request.getPassword());
+        	switch (login) {
+    		case 1:
+    			LOGGER.info("Successfully logued with credentials: {}", request.toString());
+                return new ResponseEntity<>(administrativeUserService.findByUsername(request.getUsername()).toView(),HttpStatus.OK);
+    		case 2:
+    			return new ResponseEntity<>(HttpStatus.CONFLICT);
+    		case 3:
+    			LOGGER.info("First login successful with credentials: {}", request.toString());
+                return new ResponseEntity<>(administrativeUserService.findByUsername(request.getUsername()).toView(),HttpStatus.ACCEPTED); // First Login
+    		default:
+    			return new ResponseEntity<>(HttpStatus.CONFLICT);			
+        	}
+
     	}
     	else {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
     	
-    	switch (login) {
-		case 1:
-			LOGGER.info("Successfully logued with credentials: {}", request.toString());
-            return new ResponseEntity<>(0,HttpStatus.OK);
-		case 2:
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
-		case 3:
-			LOGGER.info("First login successful with credentials: {}", request.toString());
-            return new ResponseEntity<>(0,HttpStatus.ACCEPTED); // First Login
-		default:
-			return new ResponseEntity<>(HttpStatus.CONFLICT);			
-    	}
     }
     
     @PostMapping("/changePassword")
