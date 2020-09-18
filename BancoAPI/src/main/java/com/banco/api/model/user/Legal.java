@@ -85,7 +85,6 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
         view.setPhone(this.getPhone());
         view.setUsername(this.getUsername());
         view.setUserType(UserType.valueOf(this.getUserType()).toString());
-        view.setPassword(this.getPassword());
         view.setFirstLogin(this.isFirstLogin());
         
         if(this.getSavings() == null) {

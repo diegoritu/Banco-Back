@@ -123,7 +123,6 @@ public class Physical
         view.setUserType(UserType.valueOf(this.getUserType()).toString());
         view.setDni(this.getDni());
         view.setId(this.getId());
-        view.setPassword(this.getPassword());
         view.setFirstLogin(this.isFirstLogin());
         
         if(this.getSavings() == null) {

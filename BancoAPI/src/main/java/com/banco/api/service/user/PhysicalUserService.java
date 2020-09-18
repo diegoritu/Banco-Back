@@ -74,6 +74,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
             user.setChecking(checkingAccount);
         }
         PhysicalUserDTO result = user.toView();
+        result.setPassword(user.getPassword());
         user.hashPassword(user.getPassword());
         Physical saved = physicalRepository.save(user);
         result.setId(saved.getId());
@@ -207,6 +208,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         Physical user = findByUsername(username);
         user.resetPassword();
         PhysicalUserDTO result = user.toView();
+        result.setPassword(user.getPassword());
         user.hashPassword(user.getPassword());
         Physical saved = physicalRepository.save(user);
 

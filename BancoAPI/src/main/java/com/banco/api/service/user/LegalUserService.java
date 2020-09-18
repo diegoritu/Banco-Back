@@ -66,6 +66,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
             user.setChecking(checkingAccount);
         }
         LegalUserDTO result = user.toView();
+        result.setPassword(user.getPassword());
         user.hashPassword(user.getPassword());
         Legal saved = legalRepository.save(user);
         result.setId(saved.getId());
@@ -186,6 +187,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         Legal user = findByUsername(username);
         user.resetPassword();
         LegalUserDTO result = user.toView();
+        result.setPassword(user.getPassword());
         user.hashPassword(user.getPassword());
         Legal saved = legalRepository.save(user);
 

@@ -105,7 +105,6 @@ public class Administrative extends User implements Externalizable<Administrativ
         view.setMobilePhone(this.getMobilePhone());
         view.setFirstName(this.getFirstName());
         view.setLastName(this.getLastName());
-        view.setPassword(this.getPassword());
         view.setFirstLogin(this.isFirstLogin());
         return view;
     }

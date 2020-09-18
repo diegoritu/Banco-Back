@@ -45,7 +45,8 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
         user.setLastName(request.getLastName());
 
         AdministrativeUserDTO result = user.toView();
-        user.hashPassword(user.getPassword());
+		result.setPassword(user.getPassword());
+		user.hashPassword(user.getPassword());
         Administrative saved = administrativeRepository.save(user);
         result.setId(saved.getId());
         return result;
