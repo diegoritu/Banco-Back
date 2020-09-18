@@ -88,9 +88,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@RequestBody LoginRequest request) { //0, 1 o 2, según si es persona fisica, juridica o administrativa
     	int login = 2;
-    	
     	if(physicalUserService.findByActiveUsername(request.getUsername()) != null) {
     		login = physicalUserService.login(request.getUsername(), request.getPassword());
+
 	    	switch (login) {
 			case 1:
 				LOGGER.info("Successfully logued with credentials: {}", request.toString());
@@ -106,6 +106,7 @@ public class UserController {
     	}
     	else if(legalUserService.findByActiveUsername(request.getUsername()) != null) {
     		login = legalUserService.login(request.getUsername(), request.getPassword());
+
         	switch (login) {
     		case 1:
     			LOGGER.info("Successfully logued with credentials: {}", request.toString());
@@ -122,6 +123,7 @@ public class UserController {
     	}
     	else if(administrativeUserService.findByActiveUsername(request.getUsername()) != null) {
     		login = administrativeUserService.login(request.getUsername(), request.getPassword());
+
         	switch (login) {
     		case 1:
     			LOGGER.info("Successfully logued with credentials: {}", request.toString());

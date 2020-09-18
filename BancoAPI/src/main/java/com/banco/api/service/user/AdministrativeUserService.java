@@ -63,7 +63,7 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
     }
 	
     public Administrative findByActiveUsername(String username) {
-    	Administrative administrativeUser = administrativeRepository.findByUsernameAndUserTypeNumberAndActive(username, 1, true);
+    	Administrative administrativeUser = administrativeRepository.findByUsernameAndUserTypeNumberAndActive(username, 2, true);
         return administrativeUser;
     }
 

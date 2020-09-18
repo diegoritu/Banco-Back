@@ -92,7 +92,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     }
     
     public Physical findByActiveUsername(String username) {
-    	Physical physicalUser = physicalRepository.findByUsernameAndUserTypeNumberAndActive(username, 1, true);
+    	Physical physicalUser = physicalRepository.findByUsernameAndUserTypeNumberAndActive(username, 0, true);
         return physicalUser;
     }
     
