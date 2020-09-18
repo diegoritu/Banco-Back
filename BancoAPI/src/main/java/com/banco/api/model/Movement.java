@@ -36,7 +36,7 @@ public class Movement {
     //@Column(name = "idService")
     @OneToOne
     @JoinColumn(name = "idService")
-    private Service service;
+    private ServicePayment service;
     
     private String reference;
     private float entryBalanceBeforeMovement;
@@ -57,7 +57,7 @@ public class Movement {
      */
     
     public Movement(int movementType, Date dayAndHour, String concept, float amount, int transactionNumber,
-			Service service, String reference, float entryBalanceBeforeMovement, float exitBalanceBeforeMovement,
+			ServicePayment service, String reference, float entryBalanceBeforeMovement, float exitBalanceBeforeMovement,
 			Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount, Savings saExitAccount) {
 		super();
 		this.movementType = movementType;
@@ -80,7 +80,7 @@ public class Movement {
      */
 
     public Movement(int idMovement, int movementType, Date dayAndHour, String concept, float amount,
-			int transactionNumber, Service service, String reference, float entryBalanceBeforeMovement,
+			int transactionNumber, ServicePayment service, String reference, float entryBalanceBeforeMovement,
 			float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
 			Savings saExitAccount) {
 		super();
@@ -153,11 +153,11 @@ public class Movement {
         this.transactionNumber = transactionNumber;
     }
 
-    public Service getService() {
+    public ServicePayment getService() {
         return service;
     }
 
-    public void setService(Service service) {
+    public void setService(ServicePayment service) {
         this.service = service;
     }
 

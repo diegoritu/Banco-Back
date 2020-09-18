@@ -28,7 +28,7 @@ import com.banco.api.service.others.MovementService;
 @RequestMapping("/movement")
 public class MovementController {
     
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MovementController.class);
     @Autowired
     private SavingsService savingsService;
     @Autowired
