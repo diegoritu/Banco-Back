@@ -1,5 +1,7 @@
 package com.banco.api.dto.others;
 
+import com.banco.api.dto.account.CheckingDTO;
+import com.banco.api.dto.account.SavingsDTO;
 import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.PhysicalUserDTO;
 
@@ -13,9 +15,11 @@ public class ServiceDTO {
 	private PhysicalUserDTO physicalWhoPays;
 	private LegalUserDTO vendor;
 	private String due;
+	private CheckingDTO vendorChecking;
+	private SavingsDTO vendorSavings;
 	
 	public ServiceDTO(String name, float amount, String idServicePayment, boolean paid, boolean regular,
-			LegalUserDTO legalWhoPays, PhysicalUserDTO physicalWhoPays, LegalUserDTO vendor, String due) {
+			LegalUserDTO legalWhoPays, PhysicalUserDTO physicalWhoPays, LegalUserDTO vendor, String due, CheckingDTO vendorChecking, SavingsDTO vendorSavings) {
 		super();
 		this.name = name;
 		this.amount = amount;
@@ -26,6 +30,8 @@ public class ServiceDTO {
 		this.physicalWhoPays = physicalWhoPays;
 		this.vendor = vendor;
 		this.due = due;
+		this.vendorChecking = vendorChecking;
+		this.vendorSavings = vendorSavings;
 	}
 	
 	public ServiceDTO() {}
@@ -84,10 +90,24 @@ public class ServiceDTO {
 	public void setDue(String due) {
 		this.due = due;
 	}
+	public CheckingDTO getVendorChecking() {
+		return vendorChecking;
+	}
+	public void setVendorChecking(CheckingDTO vendorChecking) {
+		this.vendorChecking = vendorChecking;
+	}
+	public SavingsDTO getVendorSavings() {
+		return vendorSavings;
+	}
+	public void setVendorSavings(SavingsDTO vendorSavings) {
+		this.vendorSavings = vendorSavings;
+	}
+
 	@Override
 	public String toString() {
 		return "ServiceDTO [name=" + name + ", amount=" + amount + ", idServicePayment=" + idServicePayment + ", paid="
 				+ paid + ", regular=" + regular + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays="
-				+ physicalWhoPays + ", vendor=" + vendor + ", due=" + due + "]";
+				+ physicalWhoPays + ", vendor=" + vendor + ", due=" + due + ", vendorChecking=" + vendorChecking
+				+ ", vendorSavings=" + vendorSavings + "]";
 	}
 }

@@ -12,11 +12,13 @@ public class CreateServiceRequest implements Serializable {
 	private boolean regular;
 	private String vendorUsername;
 	private String dueDay;
+	private int vendorAccountType;
+	private String vendorAccountNumber;
 	
     public CreateServiceRequest() {}
 
 	public CreateServiceRequest(String name, float amount, String idServicePayment, boolean regular, String vendorUsername,
-			String dueDay) {
+			String dueDay, int vendorAccountType, String vendorAccountNumber) {
 		super();
 		this.name = name;
 		this.amount = amount;
@@ -24,6 +26,8 @@ public class CreateServiceRequest implements Serializable {
 		this.regular = regular;
 		this.vendorUsername = vendorUsername;
 		this.dueDay = dueDay;
+		this.vendorAccountType = vendorAccountType;
+		this.vendorAccountNumber = vendorAccountNumber;
 	}
 
 	public String getName() {
@@ -49,4 +53,19 @@ public class CreateServiceRequest implements Serializable {
 	public String getDueDay() {
 		return dueDay;
 	}
+
+	public int getVendorAccountType() {
+		return vendorAccountType;
+	}
+	public String getVendorAccountNumber() {
+		return vendorAccountNumber;
+	}
+
+	@Override
+	public String toString() {
+		return "CreateServiceRequest [name=" + name + ", amount=" + amount + ", idServicePayment=" + idServicePayment
+				+ ", regular=" + regular + ", vendorUsername=" + vendorUsername + ", dueDay=" + dueDay
+				+ ", vendorAccountType=" + vendorAccountType + ", vendorAccountNumber=" + vendorAccountNumber + "]";
+	}
+
 }

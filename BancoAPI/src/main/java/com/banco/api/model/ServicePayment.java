@@ -12,6 +12,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.banco.api.dto.others.ServiceDTO;
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
 
@@ -23,7 +25,13 @@ public class ServicePayment {
     private float amount;
     private String idServicePayment;
     private boolean paid;
-    private boolean regular;   
+    private boolean regular;
+    
+    @ManyToOne
+    private Checking vendorChecking;
+    
+    @ManyToOne
+    private Savings vendorSavings;
     
     @ManyToOne
     private Legal legalWhoPays;
@@ -118,16 +126,32 @@ public class ServicePayment {
     public void setIdService(int idService) {
         this.idService = idService;
     }
+    
 
-    @Override
-    public String toString() {
-        return "Service{" +
-                "name='" + name + '\'' +
-                ", amount=" + amount +
-                ", due=" + due +
-                ", idService=" + idService +
-                '}';
-    }
+    public Checking getVendorChecking() {
+		return vendorChecking;
+	}
+
+	public void setVendorChecking(Checking vendorChecking) {
+		this.vendorChecking = vendorChecking;
+	}
+
+	public Savings getVendorSavings() {
+		return vendorSavings;
+	}
+
+	public void setVendorSavings(Savings vendorSavings) {
+		this.vendorSavings = vendorSavings;
+	}
+
+
+	@Override
+	public String toString() {
+		return "ServicePayment [name=" + name + ", amount=" + amount + ", idServicePayment=" + idServicePayment
+				+ ", paid=" + paid + ", regular=" + regular + ", vendorChecking=" + vendorChecking + ", vendorSavings="
+				+ vendorSavings + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays=" + physicalWhoPays
+				+ ", vendor=" + vendor + ", due=" + due + ", idService=" + idService + "]";
+	}
 
 	public ServiceDTO toView() {
 		ServiceDTO result = new ServiceDTO();
@@ -146,6 +170,18 @@ public class ServicePayment {
 		}
 		else {
 			result.setPhysicalWhoPays(null);
+		}
+		if(this.getVendorChecking() != null) {
+			result.setVendorChecking(this.getVendorChecking().toView());
+		}
+		else {
+			result.setVendorChecking(null);
+		}
+		if(this.getVendorSavings() != null) {
+			result.setVendorSavings(vendorSavings.toView());
+		}
+		else {
+			result.setVendorSavings(null);
 		}
 		result.setPaid(this.isPaid());
 		result.setRegular(this.isRegular());
