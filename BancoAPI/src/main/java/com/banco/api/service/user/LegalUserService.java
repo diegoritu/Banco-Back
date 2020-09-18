@@ -110,7 +110,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     }
 
     public byte login(String username, String password) { // 1= Logued ; 2= Error ; 3= FirstLogin (Logued, but different code)
-        Legal user = findByUsername(username);
+        Legal user = findByActiveUsername(username);
         byte result = 2;
 
         String hashedPass = null;
