@@ -172,7 +172,7 @@ public class UserController {
         }
     }
     
-    @PostMapping("/physical/modify")
+    @PutMapping("/physical/modify")
     public ResponseEntity modifyPhysical(@RequestBody PhysicalUserModificationRequest request) {
     	try {
 	        LOGGER.info("Modification of physical user operation started. {}", request.toString());
@@ -186,7 +186,7 @@ public class UserController {
     	}
     }
     
-    @PostMapping("/legal/modify")
+    @PutMapping("/legal/modify")
     public ResponseEntity modifyLegal(@RequestBody LegalUserModificationRequest request) {
     	try {
 	        LOGGER.info("Modification of legal user operation started. {}", request.toString());

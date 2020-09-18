@@ -1,7 +1,6 @@
 package com.banco.api.service.account;
 
 import com.banco.api.dto.account.SavingsDTO;
-import com.banco.api.dto.account.request.SavingsRequest;
 import com.banco.api.model.account.Savings;
 import com.banco.api.repository.account.SavingsRepository;
 import com.google.common.collect.Lists;
@@ -14,7 +13,7 @@ import java.util.List;
 
 
 @Service
-public class SavingsService extends AccountService<Savings, SavingsDTO, SavingsRequest> {
+public class SavingsService extends AccountService<Savings, SavingsDTO> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SavingsService.class);
 

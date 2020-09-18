@@ -2,8 +2,8 @@ package com.banco.api.controller;
 
 import com.banco.api.dto.account.CheckingDTO;
 import com.banco.api.dto.account.SavingsDTO;
-import com.banco.api.dto.user.LegalUserDTO;
-import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.dto.account.request.CreateCheckingAccountRequest;
+import com.banco.api.dto.account.request.UpdateCheckingAccountRequest;
 import com.banco.api.exception.CheckingAccountRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -28,8 +28,7 @@ import static com.banco.api.controller.ResponseEntityFactory.createErrorResponse
 public class AccountController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
-    
-   
+
     @Autowired
     private PhysicalUserService physicalUserService;
     @Autowired
@@ -39,8 +38,10 @@ public class AccountController {
     @Autowired
     private SavingsService savingsService;
 
-	@GetMapping("/checking/new-account")
-	public ResponseEntity openCheckingAccount(@RequestParam String username, Float maxOverdraft) {
+	@PostMapping("/checking")
+	public ResponseEntity createCheckingAccount(@RequestBody CreateCheckingAccountRequest request) {
+		String username = request.getUsername();
+		Float maxOverdraft = request.getMaxOverdraft();
 		Checking checking;
 		try {
 			if (legalUserService.existsUser(username)) {
@@ -60,15 +61,15 @@ public class AccountController {
 	}
 
 
-	@GetMapping("/checking/update-max-overdraft")
-	public ResponseEntity editCheckingAccount(@RequestParam String accountNumber, Float maxOverdraft) {
-		Checking checking = checkingService.findByAccountNumber(accountNumber);
+	@PutMapping("/checking")
+	public ResponseEntity updateCheckingAccount(@PathVariable UpdateCheckingAccountRequest request) {
+		Checking checking = checkingService.findByAccountNumber(request.getAccountNumber());
 		if (checking == null || !checking.isActive()) {
 			String message = "Could not update checking account max overdraft. Account number {} not found";
-			LOGGER.warn("Could not update checking account max overdraft. Account number {} not found", accountNumber);
+			LOGGER.warn("Could not update checking account max overdraft. Account number {} not found", request.getAccountNumber());
 			return createErrorResponseEntity(HttpStatus.NOT_FOUND, message);
 		} else {
-			checking.setMaxOverdraft(maxOverdraft);
+			checking.setMaxOverdraft(request.getMaxOverDraft());
 			Checking result = checkingService.update(checking);
 			return new ResponseEntity<>(result.toView(), HttpStatus.OK);
 		}

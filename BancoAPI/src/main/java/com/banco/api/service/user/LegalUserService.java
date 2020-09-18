@@ -12,7 +12,6 @@ import com.banco.api.model.user.Legal;
 import com.banco.api.repository.user.LegalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
-import com.banco.api.utils.CollectionUtils;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
