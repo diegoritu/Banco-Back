@@ -157,6 +157,8 @@ public class MovementService {
 		Movement result = new Movement();
 		Date now = new Date();
 		
+		servicePayment.setPaid(true);
+		
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);

@@ -10,7 +10,6 @@ public class ServiceDTO {
 	private float amount;
 	private String servicePaymentId;
 	private boolean paid;
-	private boolean regular;
 	private LegalUserDTO legalWhoPays;
 	private PhysicalUserDTO physicalWhoPays;
 	private LegalUserDTO vendor;
@@ -18,14 +17,13 @@ public class ServiceDTO {
 	private CheckingDTO vendorChecking;
 	private SavingsDTO vendorSavings;
 	
-	public ServiceDTO(String name, float amount, String idServicePayment, boolean paid, boolean regular,
+	public ServiceDTO(String name, float amount, String idServicePayment, boolean paid,
 			LegalUserDTO legalWhoPays, PhysicalUserDTO physicalWhoPays, LegalUserDTO vendor, String due, CheckingDTO vendorChecking, SavingsDTO vendorSavings) {
 		super();
 		this.name = name;
 		this.amount = amount;
 		this.servicePaymentId = idServicePayment;
 		this.paid = paid;
-		this.regular = regular;
 		this.legalWhoPays = legalWhoPays;
 		this.physicalWhoPays = physicalWhoPays;
 		this.vendor = vendor;
@@ -59,12 +57,6 @@ public class ServiceDTO {
 	}
 	public void setPaid(boolean paid) {
 		this.paid = paid;
-	}
-	public boolean isRegular() {
-		return regular;
-	}
-	public void setRegular(boolean regular) {
-		this.regular = regular;
 	}
 	public LegalUserDTO getLegalWhoPays() {
 		return legalWhoPays;
@@ -105,9 +97,10 @@ public class ServiceDTO {
 
 	@Override
 	public String toString() {
-		return "ServiceDTO [name=" + name + ", amount=" + amount + ", idServicePayment=" + servicePaymentId + ", paid="
-				+ paid + ", regular=" + regular + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays="
-				+ physicalWhoPays + ", vendor=" + vendor + ", due=" + due + ", vendorChecking=" + vendorChecking
-				+ ", vendorSavings=" + vendorSavings + "]";
+		return "ServiceDTO [name=" + name + ", amount=" + amount + ", servicePaymentId=" + servicePaymentId + ", paid="
+				+ paid + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays=" + physicalWhoPays + ", vendor="
+				+ vendor + ", due=" + due + ", vendorChecking=" + vendorChecking + ", vendorSavings=" + vendorSavings
+				+ "]";
 	}
+
 }

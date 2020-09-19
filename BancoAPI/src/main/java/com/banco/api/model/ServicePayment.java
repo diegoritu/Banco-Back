@@ -30,7 +30,6 @@ public class ServicePayment {
     private float amount;
     private String servicePaymentId;
     private boolean paid;
-    private boolean regular;
     
     @ManyToOne
     private Checking vendorChecking;
@@ -55,12 +54,11 @@ public class ServicePayment {
 
     public ServicePayment() {}
     
-    public ServicePayment(String name, float amount, boolean regular) {
+    public ServicePayment(String name, float amount) {
         super();
         this.name = name;
         this.amount = amount;
         this.paid = false;
-        this.regular = regular;
         setServicePaymentId();
     }
     
@@ -82,12 +80,6 @@ public class ServicePayment {
 	}
 	public void setPaid(boolean paid) {
 		this.paid = paid;
-	}
-	public boolean isRegular() {
-		return regular;
-	}
-	public void setRegular(boolean regular) {
-		this.regular = regular;
 	}
 	public Legal getLegalWhoPays() {
 		return legalWhoPays;
@@ -155,13 +147,12 @@ public class ServicePayment {
 		this.vendorSavings = vendorSavings;
 	}
 
-
 	@Override
 	public String toString() {
-		return "ServicePayment [name=" + name + ", amount=" + amount + ", idServicePayment=" + servicePaymentId
-				+ ", paid=" + paid + ", regular=" + regular + ", vendorChecking=" + vendorChecking + ", vendorSavings="
-				+ vendorSavings + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays=" + physicalWhoPays
-				+ ", vendor=" + vendor + ", due=" + due + ", idService=" + idService + "]";
+		return "ServicePayment [name=" + name + ", amount=" + amount + ", servicePaymentId=" + servicePaymentId
+				+ ", paid=" + paid + ", vendorChecking=" + vendorChecking + ", vendorSavings=" + vendorSavings
+				+ ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays=" + physicalWhoPays + ", vendor=" + vendor
+				+ ", due=" + due + ", idService=" + idService + "]";
 	}
 
 	public ServiceDTO toView() {
@@ -195,7 +186,6 @@ public class ServicePayment {
 			result.setVendorSavings(null);
 		}
 		result.setPaid(this.isPaid());
-		result.setRegular(this.isRegular());
 		if(this.getVendor() != null) {
 			result.setVendor(this.getVendor().toView());
 		}

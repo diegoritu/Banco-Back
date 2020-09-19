@@ -40,7 +40,7 @@ public class ServiceService {
 		Collection<ServicePayment> services = new ArrayList<ServicePayment>();
 		for(int i=0; i<request.getAmountOfIds();i++) {
 			do {
-				result = new ServicePayment(request.getName(), request.getAmount(), request.isRegular());
+				result = new ServicePayment(request.getName(), request.getAmount());
 			}
 			while(existsByServicePaymentId(result.getServicePaymentId()));
 			Legal vendor = legalUserService.findByActiveUsername(request.getVendorUsername());

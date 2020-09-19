@@ -304,9 +304,7 @@ public class MovementController {
 				balanceBeforeMovementFrom = checkingFrom.getBalance();
 				canBePerformed = checkingFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
-					if(servicePayment.isRegular()) {
-						//serviceService.createService(new CreateServiceRequest(servicePayment.getName(), servicePayment.getAmount(), servicePayment.getServicePaymentId(), true, servicePayment.getVendor().getUsername(), Integer.toString(servicePayment.getDue().getDate()), (int)whereTo, vendorAccountNumber));
-					}
+					
 					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, checkingFrom, null, servicePayment, physicalWhoPays, null, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
 				}
 				else {
@@ -318,9 +316,7 @@ public class MovementController {
 				balanceBeforeMovementFrom = savingsFrom.getBalance();
 				canBePerformed = savingsFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
-					if(servicePayment.isRegular()) {
-						//serviceService.createService(new CreateServiceRequest(servicePayment.getName(), servicePayment.getAmount(), servicePayment.getServicePaymentId(), true, servicePayment.getVendor().getUsername(), Integer.toString(servicePayment.getDue().getDate()), (int)whereTo, vendorAccountNumber));
-					}
+					
 					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)1, null, savingsFrom, servicePayment, physicalWhoPays, null, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
 				}
 				else {
@@ -339,9 +335,7 @@ public class MovementController {
 				balanceBeforeMovementFrom = checkingFrom.getBalance();
 				canBePerformed = checkingFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
-					if(servicePayment.isRegular()) {
-						//serviceService.createService(new CreateServiceRequest(servicePayment.getName(), servicePayment.getAmount(), servicePayment.getServicePaymentId(), true, servicePayment.getVendor().getUsername(), Integer.toString(servicePayment.getDue().getDate()), (int)whereTo, vendorAccountNumber));
-					}
+					
 					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, checkingFrom, null, servicePayment, null, legalWhoPays, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
 				}
 				else {
@@ -353,9 +347,7 @@ public class MovementController {
 				balanceBeforeMovementFrom = savingsFrom.getBalance();
 				canBePerformed = savingsFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
-					if(servicePayment.isRegular()) {
-						//serviceService.createService(new CreateServiceRequest(servicePayment.getName(), servicePayment.getAmount(), servicePayment.getServicePaymentId(), true, servicePayment.getVendor().getUsername(), Integer.toString(servicePayment.getDue().getDate()), (int)whereTo, vendorAccountNumber));
-					}
+					
 					return new ResponseEntity<MovementDTO>(movementService.payServices((byte) 1, null, savingsFrom, servicePayment, null, legalWhoPays, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
 				}
 				else {
