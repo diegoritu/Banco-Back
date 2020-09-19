@@ -152,8 +152,9 @@ public class MovementService {
 		return movementDTO;
 	}
 
-	public MovementDTO payServices(byte whereFrom,byte whoFrom, Checking checkingFrom, Savings savingsFrom, ServicePayment servicePayment, Physical physicalWhoPays, Legal legalWhoPays, byte whereTo, Checking checkingTo, Savings savingsTo, float balanceBeforeMovementFrom, float balanceBeforeMovementTo) {
+	public MovementDTO payServices(byte whereFrom, Checking checkingFrom, Savings savingsFrom, ServicePayment servicePayment, Physical physicalWhoPays, Legal legalWhoPays, byte whereTo, Checking checkingTo, Savings savingsTo, float balanceBeforeMovementFrom, float balanceBeforeMovementTo) {
 		MovementDTO movementDTO = new MovementDTO();
+		Movement result = new Movement();
 		Date now = new Date();
 		
 		movementDTO.setDayAndHour(now.toString());
@@ -161,27 +162,35 @@ public class MovementService {
 		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		movementDTO.setAmount(servicePayment.getAmount());
 		movementDTO.setMovementType(4);
-
+		movementDTO.setService(servicePayment.toView());
 		
-		if(whoFrom == 0) {
-			servicePayment.setPhysicalWhoPays(physicalWhoPays);
-		}
-		else if (whoFrom == 1) {
-			servicePayment.setLegalWhoPays(legalWhoPays);
-		}
+		result.setDayAndHour(now);
+		result.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
+		result.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
+		result.setAmount(servicePayment.getAmount());
+		result.setMovementType(4);
+		result.setService(servicePayment);
+		
 		if(whereFrom == 0) {
+			result.setChExitAccount(checkingFrom);
 			movementDTO.setChExitAccount(checkingFrom.toView());
 		}
 		else if(whereFrom == 1) {
+			result.setSaExitAccount(savingsFrom);
 			movementDTO.setSaExitAccount(savingsFrom.toView());
 		}
 		if(whereTo == 0) {
+			result.setChEntryAccount(servicePayment.getVendorChecking());
 			movementDTO.setChEntryAccount(servicePayment.getVendorChecking().toView());
 		}
 		else {
+			result.setSaEntryAccount(servicePayment.getVendorSavings());
 			movementDTO.setSaEntryAccount(servicePayment.getVendorSavings().toView());
 		}
-		return null;
+		
+		movementRepository.save(result);
+		
+		return movementDTO;
 	}
 	
 }

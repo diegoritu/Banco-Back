@@ -1,6 +1,11 @@
 package com.banco.api.model;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -50,21 +55,27 @@ public class ServicePayment {
 
     public ServicePayment() {}
     
-    public ServicePayment(String name, float amount, String idServicePayment, boolean regular) {
+    public ServicePayment(String name, float amount, boolean regular) {
         super();
         this.name = name;
         this.amount = amount;
-        this.servicePaymentId = idServicePayment;
         this.paid = false;
         this.regular = regular;
+        setServicePaymentId();
     }
     
     public String getServicePaymentId() {
 		return servicePaymentId;
 	}
 
-	public void setServicePaymentId(String idServicePayment) {
-		this.servicePaymentId = idServicePayment;
+	public void setServicePaymentId() {
+		final int BASE_LENGHT = 9;
+    	String numbers = "123456789";
+    	List<String> code = Arrays.asList(numbers.split(""));
+    	Collections.shuffle(code);
+    	String id = code.stream().collect(Collectors.joining()).substring(0, BASE_LENGHT);
+		
+    	this.servicePaymentId = id;
 	}
 	public boolean isPaid() {
 		return paid;

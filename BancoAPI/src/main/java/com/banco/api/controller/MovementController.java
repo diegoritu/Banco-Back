@@ -20,6 +20,7 @@ import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.dto.movement.request.ServicePaymentRequest;
 import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
 import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
+import com.banco.api.dto.others.request.CreateServiceRequest;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
@@ -269,7 +270,7 @@ public class MovementController {
     public ResponseEntity<MovementDTO> payServices(@RequestBody ServicePaymentRequest request){
 		Savings savingsFrom;
 		Checking checkingFrom;
-		ServicePayment servicePayment = serviceService.findServiceByservicePaymentIdAndVendorId(request.getIdServicePayment(), request.getVendorId());
+		ServicePayment servicePayment = serviceService.findServiceByservicePaymentId(request.getIdServicePayment(), request.getVendorId());
 		Physical physicalWhoPays;
 		Legal legalWhoPays;
 		float balanceBeforeMovementFrom;
@@ -278,28 +279,35 @@ public class MovementController {
 		Savings savingsTo = null;
 		Checking checkingTo = null;
 		byte whereTo;
+		String vendorAccountNumber;
 		
 		if(servicePayment.getVendorChecking() != null) {
 			checkingTo = servicePayment.getVendorChecking();
 			balanceBeforeMovementTo = checkingTo.getBalance();
 			checkingTo.deposit(servicePayment.getAmount());
+			vendorAccountNumber = checkingTo.getAccountNumber();
 			whereTo = 0;
 		}
 		else {
 			savingsTo = servicePayment.getVendorSavings();
 			balanceBeforeMovementTo = savingsTo.getBalance();
 			savingsTo.deposit(servicePayment.getAmount());
+			vendorAccountNumber = savingsTo.getAccountNumber();
 			whereTo = 1;
 		}
 		
 		if(physicalUserService.existsUser(request.getUsernameFrom())) {
 			physicalWhoPays = physicalUserService.findByActiveUsername(request.getUsernameFrom());
+			servicePayment.setPhysicalWhoPays(physicalWhoPays);
 			if(checkingService.existsAccountNumber(request.getAccountNumberFrom())) {
 				checkingFrom = checkingService.findByAccountNumber(request.getAccountNumberFrom());
 				balanceBeforeMovementFrom = checkingFrom.getBalance();
 				canBePerformed = checkingFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
-					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, (byte) 0, checkingFrom, null, servicePayment, physicalWhoPays, null, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+					if(servicePayment.isRegular()) {
+						//serviceService.createService(new CreateServiceRequest(servicePayment.getName(), servicePayment.getAmount(), servicePayment.getServicePaymentId(), true, servicePayment.getVendor().getUsername(), Integer.toString(servicePayment.getDue().getDate()), (int)whereTo, vendorAccountNumber));
+					}
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, checkingFrom, null, servicePayment, physicalWhoPays, null, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
 				}
 				else {
 					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
@@ -310,7 +318,10 @@ public class MovementController {
 				balanceBeforeMovementFrom = savingsFrom.getBalance();
 				canBePerformed = savingsFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
-					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)1, (byte) 0, null, savingsFrom, servicePayment, physicalWhoPays, null, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+					if(servicePayment.isRegular()) {
+						//serviceService.createService(new CreateServiceRequest(servicePayment.getName(), servicePayment.getAmount(), servicePayment.getServicePaymentId(), true, servicePayment.getVendor().getUsername(), Integer.toString(servicePayment.getDue().getDate()), (int)whereTo, vendorAccountNumber));
+					}
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)1, null, savingsFrom, servicePayment, physicalWhoPays, null, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
 				}
 				else {
 					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
@@ -322,12 +333,16 @@ public class MovementController {
 		}
 		else if(legalUserService.existsUser(request.getUsernameFrom())) {
 			legalWhoPays = legalUserService.findByActiveUsername(request.getUsernameFrom());
+			servicePayment.setLegalWhoPays(legalWhoPays);
 			if(checkingService.existsAccountNumber(request.getAccountNumberFrom())) {
 				checkingFrom = checkingService.findByAccountNumber(request.getAccountNumberFrom());
 				balanceBeforeMovementFrom = checkingFrom.getBalance();
 				canBePerformed = checkingFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
-					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, (byte) 1, checkingFrom, null, servicePayment, null, legalWhoPays, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+					if(servicePayment.isRegular()) {
+						//serviceService.createService(new CreateServiceRequest(servicePayment.getName(), servicePayment.getAmount(), servicePayment.getServicePaymentId(), true, servicePayment.getVendor().getUsername(), Integer.toString(servicePayment.getDue().getDate()), (int)whereTo, vendorAccountNumber));
+					}
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, checkingFrom, null, servicePayment, null, legalWhoPays, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
 				}
 				else {
 					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
@@ -338,7 +353,10 @@ public class MovementController {
 				balanceBeforeMovementFrom = savingsFrom.getBalance();
 				canBePerformed = savingsFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
-					return new ResponseEntity<MovementDTO>(movementService.payServices((byte) 1, (byte) 1, null, savingsFrom, servicePayment, null, legalWhoPays, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+					if(servicePayment.isRegular()) {
+						//serviceService.createService(new CreateServiceRequest(servicePayment.getName(), servicePayment.getAmount(), servicePayment.getServicePaymentId(), true, servicePayment.getVendor().getUsername(), Integer.toString(servicePayment.getDue().getDate()), (int)whereTo, vendorAccountNumber));
+					}
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte) 1, null, savingsFrom, servicePayment, null, legalWhoPays, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
 				}
 				else {
 					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.

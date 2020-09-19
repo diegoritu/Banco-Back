@@ -1,5 +1,8 @@
 package com.banco.api.controller;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.banco.api.dto.others.ServiceDTO;
 import com.banco.api.dto.others.request.CreateServiceRequest;
+import com.banco.api.exception.VendorNotFoundException;
 import com.banco.api.service.others.ServiceService;
 
 @CrossOrigin(origins = "*")
@@ -24,21 +28,15 @@ public class ServiceController {
 	ServiceService serviceService;
 	
 	@PostMapping("/create")
-    public ResponseEntity createService(@RequestBody CreateServiceRequest request){
-		ServiceDTO result = serviceService.createService(request);
-		LOGGER.info("Create service operation started. {}", request.toString());
-
-		if(result == null) {
-			LOGGER.warn("Name or idServicePayment repeated");
-			return ResponseEntity
-                    .status(HttpStatus.IM_USED)
-                    .body("{\"error\": \" Name or idServicePayment repeated \"}");    		
+    public ResponseEntity<Map<String, String>> createService(@RequestBody CreateServiceRequest request){
+		try {
+		Map<String, String> ids = serviceService.createService(request);
+		LOGGER.info("Create services operation started. {}", request.toString());
+		return new ResponseEntity<Map<String, String>>(ids, HttpStatus.CREATED);
 		}
-		else if(result.getVendor() == null) {
+		catch(VendorNotFoundException ex){
+			LOGGER.warn(ex.getLocalizedMessage());
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
-		}
-		else {
-    		return new ResponseEntity<ServiceDTO>(result, HttpStatus.CREATED);
 		}
 	}
 	

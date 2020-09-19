@@ -87,14 +87,13 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
 	}
 
 	public void setVendorId() {
-		final int BASE_LENGHT = 10;
-    	String lettersLower = "abcdefghijklmnopqrstuvwxyz";
-    	String lettersUpper = lettersLower.toUpperCase();
+		final int BASE_LENGHT = 5;
+		String bName = this.getBusinessName().replace(" ","");
     	String numbers = "123456789";
-    	String joinOfThings = lettersUpper + numbers;
-    	List<String> letters = Arrays.asList(joinOfThings.split(""));
+    	List<String> letters = Arrays.asList(numbers.split(""));
     	Collections.shuffle(letters);
     	String vendorId = letters.stream().collect(Collectors.joining()).substring(0, BASE_LENGHT);
+    	vendorId = bName + vendorId;
 		this.vendorId = vendorId;
 	}
 
