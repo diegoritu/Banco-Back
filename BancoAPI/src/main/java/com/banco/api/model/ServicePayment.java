@@ -23,7 +23,7 @@ import com.banco.api.model.user.Physical;
 public class ServicePayment {
     private String name;
     private float amount;
-    private String idServicePayment;
+    private String servicePaymentId;
     private boolean paid;
     private boolean regular;
     
@@ -54,17 +54,17 @@ public class ServicePayment {
         super();
         this.name = name;
         this.amount = amount;
-        this.idServicePayment = idServicePayment;
+        this.servicePaymentId = idServicePayment;
         this.paid = false;
         this.regular = regular;
     }
     
-    public String getIdServicePayment() {
-		return idServicePayment;
+    public String getServicePaymentId() {
+		return servicePaymentId;
 	}
 
-	public void setIdServicePayment(String idServicePayment) {
-		this.idServicePayment = idServicePayment;
+	public void setServicePaymentId(String idServicePayment) {
+		this.servicePaymentId = idServicePayment;
 	}
 	public boolean isPaid() {
 		return paid;
@@ -147,7 +147,7 @@ public class ServicePayment {
 
 	@Override
 	public String toString() {
-		return "ServicePayment [name=" + name + ", amount=" + amount + ", idServicePayment=" + idServicePayment
+		return "ServicePayment [name=" + name + ", amount=" + amount + ", idServicePayment=" + servicePaymentId
 				+ ", paid=" + paid + ", regular=" + regular + ", vendorChecking=" + vendorChecking + ", vendorSavings="
 				+ vendorSavings + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays=" + physicalWhoPays
 				+ ", vendor=" + vendor + ", due=" + due + ", idService=" + idService + "]";
@@ -157,7 +157,7 @@ public class ServicePayment {
 		ServiceDTO result = new ServiceDTO();
 		result.setAmount(this.getAmount());
 		result.setDue(this.getDue().toString());
-		result.setIdServicePayment(this.getIdServicePayment());
+		result.setServicePaymentId(this.getServicePaymentId());
 		result.setName(this.getName());
 		if(this.getLegalWhoPays() != null) {
 			result.setLegalWhoPays(this.getLegalWhoPays().toView());

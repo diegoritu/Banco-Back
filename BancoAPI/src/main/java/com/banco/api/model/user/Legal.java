@@ -6,6 +6,12 @@ import com.banco.api.dto.user.UserType;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -17,7 +23,9 @@ import javax.persistence.OneToOne;
 public class Legal extends User implements Externalizable<LegalUserDTO> {
 
     private String businessName;
-
+    private boolean isVendor;
+    private String vendorId;
+    
     @OneToOne
     @JoinColumn(name = "idSavingsAccount")
     //@Column(name = "idSavingsAccount")
@@ -40,6 +48,7 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
         this.savings = savings;
         this.checking = checking;
         this.userTypeNumber = UserType.LEGAL.getValue();
+        this.isVendor = false;
     }
 
     public String getBusinessName() {
@@ -65,8 +74,31 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
     public void setChecking(Checking checking) {
         this.checking = checking;
     }
+    public boolean isVendor() {
+		return isVendor;
+	}
 
-    @Override
+	public void setVendor(boolean isVendor) {
+		this.isVendor = isVendor;
+	}
+
+	public String getVendorId() {
+		return vendorId;
+	}
+
+	public void setVendorId() {
+		final int BASE_LENGHT = 10;
+    	String lettersLower = "abcdefghijklmnopqrstuvwxyz";
+    	String lettersUpper = lettersLower.toUpperCase();
+    	String numbers = "123456789";
+    	String joinOfThings = lettersUpper + numbers;
+    	List<String> letters = Arrays.asList(joinOfThings.split(""));
+    	Collections.shuffle(letters);
+    	String vendorId = letters.stream().collect(Collectors.joining()).substring(0, BASE_LENGHT);
+		this.vendorId = vendorId;
+	}
+
+	@Override
     public String toString() {
         return "Legal{" +
                 "businessName='" + businessName + '\'' +

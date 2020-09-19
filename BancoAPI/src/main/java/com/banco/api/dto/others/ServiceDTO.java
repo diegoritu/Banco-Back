@@ -8,7 +8,7 @@ import com.banco.api.dto.user.PhysicalUserDTO;
 public class ServiceDTO {
 	private String name;
 	private float amount;
-	private String idServicePayment;
+	private String servicePaymentId;
 	private boolean paid;
 	private boolean regular;
 	private LegalUserDTO legalWhoPays;
@@ -23,7 +23,7 @@ public class ServiceDTO {
 		super();
 		this.name = name;
 		this.amount = amount;
-		this.idServicePayment = idServicePayment;
+		this.servicePaymentId = idServicePayment;
 		this.paid = paid;
 		this.regular = regular;
 		this.legalWhoPays = legalWhoPays;
@@ -48,11 +48,11 @@ public class ServiceDTO {
 	public void setAmount(float amount) {
 		this.amount = amount;
 	}
-	public String getIdServicePayment() {
-		return idServicePayment;
+	public String getServicePaymentId() {
+		return servicePaymentId;
 	}
-	public void setIdServicePayment(String idServicePayment) {
-		this.idServicePayment = idServicePayment;
+	public void setServicePaymentId(String idServicePayment) {
+		this.servicePaymentId = idServicePayment;
 	}
 	public boolean isPaid() {
 		return paid;
@@ -105,7 +105,7 @@ public class ServiceDTO {
 
 	@Override
 	public String toString() {
-		return "ServiceDTO [name=" + name + ", amount=" + amount + ", idServicePayment=" + idServicePayment + ", paid="
+		return "ServiceDTO [name=" + name + ", amount=" + amount + ", idServicePayment=" + servicePaymentId + ", paid="
 				+ paid + ", regular=" + regular + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays="
 				+ physicalWhoPays + ", vendor=" + vendor + ", due=" + due + ", vendorChecking=" + vendorChecking
 				+ ", vendorSavings=" + vendorSavings + "]";

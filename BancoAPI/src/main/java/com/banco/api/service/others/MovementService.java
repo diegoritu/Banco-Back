@@ -3,8 +3,11 @@ package com.banco.api.service.others;
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.MovementType;
 import com.banco.api.model.Movement;
+import com.banco.api.model.ServicePayment;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
+import com.banco.api.model.user.Legal;
+import com.banco.api.model.user.Physical;
 import com.banco.api.repository.MovementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -147,6 +150,38 @@ public class MovementService {
 		
 		movementRepository.save(result);		
 		return movementDTO;
+	}
+
+	public MovementDTO payServices(byte whereFrom,byte whoFrom, Checking checkingFrom, Savings savingsFrom, ServicePayment servicePayment, Physical physicalWhoPays, Legal legalWhoPays, byte whereTo, Checking checkingTo, Savings savingsTo, float balanceBeforeMovementFrom, float balanceBeforeMovementTo) {
+		MovementDTO movementDTO = new MovementDTO();
+		Date now = new Date();
+		
+		movementDTO.setDayAndHour(now.toString());
+		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
+		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
+		movementDTO.setAmount(servicePayment.getAmount());
+		movementDTO.setMovementType(4);
+
+		
+		if(whoFrom == 0) {
+			servicePayment.setPhysicalWhoPays(physicalWhoPays);
+		}
+		else if (whoFrom == 1) {
+			servicePayment.setLegalWhoPays(legalWhoPays);
+		}
+		if(whereFrom == 0) {
+			movementDTO.setChExitAccount(checkingFrom.toView());
+		}
+		else if(whereFrom == 1) {
+			movementDTO.setSaExitAccount(savingsFrom.toView());
+		}
+		if(whereTo == 0) {
+			movementDTO.setChEntryAccount(servicePayment.getVendorChecking().toView());
+		}
+		else {
+			movementDTO.setSaEntryAccount(servicePayment.getVendorSavings().toView());
+		}
+		return null;
 	}
 	
 }

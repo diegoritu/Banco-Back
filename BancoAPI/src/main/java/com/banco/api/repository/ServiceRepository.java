@@ -9,6 +9,8 @@ public interface ServiceRepository extends CrudRepository<ServicePayment, Intege
 	
 
 	ServicePayment findByIdServicePayment(String idServicePayment);
+	
+	ServicePayment findByIdServicePaymentAndVendorId(String idServicePayment, String vendorId);
 
 
 }

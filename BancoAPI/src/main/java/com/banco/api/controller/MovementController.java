@@ -2,6 +2,8 @@ package com.banco.api.controller;
 
 import com.banco.api.dto.movement.MovementType;
 import com.banco.api.model.Movement;
+import com.banco.api.model.ServicePayment;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
+import com.banco.api.dto.movement.request.ServicePaymentRequest;
 import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
 import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
+import com.banco.api.model.user.Legal;
+import com.banco.api.model.user.Physical;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.others.MovementService;
+import com.banco.api.service.others.ServiceService;
+import com.banco.api.service.user.LegalUserService;
+import com.banco.api.service.user.PhysicalUserService;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -35,6 +43,13 @@ public class MovementController {
     private CheckingService checkingService;
     @Autowired
     private MovementService movementService;
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private LegalUserService legalUserService;
+    @Autowired
+    private PhysicalUserService physicalUserService;
+    
     
     @PostMapping("/deposit")
     public ResponseEntity<MovementDTO> deposit(@RequestBody DepositAndExtractionRequest request){
@@ -241,6 +256,101 @@ public class MovementController {
 		default:
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}    
+    }
+    
+    /*
+     * 
+     * Precondiciones:
+     * 			- Debe estar validado que el servicio no haya sido pagado ya (en el buscador).
+     * 			- Debe estar validado que el servicio exista (en el buscador).
+     * 
+     * */
+    @PostMapping("/payServices")
+    public ResponseEntity<MovementDTO> payServices(@RequestBody ServicePaymentRequest request){
+		Savings savingsFrom;
+		Checking checkingFrom;
+		ServicePayment servicePayment = serviceService.findServiceByservicePaymentIdAndVendorId(request.getIdServicePayment(), request.getVendorId());
+		Physical physicalWhoPays;
+		Legal legalWhoPays;
+		float balanceBeforeMovementFrom;
+    	float balanceBeforeMovementTo;
+    	boolean canBePerformed;
+		Savings savingsTo = null;
+		Checking checkingTo = null;
+		byte whereTo;
+		
+		if(servicePayment.getVendorChecking() != null) {
+			checkingTo = servicePayment.getVendorChecking();
+			balanceBeforeMovementTo = checkingTo.getBalance();
+			checkingTo.deposit(servicePayment.getAmount());
+			whereTo = 0;
+		}
+		else {
+			savingsTo = servicePayment.getVendorSavings();
+			balanceBeforeMovementTo = savingsTo.getBalance();
+			savingsTo.deposit(servicePayment.getAmount());
+			whereTo = 1;
+		}
+		
+		if(physicalUserService.existsUser(request.getUsernameFrom())) {
+			physicalWhoPays = physicalUserService.findByActiveUsername(request.getUsernameFrom());
+			if(checkingService.existsAccountNumber(request.getAccountNumberFrom())) {
+				checkingFrom = checkingService.findByAccountNumber(request.getAccountNumberFrom());
+				balanceBeforeMovementFrom = checkingFrom.getBalance();
+				canBePerformed = checkingFrom.extract(servicePayment.getAmount());
+				if(canBePerformed) {
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, (byte) 0, checkingFrom, null, servicePayment, physicalWhoPays, null, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
+				}
+			}
+			else if(savingsService.existsAccountNumber(request.getAccountNumberFrom())) {
+				savingsFrom = savingsService.findByAccountNumber(request.getAccountNumberFrom());
+				balanceBeforeMovementFrom = savingsFrom.getBalance();
+				canBePerformed = savingsFrom.extract(servicePayment.getAmount());
+				if(canBePerformed) {
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)1, (byte) 0, null, savingsFrom, servicePayment, physicalWhoPays, null, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
+				}
+			}
+			else {
+				return new ResponseEntity<>(HttpStatus.CONFLICT);
+			}
+		}
+		else if(legalUserService.existsUser(request.getUsernameFrom())) {
+			legalWhoPays = legalUserService.findByActiveUsername(request.getUsernameFrom());
+			if(checkingService.existsAccountNumber(request.getAccountNumberFrom())) {
+				checkingFrom = checkingService.findByAccountNumber(request.getAccountNumberFrom());
+				balanceBeforeMovementFrom = checkingFrom.getBalance();
+				canBePerformed = checkingFrom.extract(servicePayment.getAmount());
+				if(canBePerformed) {
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, (byte) 1, checkingFrom, null, servicePayment, null, legalWhoPays, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
+				}
+			}
+			else if(savingsService.existsAccountNumber(request.getAccountNumberFrom())) {
+				savingsFrom = savingsService.findByAccountNumber(request.getAccountNumberFrom());
+				balanceBeforeMovementFrom = savingsFrom.getBalance();
+				canBePerformed = savingsFrom.extract(servicePayment.getAmount());
+				if(canBePerformed) {
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte) 1, (byte) 1, null, savingsFrom, servicePayment, null, legalWhoPays, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
+				}
+			}
+			else {
+				return new ResponseEntity<>(HttpStatus.CONFLICT);
+			}
+		}
+		else {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
     }
 }
 
