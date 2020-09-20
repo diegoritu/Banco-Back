@@ -1,6 +1,6 @@
 package com.banco.api.model.user;
 
-import com.banco.api.adapter.DateUtils;
+import com.banco.api.utils.DateUtils;
 import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.UserType;

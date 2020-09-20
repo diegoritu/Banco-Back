@@ -1,7 +1,6 @@
 package com.banco.api.controller;
 
 import com.banco.api.dto.movement.MovementType;
-import com.banco.api.model.Movement;
 import com.banco.api.model.ServicePayment;
 
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.dto.movement.request.ServicePaymentRequest;
 import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
 import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
-import com.banco.api.dto.others.request.CreateServiceRequest;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
@@ -28,7 +26,7 @@ import com.banco.api.model.user.Physical;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.others.MovementService;
-import com.banco.api.service.others.ServiceService;
+import com.banco.api.service.others.BillService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 
@@ -45,7 +43,7 @@ public class MovementController {
     @Autowired
     private MovementService movementService;
     @Autowired
-    private ServiceService serviceService;
+    private BillService billService;
     @Autowired
     private LegalUserService legalUserService;
     @Autowired
@@ -266,11 +264,11 @@ public class MovementController {
      * 			- Debe estar validado que el servicio exista (en el buscador).
      * 
      * */
-    @PostMapping("/payServices")
+    @PostMapping("/payServiceBill")
     public ResponseEntity<MovementDTO> payServices(@RequestBody ServicePaymentRequest request){
 		Savings savingsFrom;
 		Checking checkingFrom;
-		ServicePayment servicePayment = serviceService.findServiceByservicePaymentId(request.getIdServicePayment(), request.getVendorId());
+		ServicePayment servicePayment = billService.findServiceByServicePaymentId(request.getIdServicePayment(), request.getVendorId());
 		Physical physicalWhoPays;
 		Legal legalWhoPays;
 		float balanceBeforeMovementFrom;

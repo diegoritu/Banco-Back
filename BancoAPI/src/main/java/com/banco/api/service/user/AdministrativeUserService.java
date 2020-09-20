@@ -8,12 +8,11 @@ import javax.xml.bind.DatatypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.banco.api.adapter.DateUtils;
+import com.banco.api.utils.DateUtils;
 import com.banco.api.dto.user.AdministrativeUserDTO;
 import com.banco.api.dto.user.request.AdministrativeUserRequest;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.user.Administrative;
-import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.AdministrativeRepository;
 
 @Service

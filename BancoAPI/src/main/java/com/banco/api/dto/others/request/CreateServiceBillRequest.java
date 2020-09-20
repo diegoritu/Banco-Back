@@ -2,27 +2,24 @@ package com.banco.api.dto.others.request;
 
 import java.io.Serializable;
 
-import com.banco.api.dto.user.LegalUserDTO;
-import com.banco.api.dto.user.PhysicalUserDTO;
-
-public class CreateServiceRequest implements Serializable {
+public class CreateServiceBillRequest implements Serializable {
 	private String name;
 	private float amount;
 	private String vendorUsername;
-	private String dueDay;
-	private int vendorAccountType;
+	private String dueDate;
+	private String vendorAccountType;
 	private String vendorAccountNumber;
 	private int amountOfIds;
-	
-    public CreateServiceRequest() {}
 
-	public CreateServiceRequest(String name, float amount,
-			String vendorUsername, String dueDay, int vendorAccountType, String vendorAccountNumber, int amountOfIds) {
+    public CreateServiceBillRequest() {}
+
+	public CreateServiceBillRequest(String name, float amount,
+									String vendorUsername, String dueDate, String vendorAccountType, String vendorAccountNumber, int amountOfIds) {
 		super();
 		this.name = name;
 		this.amount = amount;
 		this.vendorUsername = vendorUsername;
-		this.dueDay = dueDay;
+		this.dueDate = dueDate;
 		this.vendorAccountType = vendorAccountType;
 		this.vendorAccountNumber = vendorAccountNumber;
 		this.amountOfIds = amountOfIds;
@@ -40,11 +37,11 @@ public class CreateServiceRequest implements Serializable {
 		return vendorUsername;
 	}
 
-	public String getDueDay() {
-		return dueDay;
+	public String getDueDate() {
+		return dueDate;
 	}
 
-	public int getVendorAccountType() {
+	public String getVendorAccountType() {
 		return vendorAccountType;
 	}
 	public String getVendorAccountNumber() {
@@ -57,7 +54,7 @@ public class CreateServiceRequest implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CreateServiceRequest [name=" + name + ", amount=" + amount + ", vendorUsername=" + vendorUsername + ", dueDay=" + dueDay + ", vendorAccountType="
+		return "CreateServiceBillRequest [name=" + name + ", amount=" + amount + ", vendorUsername=" + vendorUsername + ", dueDate=" + dueDate + ", vendorAccountType="
 				+ vendorAccountType + ", vendorAccountNumber=" + vendorAccountNumber + ", amountOfIds=" + amountOfIds
 				+ "]";
 	}

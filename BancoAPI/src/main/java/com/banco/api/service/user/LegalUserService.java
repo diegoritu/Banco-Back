@@ -1,6 +1,7 @@
 package com.banco.api.service.user;
 
 import com.banco.api.dto.user.LegalUserDTO;
+import com.banco.api.dto.user.UserType;
 import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
@@ -32,7 +33,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     private static final Logger LOGGER = LoggerFactory.getLogger(LegalUserService.class);
 
     @Autowired
-    LegalRepository legalRepository;
+    private LegalRepository legalRepository;
     @Autowired
     private PhysicalUserService physicalUserService;
     @Autowired
@@ -79,11 +80,11 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     }
 
     public Legal findByUsername(String username) {
-        Legal legalUser = legalRepository.findByUsernameAndUserTypeNumber(username, 1);
+        Legal legalUser = legalRepository.findByUsernameAndUserTypeNumber(username, UserType.LEGAL.getValue());
         return legalUser;
     }
     public Legal findByActiveUsername(String username) {
-        Legal legalUser = legalRepository.findByUsernameAndUserTypeNumberAndActive(username, 1, true);
+        Legal legalUser = legalRepository.findByUsernameAndUserTypeNumberAndActive(username, UserType.LEGAL.getValue(), true);
         return legalUser;
     }
 
@@ -192,5 +193,9 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         Legal saved = legalRepository.save(user);
 
         return result;
+    }
+
+    public boolean vendorExists(String vendorId) {
+        return legalRepository.existsByVendorId(vendorId);
     }
 }

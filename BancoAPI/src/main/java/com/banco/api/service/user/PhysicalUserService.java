@@ -1,8 +1,8 @@
 package com.banco.api.service.user;
 
-import com.banco.api.adapter.DateUtils;
-import com.banco.api.dto.user.LegalUserDTO;
+import com.banco.api.utils.DateUtils;
 import com.banco.api.dto.user.PhysicalUserDTO;
+import com.banco.api.dto.user.UserType;
 import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
 import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
@@ -10,7 +10,6 @@ import com.banco.api.exception.CheckingAccountRequestException;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
-import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
 import com.banco.api.service.account.CheckingService;
@@ -57,6 +56,10 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
             throw new InvalidUserRequestException("Si requiere cuenta corriente es necesario especificar el monto de descubierto");
         }
 
+        if (!DateUtils.isValid(request.getBirthDate())) {
+            throw new InvalidUserRequestException("Formato de fecha de nacimiento inválido");
+        }
+
         Physical user = new Physical();
         this.mapCommonUser(user, request);
         user.setActive(true);
@@ -92,7 +95,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     }
     
     public Physical findByActiveUsername(String username) {
-    	Physical physicalUser = physicalRepository.findByUsernameAndUserTypeNumberAndActive(username, 0, true);
+    	Physical physicalUser = physicalRepository.findByUsernameAndUserTypeNumberAndActive(username, UserType.PHYSICAL.getValue(), true);
         return physicalUser;
     }
     

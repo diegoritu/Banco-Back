@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
@@ -16,16 +15,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.others.ServiceDTO;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
+import com.banco.api.utils.DateUtils;
 
 
 @Entity
 @Table(name="services")
-public class ServicePayment {
+public class ServicePayment implements Externalizable<ServiceDTO> {
     private String name;
     private float amount;
     private String servicePaymentId;
@@ -155,10 +156,11 @@ public class ServicePayment {
 				+ ", due=" + due + ", idService=" + idService + "]";
 	}
 
+	@Override
 	public ServiceDTO toView() {
 		ServiceDTO result = new ServiceDTO();
 		result.setAmount(this.getAmount());
-		result.setDue(this.getDue().toString());
+		result.setDueDate(DateUtils.format(this.due));
 		result.setServicePaymentId(this.getServicePaymentId());
 		result.setName(this.getName());
 		if(this.getLegalWhoPays() != null) {

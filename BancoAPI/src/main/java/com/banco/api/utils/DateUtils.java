@@ -1,6 +1,5 @@
-package com.banco.api.adapter;
+package com.banco.api.utils;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +15,15 @@ public class DateUtils {
     private static final String DATE_PATTERN = "dd/MM/yyyy";
     private static DateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
 
+    public static boolean isValid(String dateStr) {
+        try {
+            dateFormatter.parse(dateStr);
+        } catch (ParseException ex) {
+            return false;
+        }
+        return true;
+    }
+
     public static Date parse(String date) {
         try {
             return dateFormatter.parse(date);
@@ -29,7 +37,4 @@ public class DateUtils {
         return dateFormatter.format(date);
     }
 
-    public static DateTime getDateTime() {
-        return DateTime.now(); //timezone?
-    }
 }

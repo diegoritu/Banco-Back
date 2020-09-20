@@ -9,7 +9,7 @@ public interface ServiceRepository extends CrudRepository<ServicePayment, Intege
 	
 
 	ServicePayment findByServicePaymentId(String servicePaymentId);
-	
 
+	ServicePayment findByServicePaymentIdAndPaid(String servicePaymentId, boolean paid);
 
 }

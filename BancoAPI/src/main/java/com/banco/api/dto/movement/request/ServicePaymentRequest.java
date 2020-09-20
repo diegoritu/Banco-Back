@@ -1,10 +1,10 @@
 package com.banco.api.dto.movement.request;
 
 public class ServicePaymentRequest {
-	String idServicePayment;
-	String vendorId;
-	String accountNumberFrom;
-	String usernameFrom;
+	private String idServicePayment;
+	private String vendorId;
+	private String accountNumberFrom;
+	private String usernameFrom;
 	
 	
 	public ServicePaymentRequest(String idServicePayment, String vendorId, String accountNumberFrom, String usernameFrom) {
