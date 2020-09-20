@@ -21,13 +21,14 @@ public class MovementDTO {
     private CheckingDTO chExitAccount;
     private SavingsDTO saEntryAccount;
     private SavingsDTO saExitAccount;
+    private int idMovement;
     
     public MovementDTO() {}
 
 	public MovementDTO(int movementType, String dayAndHour, String concept, float amount,
 			int transactionNumber, ServiceDTO service, String reference, float entryBalanceBeforeMovement,
 			float exitBalanceBeforeMovement, CheckingDTO chEntryAccount, CheckingDTO chExitAccount,
-			AccountDTO entryAccount, AccountDTO exitAccount, SavingsDTO saEntryAccount, SavingsDTO saExitAccount) {
+			AccountDTO entryAccount, AccountDTO exitAccount, SavingsDTO saEntryAccount, SavingsDTO saExitAccount, int idMovement) {
 		super();
 		this.movementType = movementType;
 		this.dayAndHour = dayAndHour;
@@ -42,6 +43,16 @@ public class MovementDTO {
 		this.chExitAccount = chExitAccount;
 		this.saEntryAccount = saEntryAccount;
 		this.saExitAccount = saExitAccount;
+		this.idMovement = idMovement;
+	}
+
+	
+	public int getIdMovement() {
+		return idMovement;
+	}
+
+	public void setIdMovement(int idMovement) {
+		this.idMovement = idMovement;
 	}
 
 	public int getMovementType() {
@@ -156,6 +167,7 @@ public class MovementDTO {
 				+ ", exitBalanceBeforeMovement=" + exitBalanceBeforeMovement + ", chEntryAccount=" + chEntryAccount
 				+ ", chExitAccount=" + chExitAccount + ", saEntryAccount=" + saEntryAccount + ", saExitAccount=" + saExitAccount + "]";
 	}
+
 	
 	
 }

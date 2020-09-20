@@ -79,8 +79,8 @@ public class MovementService {
 		
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setAmount(amount);
-		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementFrom);
-		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementTo);
+		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
+		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		movementDTO.setMovementType(5);
 		
 		result.setMovementType(5);
@@ -113,8 +113,8 @@ public class MovementService {
 		
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setAmount(amount);
-		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementFrom);
-		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementTo);
+		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
+		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		movementDTO.setMovementType(6);
 		movementDTO.setReference(reference);
 		
@@ -212,11 +212,11 @@ public class MovementService {
 		Savings savings;
 		if(accountType == 0) {
 			checking = checkingService.findByAccountNumber(accountNumber);
-			movements = movementRepository.findByChEntryAccountIdAccountOrChExitAccountIdAccountOrderByDayAndHourAsc(checking.getIdAccount(), checking.getIdAccount());
+			movements = movementRepository.findByChEntryAccountIdAccountOrChExitAccountIdAccountOrderByDayAndHourDesc(checking.getIdAccount(), checking.getIdAccount());
 		}
 		else {
 			savings = savingsService.findByAccountNumber(accountNumber);
-			movements = movementRepository.findBySaEntryAccountIdAccountOrSaExitAccountIdAccountOrderByDayAndHourAsc(savings.getIdAccount(),savings.getIdAccount());
+			movements = movementRepository.findBySaEntryAccountIdAccountOrSaExitAccountIdAccountOrderByDayAndHourDesc(savings.getIdAccount(),savings.getIdAccount());
 		}
 		for(Movement m : movements) {
 			result.add(m.toView());

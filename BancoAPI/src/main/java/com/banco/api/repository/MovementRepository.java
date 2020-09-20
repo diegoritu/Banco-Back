@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MovementRepository extends CrudRepository<Movement, Integer>{
 
-	Collection<Movement> findByChEntryAccountIdAccountOrChExitAccountIdAccountOrderByDayAndHourAsc(int idEntry, int idExit);
+	Collection<Movement> findByChEntryAccountIdAccountOrChExitAccountIdAccountOrderByDayAndHourDesc(int idEntry, int idExit);
 	
-	Collection<Movement> findBySaEntryAccountIdAccountOrSaExitAccountIdAccountOrderByDayAndHourAsc(int idEntry, int idExit);
+	Collection<Movement> findBySaEntryAccountIdAccountOrSaExitAccountIdAccountOrderByDayAndHourDesc(int idEntry, int idExit);
 
 }

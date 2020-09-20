@@ -260,6 +260,7 @@ public class Movement {
 		result.setMovementType(this.getMovementType());
 		result.setEntryBalanceBeforeMovement(this.getEntryBalanceBeforeMovement());
 		result.setExitBalanceBeforeMovement(this.getExitBalanceBeforeMovement());
+		result.setIdMovement(idMovement);
 		return result;
 	}
 }
