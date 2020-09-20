@@ -197,10 +197,17 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
             checkingAccount = checkingService.update(user.getChecking());
         } else {
             checkingAccount = checkingService.createAccount(maxOverdraft);
+        	assignCheckingAccount(username, checkingAccount);
         }
         return checkingAccount;
     }
 	
+	private void assignCheckingAccount(String username, Checking checking) {
+		Physical user = findByActiveUsername(username); 
+		user.setChecking(checking);
+		physicalRepository.save(user);
+	}
+
 	public void changePassword(ChangePasswordRequest request) {
 		Physical user = findByUsername(request.getUsername());
 		user.hashPassword(request.getPassword());	

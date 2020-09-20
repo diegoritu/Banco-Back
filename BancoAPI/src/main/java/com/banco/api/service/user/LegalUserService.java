@@ -179,11 +179,18 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
             checkingAccount = checkingService.update(user.getChecking());
         } else {
             checkingAccount = checkingService.createAccount(maxOverdraft);
+        	assignCheckingAccount(username, checkingAccount);
         }
         return checkingAccount;
     }
 
-    public void changePassword(ChangePasswordRequest request) {
+    private void assignCheckingAccount(String username, Checking checking) {
+		Legal user = findByActiveUsername(username); 
+		user.setChecking(checking);
+		legalRepository.save(user);
+	}
+
+	public void changePassword(ChangePasswordRequest request) {
         Legal user = findByUsername(request.getUsername());
         user.hashPassword(request.getPassword());
         legalRepository.save(user);
