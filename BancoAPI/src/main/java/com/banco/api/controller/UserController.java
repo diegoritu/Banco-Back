@@ -6,6 +6,7 @@ import com.banco.api.dto.user.UserDTO;
 import com.banco.api.dto.user.request.*;
 import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
 import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
+import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -24,6 +25,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+
+import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -49,11 +52,13 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(physicalUserService.createUser(request), HttpStatus.CREATED);
-        } catch (InvalidUserRequestException ex) {
+        } catch (DuplicatedUsernameException ex) {
+        	LOGGER.warn(ex.getLocalizedMessage());
+        	return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+
+		} catch (InvalidUserRequestException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
-            return ResponseEntity
-                    .status(HttpStatus.IM_USED)
-                    .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
+            return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
         }
     }
     
@@ -63,12 +68,10 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(administrativeUserService.createUser(request), HttpStatus.CREATED);
-        } catch (InvalidUserRequestException ex) {
+        } catch (DuplicatedUsernameException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
-            return ResponseEntity
-                    .status(HttpStatus.IM_USED)
-                    .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
-        }
+            return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+		}
     }
 
     @PostMapping("/legal")
@@ -77,12 +80,14 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(legalUserService.createUser(request), HttpStatus.CREATED);
-        } catch (InvalidUserRequestException ex) {
-            LOGGER.warn(ex.getLocalizedMessage());
-            return ResponseEntity
-                    .status(HttpStatus.IM_USED)
-                    .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
-        }
+		} catch (DuplicatedUsernameException ex) {
+			LOGGER.warn(ex.getLocalizedMessage());
+			return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+
+		} catch (InvalidUserRequestException ex) {
+			LOGGER.warn(ex.getLocalizedMessage());
+			return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+		}
     }
     
     @PostMapping("/login")
@@ -194,12 +199,11 @@ public class UserController {
 	        LOGGER.info("Modification of physical user operation started. {}", request.toString());
 	        return new ResponseEntity<PhysicalUserDTO>(physicalUserService.modify(request),HttpStatus.OK);
     	} 
-    	catch (InvalidUserRequestException ex) {
+    	catch (DuplicatedUsernameException ex) {
 	        LOGGER.warn(ex.getLocalizedMessage());
-	        return ResponseEntity
-	                .status(HttpStatus.IM_USED)
-	                .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
-    	}
+	        return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+
+		}
     }
     
     @PutMapping("/legal/modify")
@@ -208,11 +212,9 @@ public class UserController {
 	        LOGGER.info("Modification of legal user operation started. {}", request.toString());
 	        return new ResponseEntity<LegalUserDTO>(legalUserService.modify(request),HttpStatus.OK);
     	} 
-    	catch (InvalidUserRequestException ex) {
+    	catch (DuplicatedUsernameException ex) {
 	        LOGGER.warn(ex.getLocalizedMessage());
-	        return ResponseEntity
-	                .status(HttpStatus.IM_USED)
-	                .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
+	        return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
     	}
     }
     
@@ -323,5 +325,4 @@ public class UserController {
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
     }
-
 }

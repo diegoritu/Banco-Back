@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 
 public class ResponseEntityFactory {
 
-    public static ResponseEntity createErrorResponseEntity(HttpStatus status, String message) {
+    public static ResponseEntity createErrorResponseEntity(String message, HttpStatus status) {
         return ResponseEntity
                 .status(status)
                 .body("{\"error\": \"" + message + "\"}");

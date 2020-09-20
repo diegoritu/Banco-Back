@@ -50,11 +50,11 @@ public class AccountController {
 				checking = physicalUserService.openCheckingAccount(username, maxOverdraft);
 			} else {
 				LOGGER.warn("Could not create new checking account. Physical or legal user not found with username: %s", username);
-				return createErrorResponseEntity(HttpStatus.NOT_FOUND, "No se pudo crear la cuenta corriente. Usuario no encontrado");
+				return createErrorResponseEntity("No se pudo crear la cuenta corriente. Usuario no encontrado", HttpStatus.NOT_FOUND);
 			}
 		} catch (CheckingAccountRequestException ex) {
 			LOGGER.warn(ex.getLocalizedMessage());
-			return createErrorResponseEntity(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
+			return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
 		}
 		LOGGER.info("Successfully opened checking account for username: {}. Account number: {}", username, checking.getAccountNumber());
 		return new ResponseEntity<>(checking.toView(), HttpStatus.CREATED);
@@ -67,7 +67,7 @@ public class AccountController {
 		if (checking == null || !checking.isActive()) {
 			String message = "Could not update checking account max overdraft. Account number {} not found";
 			LOGGER.warn("Could not update checking account max overdraft. Account number {} not found", request.getAccountNumber());
-			return createErrorResponseEntity(HttpStatus.NOT_FOUND, message);
+			return createErrorResponseEntity(message, HttpStatus.NOT_FOUND);
 		} else {
 			checking.setMaxOverdraft(request.getMaxOverDraft());
 			Checking result = checkingService.update(checking);

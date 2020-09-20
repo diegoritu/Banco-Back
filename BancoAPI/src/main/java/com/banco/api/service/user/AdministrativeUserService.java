@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.banco.api.exception.DuplicatedUsernameException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
 	public AdministrativeUserDTO createUser(AdministrativeUserRequest request) {
         if (existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
 				|| legalUserService.existsUser(request.getUsername())) {
-            throw new InvalidUserRequestException("El nombre de usuario ya existe");
+            throw new DuplicatedUsernameException("El nombre de usuario ya existe");
         }
 
         Administrative user = new Administrative();

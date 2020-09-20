@@ -6,6 +6,7 @@ import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.LegalUserRequest;
 import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
 import com.banco.api.exception.CheckingAccountRequestException;
+import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -47,11 +48,15 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     public LegalUserDTO createUser(LegalUserRequest request) {
         if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
                 || administrativeUserService.existsUser(request.getUsername())) {
-            throw new InvalidUserRequestException("El nombre de usuario ya existe");
+            throw new DuplicatedUsernameException("El nombre de usuario ya existe");
         }
 
         if (request.isWithCheckingAccount() && request.getMaxOverdraft() == null) {
             throw new InvalidUserRequestException("Si requiere cuenta corriente es necesario especificar el monto de descubierto");
+        }
+
+        if (request.getMaxOverdraft() < 0) {
+            throw new InvalidUserRequestException("El monto de descubierto permitido debe ser mayor o igual a cero");
         }
 
         Legal user = new Legal();
@@ -143,7 +148,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         if (!request.getUsername().equals(request.getOldUsername())) {
             if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
                     || administrativeUserService.existsUser(request.getUsername())) {
-                throw new InvalidUserRequestException("El nombre de usuario ya existe");
+                throw new DuplicatedUsernameException("El nombre de usuario ya existe");
             }
         }
         Legal user = findByUsername(request.getOldUsername());

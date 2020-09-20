@@ -1,5 +1,6 @@
 package com.banco.api.service.user;
 
+import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.utils.DateUtils;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.UserType;
@@ -49,7 +50,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     public PhysicalUserDTO createUser(PhysicalUserRequest request) {
         if (existsUser(request.getUsername()) || legalUserService.existsUser(request.getUsername())
                 || administrativeUserService.existsUser(request.getUsername())) {
-            throw new InvalidUserRequestException("El nombre de usuario ya existe");
+            throw new DuplicatedUsernameException("El nombre de usuario ya existe");
         }
 
         if (request.isWithCheckingAccount() && request.getMaxOverdraft() == null) {
@@ -162,7 +163,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 		if(!request.getUsername().equals(request.getOldUsername())) {
 			if (existsUser(request.getUsername()) || legalUserService.existsUser(request.getUsername())
                     || administrativeUserService.existsUser(request.getUsername())) {
-	            throw new InvalidUserRequestException("El nombre de usuario ya existe");
+	            throw new DuplicatedUsernameException("El nombre de usuario ya existe");
 	        }
 		}
 		Physical user = findByUsername(request.getOldUsername());
