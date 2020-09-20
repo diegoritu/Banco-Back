@@ -1,5 +1,6 @@
 package com.banco.api.model;
 
+import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 
@@ -33,7 +34,6 @@ public class Movement {
     private float amount;
     private int transactionNumber;
     
-    //@Column(name = "idService")
     @OneToOne
     @JoinColumn(name = "idService")
     private ServicePayment service;
@@ -42,7 +42,6 @@ public class Movement {
     private float entryBalanceBeforeMovement;
     private float exitBalanceBeforeMovement;
    
-   // @Column(name = "idEntryAccount")
     @ManyToOne
     private Checking chEntryAccount;
     @ManyToOne
@@ -236,4 +235,31 @@ public class Movement {
                 ", saExitAccount=" + saExitAccount +
                 '}';
     }
+
+	public MovementDTO toView() {
+		MovementDTO result = new MovementDTO();
+		result.setAmount(this.getAmount());
+		result.setConcept(this.getConcept());
+		if(this.getChEntryAccount() != null) {
+			result.setChEntryAccount(this.getChEntryAccount().toView());
+		}
+		if(this.getChExitAccount() != null) {
+			result.setChExitAccount(this.getChExitAccount().toView());
+		}
+		if(this.getSaEntryAccount() != null) {
+			result.setSaEntryAccount(this.getSaEntryAccount().toView());
+		}
+		if(this.getSaExitAccount() != null) {
+			result.setSaExitAccount(this.getSaExitAccount().toView());
+		}
+		if(this.getService() != null) {
+			result.setService(this.getService().toView());
+		}
+		result.setDayAndHour(this.getDayAndHour().toString());
+		result.setTransactionNumber(this.getTransactionNumber());
+		result.setMovementType(this.getMovementType());
+		result.setEntryBalanceBeforeMovement(this.getEntryBalanceBeforeMovement());
+		result.setExitBalanceBeforeMovement(this.getExitBalanceBeforeMovement());
+		return result;
+	}
 }

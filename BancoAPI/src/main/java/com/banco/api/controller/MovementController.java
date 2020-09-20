@@ -3,15 +3,19 @@ package com.banco.api.controller;
 import com.banco.api.dto.movement.MovementType;
 import com.banco.api.model.ServicePayment;
 
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.banco.api.dto.movement.MovementDTO;
@@ -104,6 +108,18 @@ public class MovementController {
     	else {
     		return new ResponseEntity<>(HttpStatus.CONFLICT);
     	}
+    }
+    
+    @GetMapping("/movements")
+    public ResponseEntity<Collection<MovementDTO>> getMovements(@RequestParam String accountNumber){
+    	byte accountType;
+    	if(checkingService.existsAccountNumber(accountNumber)) {
+    		accountType = 0;
+    	}
+    	else {
+    		accountType = 1;
+    	}
+    	return new ResponseEntity<Collection<MovementDTO>>(movementService.getMovements(accountNumber, accountType), HttpStatus.OK);
     }
     
     @PostMapping("/transferBetweenOwnAccounts")

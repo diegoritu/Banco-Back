@@ -55,7 +55,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
             throw new InvalidUserRequestException("Si requiere cuenta corriente es necesario especificar el monto de descubierto");
         }
 
-        if (request.getMaxOverdraft() < 0) {
+        if (request.isWithCheckingAccount() && request.getMaxOverdraft() < 0) {
             throw new InvalidUserRequestException("El monto de descubierto permitido debe ser mayor o igual a cero");
         }
 

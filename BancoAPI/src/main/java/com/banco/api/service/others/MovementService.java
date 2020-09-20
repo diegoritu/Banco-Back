@@ -9,15 +9,25 @@ import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
 import com.banco.api.repository.MovementRepository;
+import com.banco.api.service.account.CheckingService;
+import com.banco.api.service.account.SavingsService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 @Service
 public class MovementService {
 	@Autowired
 	MovementRepository movementRepository;
+	@Autowired
+	CheckingService checkingService;
+	@Autowired
+	SavingsService savingsService;
+	
 	
 	public MovementDTO depositAndExtract(float amount, float balanceBeforeMovement, int accountType, Savings savings, Checking checking, MovementType movementType) {
 		MovementDTO movementDTO = new MovementDTO();
@@ -194,5 +204,26 @@ public class MovementService {
 		
 		return movementDTO;
 	}
+
+	public Collection<MovementDTO> getMovements(String accountNumber, byte accountType) {
+		Collection<MovementDTO> result = new ArrayList<MovementDTO>();
+		Collection<Movement> movements = new ArrayList<Movement>();
+		Checking checking;
+		Savings savings;
+		if(accountType == 0) {
+			checking = checkingService.findByAccountNumber(accountNumber);
+			movements = movementRepository.findByChEntryAccountIdAccountOrChExitAccountIdAccountOrderByDayAndHourAsc(checking.getIdAccount(), checking.getIdAccount());
+		}
+		else {
+			savings = savingsService.findByAccountNumber(accountNumber);
+			movements = movementRepository.findBySaEntryAccountIdAccountOrSaExitAccountIdAccountOrderByDayAndHourAsc(savings.getIdAccount(),savings.getIdAccount());
+		}
+		for(Movement m : movements) {
+			result.add(m.toView());
+		}
+		
+		return result;
+	}
+
 	
 }
