@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -210,4 +212,11 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     public boolean vendorExists(String vendorId) {
         return legalRepository.existsByVendorId(vendorId);
     }
+
+	public Collection<Legal> findAllLegals() {
+		Iterable<Legal> legals = legalRepository.findAll();
+		Collection<Legal> result = new ArrayList<Legal>();
+		legals.forEach(result :: add);
+		return result;
+	}
 }

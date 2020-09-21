@@ -24,6 +24,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
@@ -191,6 +193,17 @@ public class UserController {
             LOGGER.warn(message);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+    
+    @GetMapping("/legals")
+    public ResponseEntity<Collection<LegalUserDTO>> getLegalUsers() {
+    	Collection<Legal> users = legalUserService.findAllLegals();
+    	Collection<LegalUserDTO> rdo = new ArrayList<LegalUserDTO>();
+    	for(Legal l : users) {
+    		rdo.add(l.toView());
+    	}
+        return new ResponseEntity<>(rdo, HttpStatus.OK);
+        
     }
     
     @PutMapping("/physical/modify")
