@@ -54,7 +54,7 @@ public class UserController {
             return new ResponseEntity<>(physicalUserService.createUser(request), HttpStatus.CREATED);
         } catch (DuplicatedUsernameException ex) {
         	LOGGER.warn(ex.getLocalizedMessage());
-        	return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+        	return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 
 		} catch (InvalidUserRequestException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
@@ -70,7 +70,7 @@ public class UserController {
             return new ResponseEntity<>(administrativeUserService.createUser(request), HttpStatus.CREATED);
         } catch (DuplicatedUsernameException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
-            return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+            return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 		}
     }
 
@@ -82,7 +82,7 @@ public class UserController {
             return new ResponseEntity<>(legalUserService.createUser(request), HttpStatus.CREATED);
 		} catch (DuplicatedUsernameException ex) {
 			LOGGER.warn(ex.getLocalizedMessage());
-			return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+			return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 
 		} catch (InvalidUserRequestException ex) {
 			LOGGER.warn(ex.getLocalizedMessage());
@@ -201,7 +201,7 @@ public class UserController {
     	} 
     	catch (DuplicatedUsernameException ex) {
 	        LOGGER.warn(ex.getLocalizedMessage());
-	        return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+	        return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 
 		}
     }
@@ -214,7 +214,7 @@ public class UserController {
     	} 
     	catch (DuplicatedUsernameException ex) {
 	        LOGGER.warn(ex.getLocalizedMessage());
-	        return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.IM_USED);
+	        return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
     	}
     }
     
