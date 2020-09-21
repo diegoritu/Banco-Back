@@ -122,8 +122,8 @@ public class MovementService {
 		result.setMovementType(6);
 		result.setDayAndHour(now);
 		result.setAmount(amount);
-		result.setEntryBalanceBeforeMovement(balanceBeforeMovementFrom);
-		result.setExitBalanceBeforeMovement(balanceBeforeMovementTo);
+		result.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
+		result.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		
 		switch (whereFrom) {
 		case 1: //From savings to savings
