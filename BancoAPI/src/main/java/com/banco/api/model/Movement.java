@@ -261,6 +261,7 @@ public class Movement {
 		result.setEntryBalanceBeforeMovement(this.getEntryBalanceBeforeMovement());
 		result.setExitBalanceBeforeMovement(this.getExitBalanceBeforeMovement());
 		result.setIdMovement(idMovement);
+		result.setReference(this.getReference());
 		return result;
 	}
 }
