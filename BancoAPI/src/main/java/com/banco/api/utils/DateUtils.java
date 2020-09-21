@@ -12,7 +12,7 @@ public class DateUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateUtils.class);
 
-    private static final String DATE_PATTERN = "dd/MM/yyyy";
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
     private static DateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
 
     public static boolean isValid(String dateStr) {
