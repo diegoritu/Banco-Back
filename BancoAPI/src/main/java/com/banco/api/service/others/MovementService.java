@@ -225,5 +225,9 @@ public class MovementService {
 		return result;
 	}
 
+	public MovementDTO getMovementById(int id) {
+		return movementRepository.findByIdMovement(id).toView();
+	}
+
 	
 }

@@ -122,6 +122,11 @@ public class MovementController {
     	return new ResponseEntity<Collection<MovementDTO>>(movementService.getMovements(accountNumber, accountType), HttpStatus.OK);
     }
     
+    @GetMapping("/movementById")
+    public ResponseEntity<MovementDTO> getMovementById(@RequestParam int id){    	
+    	return new ResponseEntity<MovementDTO>(movementService.getMovementById(id), HttpStatus.OK);
+    }
+    
     @PostMapping("/transferBetweenOwnAccounts")
     public ResponseEntity<MovementDTO> transferBetweenOwnAccounts(@RequestBody TransferBetweenOwnAccountsRequest request){
     	float balanceBeforeMovementFrom;
