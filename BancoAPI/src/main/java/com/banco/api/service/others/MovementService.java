@@ -86,8 +86,8 @@ public class MovementService {
 		result.setMovementType(5);
 		result.setDayAndHour(now);
 		result.setAmount(amount);
-		result.setEntryBalanceBeforeMovement(balanceBeforeMovementFrom);
-		result.setExitBalanceBeforeMovement(balanceBeforeMovementTo);
+		result.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
+		result.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		
 		if(accountTypes) { //From savings to checking
 			movementDTO.setSaExitAccount(savingsFrom.toView());
