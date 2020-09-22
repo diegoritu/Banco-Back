@@ -39,7 +39,7 @@ public class InterestsService {
 
             movementService.depositAndExtract(monthInterests, oldBalance, 0, savings, null, MovementType.INTERESTS);
 
-            LOGGER.info("Savings account number %s month interests deposited. Month interests: %s, New balance: %s",
+            LOGGER.info("Savings account number {} month interests deposited. Month interests: {}, New balance: {}",
                     savings.getAccountNumber(), monthInterests, savings.getBalance());
         });
     }

@@ -49,7 +49,7 @@ public class AccountController {
 			} else if (physicalUserService.existsUser(username)) {
 				checking = physicalUserService.openCheckingAccount(username, maxOverdraft);
 			} else {
-				LOGGER.warn("Could not create new checking account. Physical or legal user not found with username: %s", username);
+				LOGGER.warn("Could not create new checking account. Physical or legal user not found with username: {}", username);
 				return createErrorResponseEntity("No se pudo crear la cuenta corriente. Usuario no encontrado", HttpStatus.NOT_FOUND);
 			}
 		} catch (CheckingAccountRequestException ex) {
@@ -128,7 +128,7 @@ public class AccountController {
 			}
 		} else {
 			//Error: Es usuario administrativo, y por lo tanto no tiene ninguna cuenta asociada. O no existe un usuario con tal username
-			LOGGER.error("Could not create new checking account. Physical or legal user not found with username: %s", username);
+			LOGGER.error("Could not create new checking account. Physical or legal user not found with username: {}", username);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 		}
@@ -143,7 +143,7 @@ public class AccountController {
 		if (checking != null) {
             return new ResponseEntity<>(checking.toView(), HttpStatus.OK);
     	} else {
-			LOGGER.warn("Checking account not found with account number: %s", accountNumber);
+			LOGGER.warn("Checking account not found with account number: {}", accountNumber);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
 
@@ -156,7 +156,7 @@ public class AccountController {
     	if (savings != null) {
             return new ResponseEntity<>(savings.toView(), HttpStatus.OK);
     	} else {
-			LOGGER.warn("Savings account not found with account number: %s", accountNumber);
+			LOGGER.warn("Savings account not found with account number: {}", accountNumber);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	}
 

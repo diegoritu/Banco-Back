@@ -6,12 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
+import java.util.List;
+
 @NoRepositoryBean
 public interface UserBaseRepository<T extends User> extends CrudRepository<T, Integer> {
 
     T findByUsername(String username);
 
-    T findByUsernameContainingIgnoreCase(String username);
+    List<T> findByUsernameContainingIgnoreCase(String username);
 
     T findByCuitCuilCdi(String cuitCuilCdi);
 

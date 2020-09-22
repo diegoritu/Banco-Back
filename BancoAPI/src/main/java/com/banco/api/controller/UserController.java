@@ -234,14 +234,14 @@ public class UserController {
 
     @GetMapping("/physical/search")
     public ResponseEntity<Set<PhysicalUserDTO>> searchPhysicalUSer(@RequestParam String field, @RequestParam String term) {
-        LOGGER.info("Search physical user operation started. Field: %s, term: %s", field, term);
+        LOGGER.info("Search physical user operation started. Field: {}, term: {}", field, term);
         Set<PhysicalUserDTO> users = physicalUserService.search(field, term);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/legal/search")
     public ResponseEntity<Set<LegalUserDTO>> searchLegalUser(@RequestParam String field, @RequestParam String term) {
-        LOGGER.info("Search legal user operation started. Field: %s, term: %s", field, term);
+        LOGGER.info("Search legal user operation started. Field: {}, term: {}", field, term);
         Set<LegalUserDTO> users = legalUserService.search(field, term);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }

@@ -1,13 +1,12 @@
 package com.banco.api.service.user;
 
-import com.banco.api.exception.DuplicatedUsernameException;
-import com.banco.api.utils.DateUtils;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.UserType;
 import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
 import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
 import com.banco.api.exception.CheckingAccountRequestException;
+import com.banco.api.exception.DuplicatedUsernameException;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -15,6 +14,7 @@ import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
+import com.banco.api.utils.DateUtils;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +108,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     public Set<PhysicalUserDTO> search(String field, String term) {
         Set<Physical> users = Sets.newHashSet();
         if (PhysicalSearchField.USERNAME.equalsIgnoreCase(field)) {
-            safeAdd(users, physicalRepository.findByUsernameContainingIgnoreCase(term));
+            users.addAll(physicalRepository.findByUsernameContainingIgnoreCase(term));
 
         } else if (PhysicalSearchField.DNI.equalsIgnoreCase(field)) {
             safeAdd(users, physicalRepository.findByDni(term));
@@ -119,8 +119,8 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         } else if (PhysicalSearchField.FULL_NAME.equalsIgnoreCase(field)) {
             String[] words = term.split(" ");
             Stream.of(words).forEach(word -> {
-                safeAdd(users, physicalRepository.findByFirstNameContainingIgnoreCase(word));
-                safeAdd(users, physicalRepository.findByLastNameContainingIgnoreCase(word));
+                users.addAll(physicalRepository.findByFirstNameContainingIgnoreCase(word));
+                users.addAll(physicalRepository.findByLastNameContainingIgnoreCase(word));
             });
         }
         return users
