@@ -6,7 +6,7 @@ import com.banco.api.dto.user.request.ChangePasswordRequest;
 import com.banco.api.dto.user.request.PhysicalUserRequest;
 import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
 import com.banco.api.exception.CheckingAccountRequestException;
-import com.banco.api.exception.DuplicatedUsernameException;
+import com.banco.api.exception.DuplicatedUserException;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -50,7 +50,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     public PhysicalUserDTO createUser(PhysicalUserRequest request) {
         if (existsUser(request.getUsername()) || legalUserService.existsUser(request.getUsername())
                 || administrativeUserService.existsUser(request.getUsername())) {
-            throw new DuplicatedUsernameException("El nombre de usuario ya existe");
+            throw new DuplicatedUserException("El nombre de usuario ya existe");
         }
 
         if (request.isWithCheckingAccount() && request.getMaxOverdraft() == null) {
@@ -163,7 +163,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 		if(!request.getUsername().equals(request.getOldUsername())) {
 			if (existsUser(request.getUsername()) || legalUserService.existsUser(request.getUsername())
                     || administrativeUserService.existsUser(request.getUsername())) {
-	            throw new DuplicatedUsernameException("El nombre de usuario ya existe");
+	            throw new DuplicatedUserException("El nombre de usuario ya existe");
 	        }
 		}
 		Physical user = findByUsername(request.getOldUsername());

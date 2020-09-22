@@ -5,14 +5,13 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.banco.api.exception.DuplicatedUsernameException;
+import com.banco.api.exception.DuplicatedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.banco.api.utils.DateUtils;
 import com.banco.api.dto.user.AdministrativeUserDTO;
 import com.banco.api.dto.user.request.AdministrativeUserRequest;
-import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.user.Administrative;
 import com.banco.api.repository.user.AdministrativeRepository;
 
@@ -31,7 +30,7 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
 	public AdministrativeUserDTO createUser(AdministrativeUserRequest request) {
         if (existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
 				|| legalUserService.existsUser(request.getUsername())) {
-            throw new DuplicatedUsernameException("El nombre de usuario ya existe");
+            throw new DuplicatedUserException("El nombre de usuario ya existe");
         }
 
         Administrative user = new Administrative();

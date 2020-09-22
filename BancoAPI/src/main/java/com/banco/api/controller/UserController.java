@@ -6,7 +6,7 @@ import com.banco.api.dto.user.UserDTO;
 import com.banco.api.dto.user.request.*;
 import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
 import com.banco.api.dto.user.request.modification.PhysicalUserModificationRequest;
-import com.banco.api.exception.DuplicatedUsernameException;
+import com.banco.api.exception.DuplicatedUserException;
 import com.banco.api.exception.InvalidUserRequestException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -54,7 +54,7 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(physicalUserService.createUser(request), HttpStatus.CREATED);
-        } catch (DuplicatedUsernameException ex) {
+        } catch (DuplicatedUserException ex) {
         	LOGGER.warn(ex.getLocalizedMessage());
         	return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 
@@ -70,7 +70,7 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(administrativeUserService.createUser(request), HttpStatus.CREATED);
-        } catch (DuplicatedUsernameException ex) {
+        } catch (DuplicatedUserException ex) {
             LOGGER.warn(ex.getLocalizedMessage());
             return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 		}
@@ -82,7 +82,7 @@ public class UserController {
 
         try {
             return new ResponseEntity<>(legalUserService.createUser(request), HttpStatus.CREATED);
-		} catch (DuplicatedUsernameException ex) {
+		} catch (DuplicatedUserException ex) {
 			LOGGER.warn(ex.getLocalizedMessage());
 			return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 
@@ -212,7 +212,7 @@ public class UserController {
 	        LOGGER.info("Modification of physical user operation started. {}", request.toString());
 	        return new ResponseEntity<PhysicalUserDTO>(physicalUserService.modify(request),HttpStatus.OK);
     	} 
-    	catch (DuplicatedUsernameException ex) {
+    	catch (DuplicatedUserException ex) {
 	        LOGGER.warn(ex.getLocalizedMessage());
 	        return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 
@@ -225,7 +225,7 @@ public class UserController {
 	        LOGGER.info("Modification of legal user operation started. {}", request.toString());
 	        return new ResponseEntity<LegalUserDTO>(legalUserService.modify(request),HttpStatus.OK);
     	} 
-    	catch (DuplicatedUsernameException ex) {
+    	catch (DuplicatedUserException ex) {
 	        LOGGER.warn(ex.getLocalizedMessage());
 	        return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
     	}
