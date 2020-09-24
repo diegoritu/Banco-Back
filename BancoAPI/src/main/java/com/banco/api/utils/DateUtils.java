@@ -16,25 +16,41 @@ public class DateUtils {
     private static DateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
 
     public static boolean isValid(String dateStr) {
-        try {
-            dateFormatter.parse(dateStr);
-        } catch (ParseException ex) {
-            return false;
-        }
-        return true;
+    	if(dateStr != null)
+    	{
+	        try {
+	            dateFormatter.parse(dateStr);
+	        } catch (ParseException ex) {
+	            return false;
+	        }
+	        return true;
+    	}
+    	else {
+    		return true;
+    	}
     }
 
     public static Date parse(String date) {
-        try {
-            return dateFormatter.parse(date);
-        } catch (ParseException ex) {
-            LOGGER.error(ex.getLocalizedMessage());
-            throw new RuntimeException(ex);
+        if(date != null) {
+        	try {
+                return dateFormatter.parse(date);
+            } catch (ParseException ex) {
+                LOGGER.error(ex.getLocalizedMessage());
+                throw new RuntimeException(ex);
+            }        	
+        }
+        else {
+        	return null;
         }
     }
 
     public static String format(Date date) {
-        return dateFormatter.format(date);
+    	if(date != null) {
+            return dateFormatter.format(date);   		
+    	}
+    	else {
+    		return null;
+    	}
     }
 
 }
