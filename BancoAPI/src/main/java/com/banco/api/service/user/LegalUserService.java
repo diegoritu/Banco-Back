@@ -28,8 +28,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.banco.api.utils.CollectionUtils.safeAdd;
-
 @Service
 public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUserRequest> {
 
@@ -109,7 +107,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
             users.addAll(legalRepository.findByBusinessNameContainingIgnoreCase(term));
 
         } else if (LegalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            safeAdd(users, legalRepository.findByCuitCuilCdi(term));
+            users.addAll(legalRepository.findByCuitCuilCdi(term));
         }
         return users
                 .stream()

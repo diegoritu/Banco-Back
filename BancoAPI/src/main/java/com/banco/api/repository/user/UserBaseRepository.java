@@ -15,7 +15,7 @@ public interface UserBaseRepository<T extends User> extends CrudRepository<T, In
 
     List<T> findByUsernameContainingIgnoreCase(String username);
 
-    T findByCuitCuilCdi(String cuitCuilCdi);
+    List<T> findByCuitCuilCdi(String cuitCuilCdi);
 
 	/*public boolean existsByUsername(String username);
 

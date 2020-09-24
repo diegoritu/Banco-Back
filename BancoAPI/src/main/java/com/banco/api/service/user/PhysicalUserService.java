@@ -28,8 +28,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.banco.api.utils.CollectionUtils.safeAdd;
-
 @Service
 public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, PhysicalUserRequest> {
 
@@ -89,17 +87,17 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         Physical result = this.findByUsername(username);
         return result != null;
     }
-    
+
     public Physical findByUsername(String username) {
        Physical physicalUser = physicalRepository.findByUsername(username);
        return physicalUser;
     }
-    
+
     public Physical findByActiveUsername(String username) {
     	Physical physicalUser = physicalRepository.findByUsernameAndUserTypeNumberAndActive(username, UserType.PHYSICAL.getValue(), true);
         return physicalUser;
     }
-    
+
     public PhysicalUserDTO update(Physical physical) {
         Physical physicalUser = physicalRepository.save(physical);
         return physicalUser.toView();
@@ -111,10 +109,10 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
             users.addAll(physicalRepository.findByUsernameContainingIgnoreCase(term));
 
         } else if (PhysicalSearchField.DNI.equalsIgnoreCase(field)) {
-            safeAdd(users, physicalRepository.findByDni(term));
+            users.addAll(physicalRepository.findByDni(term));
 
         } else if (PhysicalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            safeAdd(users, physicalRepository.findByCuitCuilCdi(term));
+            users.addAll(physicalRepository.findByCuitCuilCdi(term));
 
         } else if (PhysicalSearchField.FULL_NAME.equalsIgnoreCase(field)) {
             String[] words = term.split(" ");

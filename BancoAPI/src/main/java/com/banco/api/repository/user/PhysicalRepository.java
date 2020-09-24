@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface PhysicalRepository extends UserBaseRepository<Physical> {
 
-	Physical findByDni(String dni);
+	List<Physical> findByDni(String dni);
 
 	List<Physical> findByFirstNameContainingIgnoreCase(String firstName);
 
