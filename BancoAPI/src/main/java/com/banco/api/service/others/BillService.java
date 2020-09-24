@@ -1,6 +1,7 @@
 package com.banco.api.service.others;
 
 import com.banco.api.dto.account.AccountType;
+import com.banco.api.dto.others.ServiceCreatedDTO;
 import com.banco.api.dto.others.request.CreateServiceBillRequest;
 import com.banco.api.exception.InvalidServiceBillCreationRequestException;
 import com.banco.api.exception.VendorNotFoundException;
@@ -32,19 +33,20 @@ public class BillService {
 	@Autowired
 	private SavingsService savingsService;
 	
-	public Map<String, String> createService(CreateServiceBillRequest request) {
+	public ServiceCreatedDTO createService(CreateServiceBillRequest request) {
 		validateRequest(request);
-
+		ServiceCreatedDTO answer = new ServiceCreatedDTO();
 		AccountType vendorAccountType = stringToAccountType(request.getVendorAccountType());
 		ServicePayment result = null;
-		Map<String, String> ids = new HashMap<String, String>();
+		Collection<String> ids = new ArrayList<String>();
 		Collection<ServicePayment> services = new ArrayList<ServicePayment>();
+		Legal vendor = null;
 		for(int i=0; i<request.getAmountOfIds();i++) {
 			do {
 				result = new ServicePayment(request.getName(), request.getAmount());
 			}
 			while(existsByServicePaymentId(result.getServicePaymentId()));
-			Legal vendor = legalUserService.findByActiveUsername(request.getVendorUsername());
+			vendor = legalUserService.findByActiveUsername(request.getVendorUsername());
 			if(vendor != null) {
 				if(vendor.getVendorId() == null) {
 					vendor.setVendorId();
@@ -64,12 +66,14 @@ public class BillService {
 			result.setDue(dueDate);
 			result.setVendor(vendor);
 			services.add(result);
-			ids.put(result.getServicePaymentId(),vendor.getVendorId());
+			ids.add(result.getServicePaymentId());
 		}
+		answer.setVendorId(vendor.getVendorId());
+		answer.setIds(ids);
 		for(ServicePayment sp : services) {
 			serviceRepository.save(sp);
 		}
-		return ids;
+		return answer;
 	}
 
 	public ServicePayment searchNotPayedServiceBill(String servicePaymentId, String vendorId) {

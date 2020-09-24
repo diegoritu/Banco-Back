@@ -1,5 +1,6 @@
 package com.banco.api.controller;
 
+import com.banco.api.dto.others.ServiceCreatedDTO;
 import com.banco.api.dto.others.ServiceDTO;
 import com.banco.api.dto.others.request.CreateServiceBillRequest;
 import com.banco.api.exception.InvalidServiceBillCreationRequestException;
@@ -28,9 +29,9 @@ public class ServiceBillController {
 	@PostMapping("/create")
     public ResponseEntity createServiceBills(@RequestBody CreateServiceBillRequest request){
 		try {
-		Map<String, String> ids = billService.createService(request);
+		ServiceCreatedDTO screated = billService.createService(request);
 		LOGGER.info("Create service bills operation started. {}", request.toString());
-		return new ResponseEntity<Map<String, String>>(ids, HttpStatus.CREATED);
+		return new ResponseEntity<ServiceCreatedDTO>(screated, HttpStatus.CREATED);
 		}
 		catch(VendorNotFoundException ex){
 			LOGGER.warn(ex.getLocalizedMessage());
