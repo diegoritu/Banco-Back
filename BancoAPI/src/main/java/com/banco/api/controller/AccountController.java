@@ -62,7 +62,7 @@ public class AccountController {
 
 
 	@PutMapping("/checking")
-	public ResponseEntity updateCheckingAccount(@PathVariable UpdateCheckingAccountRequest request) {
+	public ResponseEntity updateCheckingAccount(@RequestBody UpdateCheckingAccountRequest request) {
 		Checking checking = checkingService.findByAccountNumber(request.getAccountNumber());
 		if (checking == null || !checking.isActive()) {
 			String message = "Could not update checking account max overdraft. Account number {} not found";
