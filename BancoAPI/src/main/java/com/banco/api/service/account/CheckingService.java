@@ -31,7 +31,7 @@ public class CheckingService extends AccountService<Checking, CheckingDTO> {
     }
     
     public Checking findByAccountNumber(String accountNumber) {
-    	Checking result = checkingRepository.findByAccountNumber(accountNumber);
+    	Checking result = checkingRepository.findByAccountNumberAndActive(accountNumber, true);
     	return result;
     }
     
@@ -40,7 +40,7 @@ public class CheckingService extends AccountService<Checking, CheckingDTO> {
     }
     
     public Checking findByCbu(String cbu) {
-    	Checking result = checkingRepository.findByCbu(cbu);
+    	Checking result = checkingRepository.findByCbuAndActive(cbu, true);
     	return result;
     }
 

@@ -118,14 +118,14 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
         view.setUserType(UserType.valueOf(this.getUserType()).toString());
         view.setFirstLogin(this.isFirstLogin());
         
-        if(this.getSavings() == null) {
+        if(this.getSavings() == null || !this.getSavings().isActive()) {
         	view.setSavings(null);
         }
         else {
             view.setSavings(this.getSavings().toView());       	
         }
         
-        if(this.getChecking() == null) {
+        if(this.getChecking() == null || !this.getChecking().isActive()) {
             view.setChecking(null);
         }
         else {

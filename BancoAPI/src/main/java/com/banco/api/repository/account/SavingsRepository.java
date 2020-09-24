@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SavingsRepository extends AccountBaseRepository<Savings> {
-	   public Savings findByAccountNumber(String accountNumber);
+	   public Savings findByAccountNumberAndActive(String accountNumber, boolean active);
 
-	   public Savings findByCbu(String cbu);
+	   public Savings findByCbuAndActive(String cbu, boolean active);
 }

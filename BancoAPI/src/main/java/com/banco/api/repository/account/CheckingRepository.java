@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CheckingRepository extends AccountBaseRepository<Checking> {
-    public Checking findByAccountNumber(String accountNumber);
+    public Checking findByAccountNumberAndActive(String accountNumber, boolean active);
 
-    public Checking findByCbu(String cbu);
+    public Checking findByCbuAndActive(String cbu, boolean active);
 }

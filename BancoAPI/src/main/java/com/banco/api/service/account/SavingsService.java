@@ -36,7 +36,7 @@ public class SavingsService extends AccountService<Savings, SavingsDTO> {
     public boolean existsAccountNumber(String accountNumber) {
     	boolean result;
     	
-    	if(savingsRepository.findByAccountNumber(accountNumber) == null) {
+    	if(savingsRepository.findByAccountNumberAndActive(accountNumber, true) == null) {
     		result = false;
     	}
     	else {
@@ -46,7 +46,7 @@ public class SavingsService extends AccountService<Savings, SavingsDTO> {
     }
     
     public Savings findByAccountNumber(String accountNumber) {
-    	Savings result = savingsRepository.findByAccountNumber(accountNumber);
+    	Savings result = savingsRepository.findByAccountNumberAndActive(accountNumber, true);
     	return result;
     }
 
@@ -59,7 +59,7 @@ public class SavingsService extends AccountService<Savings, SavingsDTO> {
     public boolean existsCbu(String cbu) {
     	boolean result;
     	
-    	if(savingsRepository.findByCbu(cbu) == null) {
+    	if(savingsRepository.findByCbuAndActive(cbu, true) == null) {
     		result = false;
     	}
     	else {
@@ -69,7 +69,7 @@ public class SavingsService extends AccountService<Savings, SavingsDTO> {
     }
     
     public Savings findByCbu(String cbu) {
-    	Savings result = savingsRepository.findByCbu(cbu);
+    	Savings result = savingsRepository.findByCbuAndActive(cbu, true);
     	return result;
     }
     

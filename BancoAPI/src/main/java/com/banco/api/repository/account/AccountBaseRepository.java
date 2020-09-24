@@ -7,7 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface AccountBaseRepository<T extends Account> extends CrudRepository<T, Integer> {
 
-    public T findByAccountNumber(String accountNumber);
+    public T findByAccountNumberAndActive(String accountNumber, boolean active);
 
-    public T findByCbu(String cbu);
+    public T findByCbuAndActive(String cbu, boolean active);
 }
