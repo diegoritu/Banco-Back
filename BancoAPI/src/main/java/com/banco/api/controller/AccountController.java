@@ -92,7 +92,7 @@ public class AccountController {
 
 				if (checking.isActive()) {
 					//No se cerró la cuenta porque el balance no daba 0
-					return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+					return new ResponseEntity<>(HttpStatus.CONFLICT);
 
 				} else {
 					return new ResponseEntity<>(checking.toView(), HttpStatus.OK);
