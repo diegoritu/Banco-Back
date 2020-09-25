@@ -106,19 +106,19 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     public Set<PhysicalUserDTO> search(String field, String term) {
         Set<Physical> users = Sets.newHashSet();
         if (PhysicalSearchField.USERNAME.equalsIgnoreCase(field)) {
-            users.addAll(physicalRepository.findByUsernameContainingIgnoreCase(term));
+            users.addAll(physicalRepository.findByActiveTrueAndUsernameContainingIgnoreCase(term));
 
         } else if (PhysicalSearchField.DNI.equalsIgnoreCase(field)) {
-            users.addAll(physicalRepository.findByDni(term));
+            users.addAll(physicalRepository.findByActiveTrueAndDni(term));
 
         } else if (PhysicalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            users.addAll(physicalRepository.findByCuitCuilCdi(term));
+            users.addAll(physicalRepository.findByActiveTrueAndCuitCuilCdi(term));
 
         } else if (PhysicalSearchField.FULL_NAME.equalsIgnoreCase(field)) {
             String[] words = term.split(" ");
             Stream.of(words).forEach(word -> {
-                users.addAll(physicalRepository.findByFirstNameContainingIgnoreCase(word));
-                users.addAll(physicalRepository.findByLastNameContainingIgnoreCase(word));
+                users.addAll(physicalRepository.findByActiveTrueAndFirstNameContainingIgnoreCase(word));
+                users.addAll(physicalRepository.findByActiveTrueAndLastNameContainingIgnoreCase(word));
             });
         }
         return users

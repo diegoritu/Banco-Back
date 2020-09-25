@@ -101,13 +101,13 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     public Set<LegalUserDTO> search(String field, String term) {
         Set<Legal> users = Sets.newHashSet();
         if (LegalSearchField.USERNAME.equalsIgnoreCase(field)) {
-            users.addAll(legalRepository.findByUsernameContainingIgnoreCase(term));
+            users.addAll(legalRepository.findByActiveTrueAndUsernameContainingIgnoreCase(term));
 
         } else if (LegalSearchField.BUSINESS_NAME.equalsIgnoreCase(field)) {
-            users.addAll(legalRepository.findByBusinessNameContainingIgnoreCase(term));
+            users.addAll(legalRepository.findByActiveTrueAndBusinessNameContainingIgnoreCase(term));
 
         } else if (LegalSearchField.CUIT_CUIL.equalsIgnoreCase(field)) {
-            users.addAll(legalRepository.findByCuitCuilCdi(term));
+            users.addAll(legalRepository.findByActiveTrueAndCuitCuilCdi(term));
         }
         return users
                 .stream()

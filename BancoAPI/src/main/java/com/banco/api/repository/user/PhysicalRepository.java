@@ -8,11 +8,11 @@ import java.util.List;
 @Repository
 public interface PhysicalRepository extends UserBaseRepository<Physical> {
 
-	List<Physical> findByDni(String dni);
+	List<Physical> findByActiveTrueAndDni(String dni);
 
-	List<Physical> findByFirstNameContainingIgnoreCase(String firstName);
+	List<Physical> findByActiveTrueAndFirstNameContainingIgnoreCase(String firstName);
 
-	List<Physical> findByLastNameContainingIgnoreCase(String lastName);
+	List<Physical> findByActiveTrueAndLastNameContainingIgnoreCase(String lastName);
 
 	Physical findByUsernameAndUserTypeNumberAndActive(String username, int userTypeNumber, boolean active);
 }

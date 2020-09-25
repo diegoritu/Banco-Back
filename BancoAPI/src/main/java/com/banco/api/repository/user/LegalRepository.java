@@ -10,7 +10,7 @@ public interface LegalRepository extends UserBaseRepository<Legal> {
 
 	Legal findByUsernameAndUserTypeNumber(String username, int userTypeNumber);
 
-	List<Legal> findByBusinessNameContainingIgnoreCase(String businessName);
+	List<Legal> findByActiveTrueAndBusinessNameContainingIgnoreCase(String businessName);
 
 	Legal findByUsernameAndUserTypeNumberAndActive(String username, int userTypeNumber, boolean active);
 
