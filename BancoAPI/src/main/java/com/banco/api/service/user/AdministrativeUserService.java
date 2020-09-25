@@ -33,6 +33,10 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
             throw new DuplicatedUserException("El nombre de usuario ya existe");
         }
 
+		if (existsByDni(request.getDni()) || physicalUserService.existsByDni(request.getDni())) {
+			throw new DuplicatedUserException("Ya existe un usuario con el mismo DNI");
+		}
+
         Administrative user = new Administrative();
         this.mapCommonUser(user, request);
         user.setActive(true);
@@ -100,5 +104,9 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
 		}
 		
 		return result;
+	}
+
+	public boolean existsByDni(String dni) {
+		return administrativeRepository.existsByDni(dni);
 	}
 }

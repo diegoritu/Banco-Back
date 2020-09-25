@@ -217,4 +217,8 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 		legals.forEach(result :: add);
 		return result;
 	}
+
+	public boolean existsByCuitCuilCdi(String cuitCuilCdi) {
+        return legalRepository.existsByCuitCuilCdi(cuitCuilCdi);
+    }
 }

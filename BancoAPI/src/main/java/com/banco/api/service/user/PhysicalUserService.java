@@ -51,6 +51,14 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
             throw new DuplicatedUserException("El nombre de usuario ya existe");
         }
 
+        if (existsByCuitCuilCdi(request.getCuitCuilCdi()) || legalUserService.existsByCuitCuilCdi(request.getCuitCuilCdi())) {
+            throw new DuplicatedUserException("Ya existe un usuario con el mismo CUIT/CUIL");
+        }
+
+        if (existsByDni(request.getDni()) || administrativeUserService.existsByDni(request.getDni())) {
+            throw new DuplicatedUserException("Ya existe un usuario con el mismo DNI");
+        }
+
         if (request.isWithCheckingAccount() && request.getMaxOverdraft() == null) {
             throw new InvalidUserRequestException("Si requiere cuenta corriente es necesario especificar el monto de descubierto");
         }
@@ -224,4 +232,12 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         
 		return result;
 	}
+
+	public boolean existsByCuitCuilCdi(String cuitCuilCdi) {
+        return physicalRepository.existsByCuitCuilCdi(cuitCuilCdi);
+    }
+
+    public boolean existsByDni(String dni) {
+        return physicalRepository.existsByDni(dni);
+    }
 }

@@ -15,4 +15,6 @@ public interface PhysicalRepository extends UserBaseRepository<Physical> {
 	List<Physical> findByActiveTrueAndLastNameContainingIgnoreCase(String lastName);
 
 	Physical findByUsernameAndUserTypeNumberAndActive(String username, int userTypeNumber, boolean active);
+
+	boolean existsByDni(String dni);
 }
