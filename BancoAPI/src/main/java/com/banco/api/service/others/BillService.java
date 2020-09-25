@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -108,6 +109,12 @@ public class BillService {
 
 		if (request.getAmount() <= 0)
 			throw new InvalidServiceBillCreationRequestException("El monto a pagar debe ser mayor a cero");
+
+		if (StringUtils.isEmpty(request.getVendorUsername()))
+			throw new InvalidServiceBillCreationRequestException("Debe especificar el dueño del servicio");
+
+		if (StringUtils.isEmpty(request.getVendorAccountNumber()))
+			throw new InvalidServiceBillCreationRequestException("Debe especificar el número de cuenta de cobro del vendedor");
 	}
 
 	private AccountType stringToAccountType(String accountType) {

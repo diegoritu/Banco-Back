@@ -63,6 +63,9 @@ public class AccountController {
 
 	@PutMapping("/checking")
 	public ResponseEntity updateCheckingAccount(@RequestBody UpdateCheckingAccountRequest request) {
+		if (request.getMaxOverDraft() == null)
+			return createErrorResponseEntity("Es necesario especificar el descubierto", HttpStatus.BAD_REQUEST);
+
 		Checking checking = checkingService.findByAccountNumber(request.getAccountNumber());
 		if (checking == null || !checking.isActive()) {
 			String message = "Could not update checking account max overdraft. Account number {} not found";

@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -31,16 +31,14 @@ public class ServiceBillController {
 		try {
 		ServiceCreatedDTO screated = billService.createService(request);
 		LOGGER.info("Create service bills operation started. {}", request.toString());
-		return new ResponseEntity<ServiceCreatedDTO>(screated, HttpStatus.CREATED);
+		return new ResponseEntity<>(screated, HttpStatus.CREATED);
 		}
 		catch(VendorNotFoundException ex){
 			LOGGER.warn(ex.getLocalizedMessage());
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
 		} catch (InvalidServiceBillCreationRequestException ex ) {
 		    LOGGER.warn(ex.getLocalizedMessage());
-		    return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"" + ex.getLocalizedMessage() + "\"}");
+		    return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
         }
 	}
 
