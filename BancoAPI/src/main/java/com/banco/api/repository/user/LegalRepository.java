@@ -17,4 +17,6 @@ public interface LegalRepository extends UserBaseRepository<Legal> {
 	Legal findByVendorId(String vendorId);
 
 	boolean existsByVendorId(String vendorId);
+
+	List<Legal> findByActiveTrue();
 }

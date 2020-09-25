@@ -24,9 +24,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
 
@@ -196,13 +196,10 @@ public class UserController {
     }
     
     @GetMapping("/legals")
-    public ResponseEntity<Collection<LegalUserDTO>> getLegalUsers() {
-    	Collection<Legal> users = legalUserService.findAllLegals();
-    	Collection<LegalUserDTO> rdo = new ArrayList<LegalUserDTO>();
-    	for(Legal l : users) {
-    		rdo.add(l.toView());
-    	}
-        return new ResponseEntity<>(rdo, HttpStatus.OK);
+    public ResponseEntity<List<LegalUserDTO>> getLegalUsers() {
+    	List<Legal> users = legalUserService.findAllLegals();
+    	List<LegalUserDTO> legalsView = users.stream().map(Legal::toView).collect(Collectors.toList());
+        return new ResponseEntity<>(legalsView, HttpStatus.OK);
         
     }
     

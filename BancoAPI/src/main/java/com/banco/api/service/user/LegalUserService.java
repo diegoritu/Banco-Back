@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -211,11 +212,8 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         return legalRepository.existsByVendorId(vendorId);
     }
 
-	public Collection<Legal> findAllLegals() {
-		Iterable<Legal> legals = legalRepository.findAll();
-		Collection<Legal> result = new ArrayList<Legal>();
-		legals.forEach(result :: add);
-		return result;
+	public List<Legal> findAllLegals() {
+		return legalRepository.findByActiveTrue();
 	}
 
 	public boolean existsByCuitCuilCdi(String cuitCuilCdi) {
