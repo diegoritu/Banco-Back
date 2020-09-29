@@ -2,63 +2,63 @@ package com.banco.api.dto.others.request;
 
 import java.io.Serializable;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class CreateServiceBillRequest implements Serializable {
+	private MultipartFile file;
 	private String name;
-	private float amount;
 	private String vendorUsername;
-	private String dueDate;
 	private String vendorAccountType;
-	private String vendorAccountNumber;
-	private int amountOfIds;
 
     public CreateServiceBillRequest() {}
 
-	public CreateServiceBillRequest(String name, float amount,
-									String vendorUsername, String dueDate, String vendorAccountType, String vendorAccountNumber, int amountOfIds) {
+	public CreateServiceBillRequest(MultipartFile file, String name, String vendorUsername, String vendorAccountType) {
 		super();
+		this.file = file;
 		this.name = name;
-		this.amount = amount;
 		this.vendorUsername = vendorUsername;
-		this.dueDate = dueDate;
 		this.vendorAccountType = vendorAccountType;
-		this.vendorAccountNumber = vendorAccountNumber;
-		this.amountOfIds = amountOfIds;
+	}
+
+	public MultipartFile getFile() {
+		return file;
+	}
+
+	public void setFile(MultipartFile file) {
+		this.file = file;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public float getAmount() {
-		return amount;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getVendorUsername() {
 		return vendorUsername;
 	}
 
-	public String getDueDate() {
-		return dueDate;
+	public void setVendorUsername(String vendorUsername) {
+		this.vendorUsername = vendorUsername;
 	}
 
 	public String getVendorAccountType() {
 		return vendorAccountType;
 	}
-	public String getVendorAccountNumber() {
-		return vendorAccountNumber;
-	}
 
-	public int getAmountOfIds() {
-		return amountOfIds;
+	public void setVendorAccountType(String vendorAccountType) {
+		this.vendorAccountType = vendorAccountType;
 	}
 
 	@Override
 	public String toString() {
-		return "CreateServiceBillRequest [name=" + name + ", amount=" + amount + ", vendorUsername=" + vendorUsername + ", dueDate=" + dueDate + ", vendorAccountType="
-				+ vendorAccountType + ", vendorAccountNumber=" + vendorAccountNumber + ", amountOfIds=" + amountOfIds
-				+ "]";
+		return "CreateServiceBillRequest [file=" + file + ", name=" + name + ", vendorUsername=" + vendorUsername
+				+ ", vendorAccountType=" + vendorAccountType + "]";
 	}
 
+	
 	
 
 }

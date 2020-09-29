@@ -1,24 +1,21 @@
 package com.banco.api.service.others;
 
-import com.banco.api.dto.account.AccountType;
-import com.banco.api.dto.others.ServiceCreatedDTO;
-import com.banco.api.dto.others.request.CreateServiceBillRequest;
-import com.banco.api.exception.InvalidServiceBillCreationRequestException;
-import com.banco.api.exception.VendorNotFoundException;
-import com.banco.api.model.ServicePayment;
-import com.banco.api.model.user.Legal;
-import com.banco.api.repository.ServiceRepository;
-import com.banco.api.service.account.CheckingService;
-import com.banco.api.service.account.SavingsService;
-import com.banco.api.service.user.LegalUserService;
-import com.banco.api.utils.DateUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.*;
+import com.banco.api.dto.account.AccountType;
+import com.banco.api.dto.others.ServiceCsvDTO;
+import com.banco.api.exception.VendorNotFoundException;
+import com.banco.api.model.ServicePayment;
+import com.banco.api.model.user.Legal;
+import com.banco.api.repository.ServiceRepository;
+import com.banco.api.service.user.LegalUserService;
 
 @Service
 public class BillService {
@@ -30,12 +27,57 @@ public class BillService {
 	@Autowired
 	private LegalUserService legalUserService;
 	@Autowired
-	private CheckingService checkingService;
-	@Autowired
-	private SavingsService savingsService;
 	
-	public ServiceCreatedDTO createService(CreateServiceBillRequest request) {
-		validateRequest(request);
+	public ArrayList<String> createService(List<ServiceCsvDTO> servicesCsv, String name, String vendorUsername, String accountType) {
+		Legal vendor = null;
+		AccountType vendorAccountType = stringToAccountType(accountType);
+		Collection<ServicePayment> services = new ArrayList<ServicePayment>();
+		ArrayList<String> repeatedIds = new ArrayList<String>(); //En la posición 0 lleva el id del vendor. De la posición 1 en adelante lleva los serviceIds que ya existían y no se crearon
+		
+		vendor = legalUserService.findByActiveUsername(vendorUsername);
+		if(vendor != null) {
+			if(vendor.getVendorId() == null) {
+				vendor.setVendorId();
+			}
+			repeatedIds.add(vendor.getVendorId());
+			for(ServiceCsvDTO s : servicesCsv) {
+				ServicePayment serv = new ServicePayment();
+				
+				if(serviceRepository.existsByServicePaymentIdAndVendorIdUser(s.getServicePaymentId(), vendor.getId())) {
+					repeatedIds.add(s.getServicePaymentId());
+				}
+				else {
+					if(AccountType.CHECKING.equals(vendorAccountType)) {
+						serv.setVendorChecking(vendor.getChecking());
+					}
+					else if(AccountType.SAVINGS.equals(vendorAccountType)) {
+						serv.setVendorSavings(vendor.getSavings());
+					}
+					serv.setAmount(s.getAmount());
+					serv.setDue(s.getDue());
+					serv.setServicePaymentId(s.getServicePaymentId());
+					serv.setCuitCuilCdi(s.getCuitCuilCdi());
+					serv.setName(name);
+					serv.setVendor(vendor);
+					services.add(serv);
+				}
+			}
+			for(ServicePayment sp : services) {
+				serviceRepository.save(sp);
+			}
+			return repeatedIds;
+			
+		}
+		else {
+			LOGGER.warn("Vendor not found");
+			throw new VendorNotFoundException("No se encontró al proveedor");
+		}
+		
+		
+		
+		
+		
+		/*validateRequest(request);
 		ServiceCreatedDTO answer = new ServiceCreatedDTO();
 		AccountType vendorAccountType = stringToAccountType(request.getVendorAccountType());
 		ServicePayment result = null;
@@ -75,6 +117,7 @@ public class BillService {
 			serviceRepository.save(sp);
 		}
 		return answer;
+		*/
 	}
 
 	public ServicePayment searchNotPayedServiceBill(String servicePaymentId, String vendorId) {
@@ -100,7 +143,7 @@ public class BillService {
 		return findServiceByServicePaymentId(idServicePayment, vendorId) != null;
 	}
 
-	private void validateRequest(CreateServiceBillRequest request) {
+	/*private void validateRequest(CreateServiceBillRequest request) {
 		if (!DateUtils.isValid(request.getDueDate()))
 			throw new InvalidServiceBillCreationRequestException("Formato inválido de fecha de vencimiento");
 
@@ -115,7 +158,7 @@ public class BillService {
 
 		if (StringUtils.isEmpty(request.getVendorAccountNumber()))
 			throw new InvalidServiceBillCreationRequestException("Debe especificar el número de cuenta de cobro del vendedor");
-	}
+	}*/
 
 	private AccountType stringToAccountType(String accountType) {
 		return AccountType.valueOf(accountType.toUpperCase());

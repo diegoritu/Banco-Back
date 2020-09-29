@@ -13,12 +13,13 @@ public class ServiceDTO {
 	private LegalUserDTO legalWhoPays;
 	private PhysicalUserDTO physicalWhoPays;
 	private LegalUserDTO vendor;
+	private String cuitCuilCdi;
 	private String dueDate;
 	private CheckingDTO vendorChecking;
 	private SavingsDTO vendorSavings;
 	
 	public ServiceDTO(String name, float amount, String idServicePayment, boolean paid,
-					  LegalUserDTO legalWhoPays, PhysicalUserDTO physicalWhoPays, LegalUserDTO vendor, String dueDate, CheckingDTO vendorChecking, SavingsDTO vendorSavings) {
+					  LegalUserDTO legalWhoPays, PhysicalUserDTO physicalWhoPays, LegalUserDTO vendor, String dueDate, CheckingDTO vendorChecking, SavingsDTO vendorSavings, String cuitCuilCdi) {
 		super();
 		this.name = name;
 		this.amount = amount;
@@ -30,6 +31,7 @@ public class ServiceDTO {
 		this.dueDate = dueDate;
 		this.vendorChecking = vendorChecking;
 		this.vendorSavings = vendorSavings;
+		this.cuitCuilCdi = cuitCuilCdi;
 	}
 	
 	public ServiceDTO() {}
@@ -94,13 +96,19 @@ public class ServiceDTO {
 	public void setVendorSavings(SavingsDTO vendorSavings) {
 		this.vendorSavings = vendorSavings;
 	}
+	public String getCuitCuilCdi() {
+		return cuitCuilCdi;
+	}
+
+	public void setCuitCuilCdi(String cuitCuilCdi) {
+		this.cuitCuilCdi = cuitCuilCdi;
+	}
 
 	@Override
 	public String toString() {
 		return "ServiceDTO [name=" + name + ", amount=" + amount + ", servicePaymentId=" + servicePaymentId + ", paid="
 				+ paid + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays=" + physicalWhoPays + ", vendor="
-				+ vendor + ", dueDate=" + dueDate + ", vendorChecking=" + vendorChecking + ", vendorSavings=" + vendorSavings
-				+ "]";
+				+ vendor + ", cuitCuilCdi=" + cuitCuilCdi + ", dueDate=" + dueDate + ", vendorChecking="
+				+ vendorChecking + ", vendorSavings=" + vendorSavings + "]";
 	}
-
 }

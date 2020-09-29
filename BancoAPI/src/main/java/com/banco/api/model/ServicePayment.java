@@ -31,6 +31,7 @@ public class ServicePayment implements Externalizable<ServiceDTO> {
     private float amount;
     private String servicePaymentId;
     private boolean paid;
+    private String cuitCuilCdi;
     
     @ManyToOne
     private Checking vendorChecking;
@@ -60,20 +61,20 @@ public class ServicePayment implements Externalizable<ServiceDTO> {
         this.name = name;
         this.amount = amount;
         this.paid = false;
-        setServicePaymentId();
+        //setServicePaymentId();
     }
     
     public String getServicePaymentId() {
 		return servicePaymentId;
 	}
 
-	public void setServicePaymentId() {
-		final int BASE_LENGHT = 9;
+	public void setServicePaymentId(String id) {
+		/*final int BASE_LENGHT = 9;
     	String numbers = "123456789";
     	List<String> code = Arrays.asList(numbers.split(""));
     	Collections.shuffle(code);
     	String id = code.stream().collect(Collectors.joining()).substring(0, BASE_LENGHT);
-		
+		*/
     	this.servicePaymentId = id;
 	}
 	public boolean isPaid() {
@@ -148,12 +149,20 @@ public class ServicePayment implements Externalizable<ServiceDTO> {
 		this.vendorSavings = vendorSavings;
 	}
 
+	public String getCuitCuilCdi() {
+		return cuitCuilCdi;
+	}
+
+	public void setCuitCuilCdi(String cuitCuilCdi) {
+		this.cuitCuilCdi = cuitCuilCdi;
+	}
+
 	@Override
 	public String toString() {
 		return "ServicePayment [name=" + name + ", amount=" + amount + ", servicePaymentId=" + servicePaymentId
-				+ ", paid=" + paid + ", vendorChecking=" + vendorChecking + ", vendorSavings=" + vendorSavings
-				+ ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays=" + physicalWhoPays + ", vendor=" + vendor
-				+ ", due=" + due + ", idService=" + idService + "]";
+				+ ", paid=" + paid + ", cuitCuilCdi=" + cuitCuilCdi + ", vendorChecking=" + vendorChecking
+				+ ", vendorSavings=" + vendorSavings + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays="
+				+ physicalWhoPays + ", vendor=" + vendor + ", due=" + due + ", idService=" + idService + "]";
 	}
 
 	@Override
@@ -163,6 +172,7 @@ public class ServicePayment implements Externalizable<ServiceDTO> {
 		result.setDueDate(DateUtils.format(this.due));
 		result.setServicePaymentId(this.getServicePaymentId());
 		result.setName(this.getName());
+		result.setCuitCuilCdi(this.getCuitCuilCdi());
 		if(this.getLegalWhoPays() != null) {
 			result.setLegalWhoPays(this.getLegalWhoPays().toView());
 		}
