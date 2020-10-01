@@ -26,7 +26,6 @@ public class BillService {
 	ServiceRepository serviceRepository;
 	@Autowired
 	private LegalUserService legalUserService;
-	@Autowired
 	
 	public ArrayList<String> createService(List<ServiceCsvDTO> servicesCsv, String name, String vendorUsername, String accountType) {
 		Legal vendor = null;
