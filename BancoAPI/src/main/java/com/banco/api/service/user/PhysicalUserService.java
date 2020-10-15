@@ -8,12 +8,14 @@ import com.banco.api.dto.user.request.modification.PhysicalUserModificationReque
 import com.banco.api.exception.CheckingAccountRequestException;
 import com.banco.api.exception.DuplicatedUserException;
 import com.banco.api.exception.InvalidUserRequestException;
+import com.banco.api.model.DebitCard;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
+import com.banco.api.service.others.DebitCardService;
 import com.banco.api.utils.DateUtils;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
@@ -43,6 +45,8 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
     private SavingsService savingsService;
     @Autowired
     private CheckingService checkingService;
+    @Autowired
+    private DebitCardService debitCardService;
 
     @Override
     public PhysicalUserDTO createUser(PhysicalUserRequest request) {
@@ -78,7 +82,10 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 
         Savings savingsAccount = savingsService.createAccount();
         user.setSavings(savingsAccount);
-
+        
+        DebitCard debitCard = debitCardService.createDebitCard(savingsAccount.getAccountNumber());
+        user.setDebitCard(debitCard);
+        
         if (request.isWithCheckingAccount()) {
             Checking checkingAccount = checkingService.createAccount(request.getMaxOverdraft());
             user.setChecking(checkingAccount);

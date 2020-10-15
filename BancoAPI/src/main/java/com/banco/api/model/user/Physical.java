@@ -4,6 +4,7 @@ import com.banco.api.utils.DateUtils;
 import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.user.PhysicalUserDTO;
 import com.banco.api.dto.user.UserType;
+import com.banco.api.model.DebitCard;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 
@@ -21,14 +22,16 @@ public class Physical
 
     @OneToOne
     @JoinColumn(name = "idSavingsAccount")
-  //  @Column(name = "idSavingsAccount")
     private Savings savings; //Caja de Ahorro
 
     @OneToOne
     @JoinColumn(name = "idCheckingAccount")
-   // @Column(name = "idCheckingAccount")
     private Checking checking; //Cuenta Corriente
 
+    @OneToOne
+    @JoinColumn(name = "debitCardId")
+    private DebitCard debitCard;
+    
     @Temporal(TemporalType.TIMESTAMP)
     private Date birthday;
 
@@ -42,12 +45,13 @@ public class Physical
     }
 
     public Physical(int id, String cuitCuilCdi, String usr, String address, String phone, String mobilePhone,
-                    boolean active, String dni, Savings savings, Checking checking, Date birthDate, String firstName,
+                    boolean active, String dni, Savings savings, Checking checking, DebitCard debitCard, Date birthDate, String firstName,
                     String lastName) {
         super(id, cuitCuilCdi, usr, address, phone, active);
         this.dni = dni;
         this.savings = savings;
         this.checking = checking;
+        this.debitCard = debitCard;
         this.birthday = birthDate;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -79,7 +83,15 @@ public class Physical
         this.checking = checking;
     }
 
-    public Date getBirthDate() {
+    public DebitCard getDebitCard() {
+		return debitCard;
+	}
+
+	public void setDebitCard(DebitCard debitCard) {
+		this.debitCard = debitCard;
+	}
+
+	public Date getBirthDate() {
         return birthday;
     }
 
@@ -124,6 +136,7 @@ public class Physical
         view.setDni(this.getDni());
         view.setId(this.getId());
         view.setFirstLogin(this.isFirstLogin());
+        view.setDebitCard(this.getDebitCard().toView());
         
         if(this.getSavings() == null || !this.getSavings().isActive()) {
         	view.setSavings(null);

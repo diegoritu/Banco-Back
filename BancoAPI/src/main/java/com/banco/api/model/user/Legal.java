@@ -3,6 +3,7 @@ package com.banco.api.model.user;
 import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.user.LegalUserDTO;
 import com.banco.api.dto.user.UserType;
+import com.banco.api.model.DebitCard;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 
@@ -28,25 +29,28 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
     
     @OneToOne
     @JoinColumn(name = "idSavingsAccount")
-    //@Column(name = "idSavingsAccount")
     private Savings savings; //Caja de Ahorro
 
     @OneToOne
     @JoinColumn(name = "idCheckingAccount")
-    //@Column(name = "idCheckingAccount")
     private Checking checking; //Cuenta Corriente
 
+    @OneToOne
+    @JoinColumn(name = "debitCardId")
+    private DebitCard debitCard;
+    
     public Legal() {
     	super();
         this.userTypeNumber = UserType.LEGAL.getValue();
     }
 
     public Legal(int id, String cuitCuilCdi, String usr, String address, String phone,
-                 boolean active, String businessName, Savings savings, Checking checking) {
+                 boolean active, String businessName, Savings savings, Checking checking, DebitCard debitCard) {
         super(id, cuitCuilCdi, usr, address, phone, active);
         this.businessName = businessName;
         this.savings = savings;
         this.checking = checking;
+        this.debitCard = debitCard;
         this.userTypeNumber = UserType.LEGAL.getValue();
         this.isVendor = false;
     }
@@ -71,7 +75,15 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
         return checking;
     }
 
-    public void setChecking(Checking checking) {
+    public DebitCard getDebitCard() {
+		return debitCard;
+	}
+
+	public void setDebitCard(DebitCard debitCard) {
+		this.debitCard = debitCard;
+	}
+
+	public void setChecking(Checking checking) {
         this.checking = checking;
     }
     public boolean isVendor() {
@@ -117,6 +129,7 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
         view.setUsername(this.getUsername());
         view.setUserType(UserType.valueOf(this.getUserType()).toString());
         view.setFirstLogin(this.isFirstLogin());
+        view.setDebitCard(this.getDebitCard().toView());
         
         if(this.getSavings() == null || !this.getSavings().isActive()) {
         	view.setSavings(null);
