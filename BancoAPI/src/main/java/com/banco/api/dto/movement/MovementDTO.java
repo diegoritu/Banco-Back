@@ -12,7 +12,6 @@ public class MovementDTO {
 	private String dayAndHour;
 	private String concept;
 	private float amount;
-    private long transactionId;
     private ServiceDTO service;
     private String reference;
     private float entryBalanceBeforeMovement;
@@ -26,8 +25,8 @@ public class MovementDTO {
     
     public MovementDTO() {}
 
-	public MovementDTO(int movementType, String dayAndHour, String concept, float amount,
-			long transactionId, ServiceDTO service, String reference, float entryBalanceBeforeMovement,
+	public MovementDTO(int movementType, String dayAndHour, String concept, float amount, 
+			ServiceDTO service, String reference, float entryBalanceBeforeMovement,
 			float exitBalanceBeforeMovement, CheckingDTO chEntryAccount, CheckingDTO chExitAccount,
 			AccountDTO entryAccount, AccountDTO exitAccount, SavingsDTO saEntryAccount, SavingsDTO saExitAccount, int idMovement, String businessName) {
 		super();
@@ -35,7 +34,6 @@ public class MovementDTO {
 		this.dayAndHour = dayAndHour;
 		this.concept = concept;
 		this.amount = amount;
-		this.transactionId = transactionId;
 		this.service = service;
 		this.reference = reference;
 		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
@@ -87,14 +85,6 @@ public class MovementDTO {
 
 	public void setAmount(float amount) {
 		this.amount = amount;
-	}
-
-	public long getTransactionId() {
-		return transactionId;
-	}
-
-	public void setTransactionId(long transactionId) {
-		this.transactionId = transactionId;
 	}
 
 	public ServiceDTO getService() {
@@ -172,7 +162,7 @@ public class MovementDTO {
 	@Override
 	public String toString() {
 		return "MovementDTO [movementType=" + movementType + ", dayAndHour=" + dayAndHour + ", concept=" + concept
-				+ ", amount=" + amount + ", transactionId=" + transactionId + ", service=" + service + ", reference="
+				+ ", amount=" + amount + ", service=" + service + ", reference="
 				+ reference + ", entryBalanceBeforeMovement=" + entryBalanceBeforeMovement
 				+ ", exitBalanceBeforeMovement=" + exitBalanceBeforeMovement + ", chEntryAccount=" + chEntryAccount
 				+ ", chExitAccount=" + chExitAccount + ", saEntryAccount=" + saEntryAccount + ", saExitAccount="

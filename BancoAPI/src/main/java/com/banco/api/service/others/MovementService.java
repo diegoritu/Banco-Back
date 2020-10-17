@@ -240,9 +240,9 @@ public class MovementService {
 		return movementRepository.findByIdMovement(id).toView();
 	}
 
-	public long debitCardPayment(DebitCardPaymentRequest request) {
+	public int debitCardPayment(DebitCardPaymentRequest request) {
 		Movement movement = new Movement();
-		long transactionId;
+		int transactionId;
 		float clientBalanceBeforeMovement;
 		float businessBalanceBeforeMovement;
 		Checking businessChecking = null;
@@ -293,7 +293,7 @@ public class MovementService {
 		Movement m = movementRepository.save(movement);
 		
 		
-		transactionId = m.getTransactionId();
+		transactionId = m.getIdMovement();
 		return transactionId;
 	}
 

@@ -1,9 +1,9 @@
 package com.banco.api.dto.others;
 
 public class TransactionIdDTO {
-	private long transactionId;
+	private int transactionId;
 
-	public TransactionIdDTO(long transactionId) {
+	public TransactionIdDTO(int transactionId) {
 		super();
 		this.transactionId = transactionId;
 	}
@@ -12,11 +12,11 @@ public class TransactionIdDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public long getTransactionId() {
+	public int getTransactionId() {
 		return transactionId;
 	}
 
-	public void setTransactionId(long transactionId) {
+	public void setTransactionId(int transactionId) {
 		this.transactionId = transactionId;
 	}
 	

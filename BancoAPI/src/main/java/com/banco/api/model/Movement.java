@@ -34,10 +34,7 @@ public class Movement {
     private Date dayAndHour;
     private String concept;
     private float amount;
-    
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="transactionId")
-    private long transactionId;
-    
+        
     @OneToOne
     @JoinColumn(name = "idService")
     private ServicePayment service;
@@ -83,8 +80,7 @@ public class Movement {
      * Constructor with idMovement and transactionId
      */
 
-    public Movement(int idMovement, int movementType, Date dayAndHour, String concept, float amount,
-    		long transactionId, ServicePayment service, String reference, float entryBalanceBeforeMovement,
+    public Movement(int idMovement, int movementType, Date dayAndHour, String concept, float amount, ServicePayment service, String reference, float entryBalanceBeforeMovement,
 			float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
 			Savings saExitAccount, String businessName) {
 		super();
@@ -93,7 +89,6 @@ public class Movement {
 		this.dayAndHour = dayAndHour;
 		this.concept = concept;
 		this.amount = amount;
-		this.transactionId = transactionId;
 		this.service = service;
 		this.reference = reference;
 		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
@@ -146,14 +141,6 @@ public class Movement {
 
     public void setAmount(float amount) {
         this.amount = amount;
-    }
-
-    public long getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(long transactionId) {
-        this.transactionId = transactionId;
     }
 
     public ServicePayment getService() {
@@ -231,11 +218,11 @@ public class Movement {
 	@Override
 	public String toString() {
 		return "Movement [idMovement=" + idMovement + ", movementType=" + movementType + ", dayAndHour=" + dayAndHour
-				+ ", concept=" + concept + ", amount=" + amount + ", transactionId=" + transactionId + ", service="
-				+ service + ", reference=" + reference + ", entryBalanceBeforeMovement=" + entryBalanceBeforeMovement
-				+ ", exitBalanceBeforeMovement=" + exitBalanceBeforeMovement + ", chEntryAccount=" + chEntryAccount
-				+ ", chExitAccount=" + chExitAccount + ", saEntryAccount=" + saEntryAccount + ", saExitAccount="
-				+ saExitAccount + ", businessName=" + businessName + "]";
+				+ ", concept=" + concept + ", amount=" + amount + ", service=" + service + ", reference=" + reference
+				+ ", entryBalanceBeforeMovement=" + entryBalanceBeforeMovement + ", exitBalanceBeforeMovement=" 
+				+ exitBalanceBeforeMovement + ", chEntryAccount=" + chEntryAccount + ", chExitAccount=" 
+				+ chExitAccount + ", saEntryAccount=" + saEntryAccount + ", saExitAccount="	+ saExitAccount 
+				+ ", businessName=" + businessName + "]";
 	}
 
 	public MovementDTO toView() {
@@ -259,7 +246,6 @@ public class Movement {
 			result.setService(this.getService().toView());
 		}
 		result.setDayAndHour(this.getDayAndHour().toString());
-		result.setTransactionId(this.getTransactionId());
 		result.setMovementType(this.getMovementType());
 		result.setEntryBalanceBeforeMovement(this.getEntryBalanceBeforeMovement());
 		result.setExitBalanceBeforeMovement(this.getExitBalanceBeforeMovement());
