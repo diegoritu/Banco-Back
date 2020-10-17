@@ -28,11 +28,11 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
     private String vendorId;
     
     @OneToOne
-    @JoinColumn(name = "idSavingsAccount")
+    @JoinColumn(name = "savingsAccountId")
     private Savings savings; //Caja de Ahorro
 
     @OneToOne
-    @JoinColumn(name = "idCheckingAccount")
+    @JoinColumn(name = "checkingAccountId")
     private Checking checking; //Cuenta Corriente
 
     @OneToOne

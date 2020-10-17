@@ -12,7 +12,7 @@ public class MovementDTO {
 	private String dayAndHour;
 	private String concept;
 	private float amount;
-    private int transactionNumber;
+    private long transactionId;
     private ServiceDTO service;
     private String reference;
     private float entryBalanceBeforeMovement;
@@ -22,19 +22,20 @@ public class MovementDTO {
     private SavingsDTO saEntryAccount;
     private SavingsDTO saExitAccount;
     private int idMovement;
+    private String businessName;
     
     public MovementDTO() {}
 
 	public MovementDTO(int movementType, String dayAndHour, String concept, float amount,
-			int transactionNumber, ServiceDTO service, String reference, float entryBalanceBeforeMovement,
+			long transactionId, ServiceDTO service, String reference, float entryBalanceBeforeMovement,
 			float exitBalanceBeforeMovement, CheckingDTO chEntryAccount, CheckingDTO chExitAccount,
-			AccountDTO entryAccount, AccountDTO exitAccount, SavingsDTO saEntryAccount, SavingsDTO saExitAccount, int idMovement) {
+			AccountDTO entryAccount, AccountDTO exitAccount, SavingsDTO saEntryAccount, SavingsDTO saExitAccount, int idMovement, String businessName) {
 		super();
 		this.movementType = movementType;
 		this.dayAndHour = dayAndHour;
 		this.concept = concept;
 		this.amount = amount;
-		this.transactionNumber = transactionNumber;
+		this.transactionId = transactionId;
 		this.service = service;
 		this.reference = reference;
 		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
@@ -44,6 +45,7 @@ public class MovementDTO {
 		this.saEntryAccount = saEntryAccount;
 		this.saExitAccount = saExitAccount;
 		this.idMovement = idMovement;
+		this.businessName = businessName;
 	}
 
 	
@@ -87,12 +89,12 @@ public class MovementDTO {
 		this.amount = amount;
 	}
 
-	public int getTransactionNumber() {
-		return transactionNumber;
+	public long getTransactionId() {
+		return transactionId;
 	}
 
-	public void setTransactionNumber(int transactionNumber) {
-		this.transactionNumber = transactionNumber;
+	public void setTransactionId(long transactionId) {
+		this.transactionId = transactionId;
 	}
 
 	public ServiceDTO getService() {
@@ -158,16 +160,23 @@ public class MovementDTO {
 	public void setSaExitAccount(SavingsDTO saExitAccount) {
 		this.saExitAccount = saExitAccount;
 	}
+	
+	public String getBusinessName() {
+		return businessName;
+	}
+	
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
+	}
 
 	@Override
 	public String toString() {
 		return "MovementDTO [movementType=" + movementType + ", dayAndHour=" + dayAndHour + ", concept=" + concept
-				+ ", amount=" + amount + ", transactionNumber=" + transactionNumber + ", service=" + service
-				+ ", reference=" + reference + ", entryBalanceBeforeMovement=" + entryBalanceBeforeMovement
+				+ ", amount=" + amount + ", transactionId=" + transactionId + ", service=" + service + ", reference="
+				+ reference + ", entryBalanceBeforeMovement=" + entryBalanceBeforeMovement
 				+ ", exitBalanceBeforeMovement=" + exitBalanceBeforeMovement + ", chEntryAccount=" + chEntryAccount
-				+ ", chExitAccount=" + chExitAccount + ", saEntryAccount=" + saEntryAccount + ", saExitAccount=" + saExitAccount + "]";
+				+ ", chExitAccount=" + chExitAccount + ", saEntryAccount=" + saEntryAccount + ", saExitAccount="
+				+ saExitAccount + ", idMovement=" + idMovement + ", businessName=" + businessName + "]";
 	}
-
-	
 	
 }

@@ -1,39 +1,31 @@
 package com.banco.api.dto.movement.request;
 
+import com.banco.api.dto.others.request.DebitCardRequest;
+
 public class DebitCardPaymentRequest {
 	private String businessCbu;
-	private String number;
-	private String securityCode;
-	private String expirationDate;
-	private String amount;
+	DebitCardRequest debitCard;
+	private float amount;
 	private String concept;
 	
 	public DebitCardPaymentRequest() {}
-	
-	public DebitCardPaymentRequest(String businessCbu, String number, String securityCode, String expirationDate,
-			String amount, String concept) {
+
+	public DebitCardPaymentRequest(String businessCbu, DebitCardRequest debitCard, float amount, String concept) {
 		super();
 		this.businessCbu = businessCbu;
-		this.number = number;
-		this.securityCode = securityCode;
-		this.expirationDate = expirationDate;
+		this.debitCard = debitCard;
 		this.amount = amount;
 		this.concept = concept;
 	}
-	
+
 	public String getBusinessCbu() {
 		return businessCbu;
 	}
-	public String getNumber() {
-		return number;
+	public DebitCardRequest getDebitCard() {
+		return debitCard;
 	}
-	public String getSecurityCode() {
-		return securityCode;
-	}
-	public String getExpirationDate() {
-		return expirationDate;
-	}
-	public String getAmount() {
+
+	public float getAmount() {
 		return amount;
 	}
 	public String getConcept() {
@@ -42,8 +34,7 @@ public class DebitCardPaymentRequest {
 
 	@Override
 	public String toString() {
-		return "DebitCardPaymentRequest [businessCbu=" + businessCbu + ", number=" + number + ", securityCode="
-				+ securityCode + ", expirationDate=" + expirationDate + ", amount=" + amount + ", concept=" + concept
-				+ "]";
+		return "DebitCardPaymentRequest [businessCbu=" + businessCbu + ", debitCard=" + debitCard + ", amount=" + amount
+				+ ", concept=" + concept + "]";
 	}
 }

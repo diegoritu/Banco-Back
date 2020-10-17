@@ -1,7 +1,10 @@
 package com.banco.api.controller;
 
 import com.banco.api.dto.movement.MovementType;
+import com.banco.api.model.DebitCard;
 import com.banco.api.model.ServicePayment;
+
+import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
 
 import java.util.Collection;
 
@@ -19,10 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.banco.api.dto.movement.MovementDTO;
+import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
 import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.dto.movement.request.ServicePaymentRequest;
 import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
 import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
+import com.banco.api.exception.BusinessCBUNotFoundException;
+import com.banco.api.exception.ClientInsuficientFundsException;
+import com.banco.api.exception.DebitCardNotFoundException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
@@ -31,6 +38,7 @@ import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.others.MovementService;
 import com.banco.api.service.others.BillService;
+import com.banco.api.service.others.DebitCardService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 
@@ -52,6 +60,7 @@ public class MovementController {
     private LegalUserService legalUserService;
     @Autowired
     private PhysicalUserService physicalUserService;
+    
     
     
     @PostMapping("/deposit")
@@ -381,6 +390,23 @@ public class MovementController {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
     }
+    
+    @PostMapping("/debitCardPayment")
+    public ResponseEntity debitCardPayment(@RequestBody DebitCardPaymentRequest request){
+    	try {
+    		return new ResponseEntity<Long> (movementService.debitCardPayment(request), HttpStatus.OK);
+    	}
+    	catch(ClientInsuficientFundsException ex){
+    		return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
+    	}
+    	catch(DebitCardNotFoundException ex) {
+    		return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
+    	}
+    	catch(BusinessCBUNotFoundException ex) {
+    		return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
+    	}
+    }
+
 }
 
 

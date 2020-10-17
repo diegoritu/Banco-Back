@@ -10,6 +10,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "movements")
+@SequenceGenerator(name="transactionId", initialValue=10000, allocationSize=100)
 public class Movement {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +25,7 @@ public class Movement {
 	 * TRANSFER_BETWEEN_OWN_ACCOUNTS = 5
 	 * TRANSFER_TO_OTHER_ACCOUNTS = 6
 	 * INTERESTS = 7
+	 * DEBIT_CARD_PAYMENT = 8
 	 */
     private int movementType;
     
@@ -32,7 +34,9 @@ public class Movement {
     private Date dayAndHour;
     private String concept;
     private float amount;
-    private int transactionNumber;
+    
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="transactionId")
+    private long transactionId;
     
     @OneToOne
     @JoinColumn(name = "idService")
@@ -51,19 +55,19 @@ public class Movement {
     @ManyToOne
     private Savings saExitAccount;
 
+    private String businessName;
     /*
-     * Constructor without idMovement
+     * Constructor without idMovement and transactionId
      */
     
-    public Movement(int movementType, Date dayAndHour, String concept, float amount, int transactionNumber,
+    public Movement(int movementType, Date dayAndHour, String concept, float amount,
 			ServicePayment service, String reference, float entryBalanceBeforeMovement, float exitBalanceBeforeMovement,
-			Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount, Savings saExitAccount) {
+			Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount, Savings saExitAccount, String businessName) {
 		super();
 		this.movementType = movementType;
 		this.dayAndHour = dayAndHour;
 		this.concept = concept;
 		this.amount = amount;
-		this.transactionNumber = transactionNumber;
 		this.service = service;
 		this.reference = reference;
 		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
@@ -72,23 +76,24 @@ public class Movement {
 		this.chExitAccount = chExitAccount;
 		this.saEntryAccount = saEntryAccount;
 		this.saExitAccount = saExitAccount;
+		this.businessName = businessName;
 	}
 
     /*
-     * Constructor with idMovement
+     * Constructor with idMovement and transactionId
      */
 
     public Movement(int idMovement, int movementType, Date dayAndHour, String concept, float amount,
-			int transactionNumber, ServicePayment service, String reference, float entryBalanceBeforeMovement,
+    		long transactionId, ServicePayment service, String reference, float entryBalanceBeforeMovement,
 			float exitBalanceBeforeMovement, Checking chEntryAccount, Checking chExitAccount, Savings saEntryAccount,
-			Savings saExitAccount) {
+			Savings saExitAccount, String businessName) {
 		super();
 		this.idMovement = idMovement;
 		this.movementType = movementType;
 		this.dayAndHour = dayAndHour;
 		this.concept = concept;
 		this.amount = amount;
-		this.transactionNumber = transactionNumber;
+		this.transactionId = transactionId;
 		this.service = service;
 		this.reference = reference;
 		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
@@ -97,12 +102,11 @@ public class Movement {
 		this.chExitAccount = chExitAccount;
 		this.saEntryAccount = saEntryAccount;
 		this.saExitAccount = saExitAccount;
+		this.businessName = businessName;
 	}
 
 
-    public Movement() {
-		// TODO Auto-generated constructor stub
-	}
+    public Movement() {}
 
 	public int getIdMovement() {
         return idMovement;
@@ -144,12 +148,12 @@ public class Movement {
         this.amount = amount;
     }
 
-    public int getTransactionNumber() {
-        return transactionNumber;
+    public long getTransactionId() {
+        return transactionId;
     }
 
-    public void setTransactionNumber(int transactionNumber) {
-        this.transactionNumber = transactionNumber;
+    public void setTransactionId(long transactionId) {
+        this.transactionId = transactionId;
     }
 
     public ServicePayment getService() {
@@ -215,31 +219,30 @@ public class Movement {
     public void setSaExitAccount(Savings saExitAccount) {
         this.saExitAccount = saExitAccount;
     }
+    
+    public String getBusinessName() {
+		return businessName;
+	}
 
-    @Override
-    public String toString() {
-        return "Movement{" +
-                "idMovement=" + idMovement +
-                ", movementType=" + movementType +
-                ", dayAndHour=" + dayAndHour +
-                ", concept='" + concept + '\'' +
-                ", amount=" + amount +
-                ", transactionNumber=" + transactionNumber +
-                ", service=" + service +
-                ", reference='" + reference + '\'' +
-                ", entryBalanceBeforeMovement=" + entryBalanceBeforeMovement +
-                ", exitBalanceBeforeMovement=" + exitBalanceBeforeMovement +
-                ", chEntryAccount=" + chEntryAccount +
-                ", chExitAccount=" + chExitAccount +
-                ", saEntryAccount=" + saEntryAccount +
-                ", saExitAccount=" + saExitAccount +
-                '}';
-    }
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
+	}
+
+	@Override
+	public String toString() {
+		return "Movement [idMovement=" + idMovement + ", movementType=" + movementType + ", dayAndHour=" + dayAndHour
+				+ ", concept=" + concept + ", amount=" + amount + ", transactionId=" + transactionId + ", service="
+				+ service + ", reference=" + reference + ", entryBalanceBeforeMovement=" + entryBalanceBeforeMovement
+				+ ", exitBalanceBeforeMovement=" + exitBalanceBeforeMovement + ", chEntryAccount=" + chEntryAccount
+				+ ", chExitAccount=" + chExitAccount + ", saEntryAccount=" + saEntryAccount + ", saExitAccount="
+				+ saExitAccount + ", businessName=" + businessName + "]";
+	}
 
 	public MovementDTO toView() {
 		MovementDTO result = new MovementDTO();
 		result.setAmount(this.getAmount());
 		result.setConcept(this.getConcept());
+		result.setBusinessName(this.getBusinessName());
 		if(this.getChEntryAccount() != null) {
 			result.setChEntryAccount(this.getChEntryAccount().toView());
 		}
@@ -256,7 +259,7 @@ public class Movement {
 			result.setService(this.getService().toView());
 		}
 		result.setDayAndHour(this.getDayAndHour().toString());
-		result.setTransactionNumber(this.getTransactionNumber());
+		result.setTransactionId(this.getTransactionId());
 		result.setMovementType(this.getMovementType());
 		result.setEntryBalanceBeforeMovement(this.getEntryBalanceBeforeMovement());
 		result.setExitBalanceBeforeMovement(this.getExitBalanceBeforeMovement());

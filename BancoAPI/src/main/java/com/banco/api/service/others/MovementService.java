@@ -2,6 +2,11 @@ package com.banco.api.service.others;
 
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.MovementType;
+import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
+import com.banco.api.exception.BusinessCBUNotFoundException;
+import com.banco.api.exception.ClientInsuficientFundsException;
+import com.banco.api.exception.DebitCardNotFoundException;
+import com.banco.api.model.DebitCard;
 import com.banco.api.model.Movement;
 import com.banco.api.model.ServicePayment;
 import com.banco.api.model.account.Checking;
@@ -11,8 +16,11 @@ import com.banco.api.model.user.Physical;
 import com.banco.api.repository.MovementRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
+import com.banco.api.service.user.LegalUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +35,10 @@ public class MovementService {
 	CheckingService checkingService;
 	@Autowired
 	SavingsService savingsService;
-	
+	@Autowired
+    DebitCardService debitCardService;
+	@Autowired
+	LegalUserService legalUserService;
 	
 	public MovementDTO depositAndExtract(float amount, float balanceBeforeMovement, int accountType, Savings savings, Checking checking, MovementType movementType) {
 		MovementDTO movementDTO = new MovementDTO();
@@ -227,6 +238,57 @@ public class MovementService {
 
 	public MovementDTO getMovementById(int id) {
 		return movementRepository.findByIdMovement(id).toView();
+	}
+
+	public long debitCardPayment(DebitCardPaymentRequest request) {
+		Movement movement = new Movement();
+		long transactionId;
+		float clientBalanceBeforeMovement;
+		float businessBalanceBeforeMovement;
+		Checking businessChecking = null;
+		Savings businessSavings = null;
+		Legal legal = null;
+		Date now = new Date();
+		
+		movement.setAmount(request.getAmount());
+		movement.setConcept(request.getConcept());
+		movement.setDayAndHour(now);
+		movement.setMovementType(8);
+		
+		if(debitCardService.existsDebitCard(request.getDebitCard().getNumber(), request.getDebitCard().getSecurityCode())) {
+    		DebitCard debitCard = debitCardService.findByNumberAndSecurityCode(request.getDebitCard().getNumber(), request.getDebitCard().getSecurityCode());
+    		clientBalanceBeforeMovement = debitCard.getSavingsAccount().getBalance() - request.getAmount();
+    		movement.setSaExitAccount(debitCard.getSavingsAccount());
+    		if(clientBalanceBeforeMovement < 0) {
+    			throw new ClientInsuficientFundsException("El cliente no tiene fondos para realizar la operación");
+    		}
+    		movement.setExitBalanceBeforeMovement(clientBalanceBeforeMovement);
+		}
+    	else {
+    		throw new DebitCardNotFoundException("La tarjeta de débito " + request.getDebitCard().getNumber() + " no existe");
+    	}
+    	if(checkingService.existsCbu(request.getBusinessCbu())) {
+    		businessChecking = checkingService.findByCbu(request.getBusinessCbu());
+    		movement.setChEntryAccount(businessChecking);
+    		businessBalanceBeforeMovement = businessChecking.getBalance() + request.getAmount();
+    		legal = legalUserService.findByIdCheckingAccount(businessChecking.getIdAccount());
+    	}
+    	else if(savingsService.existsCbu(request.getBusinessCbu())) {
+    		businessSavings = savingsService.findByCbu(request.getBusinessCbu());
+    		movement.setSaEntryAccount(businessSavings);
+    		businessBalanceBeforeMovement = businessSavings.getBalance() + request.getAmount();
+    		legal = legalUserService.findByIdSavingsAccount(businessSavings.getIdAccount());
+    	}
+    	else {
+    		throw new BusinessCBUNotFoundException("El CBU del comercio " + request.getBusinessCbu() + " no existe");
+    	}
+    	movement.setBusinessName(legal.getBusinessName());
+		movement.setEntryBalanceBeforeMovement(businessBalanceBeforeMovement);
+
+		
+		Movement m = movementRepository.save(movement);
+		transactionId = m.getTransactionId();
+		return transactionId;
 	}
 
 	
