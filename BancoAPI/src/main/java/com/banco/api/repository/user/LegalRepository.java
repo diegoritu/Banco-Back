@@ -1,5 +1,7 @@
 package com.banco.api.repository.user;
 
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +22,7 @@ public interface LegalRepository extends UserBaseRepository<Legal> {
 
 	List<Legal> findByActiveTrue();
 	
-	Legal findByChecking(int idCheckingAccount);
+	Legal findByChecking(Checking checkingAccount);
 	
-	Legal findBySavings(int idSavingsAccount);
+	Legal findBySavings(Savings savingsAccount);
 }

@@ -27,6 +27,8 @@ import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.dto.movement.request.ServicePaymentRequest;
 import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
 import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
+import com.banco.api.dto.others.APIErrorMessageDTO;
+import com.banco.api.dto.others.TransactionIdDTO;
 import com.banco.api.exception.BusinessCBUNotFoundException;
 import com.banco.api.exception.ClientInsuficientFundsException;
 import com.banco.api.exception.DebitCardNotFoundException;
@@ -394,16 +396,21 @@ public class MovementController {
     @PostMapping("/debitCardPayment")
     public ResponseEntity debitCardPayment(@RequestBody DebitCardPaymentRequest request){
     	try {
-    		return new ResponseEntity<Long> (movementService.debitCardPayment(request), HttpStatus.OK);
+    		TransactionIdDTO response = new TransactionIdDTO();
+    		response.setTransactionId(movementService.debitCardPayment(request));
+    		return new ResponseEntity<TransactionIdDTO> (response, HttpStatus.OK);
     	}
     	catch(ClientInsuficientFundsException ex){
-    		return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
+    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(409, "CLIENT_INSUFFICIENT_FUNDS", "El cliente no tiene fondos para realizar la operación");
+    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.CONFLICT);
     	}
     	catch(DebitCardNotFoundException ex) {
-    		return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
+    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "DEBIT_CARD_NOT_FOUND", "La tarjeta de débito " + request.getDebitCard().getNumber() + " no existe o se ingresó mal algún dato adicional de la misma.");
+    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
     	}
     	catch(BusinessCBUNotFoundException ex) {
-    		return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
+    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "BUSINESS_CBU_NOT_FOUND", "El CBU del comercio " + request.getBusinessCbu() + " no existe.");
+    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
     	}
     }
 

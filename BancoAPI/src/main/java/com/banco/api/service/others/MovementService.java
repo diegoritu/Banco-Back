@@ -257,11 +257,12 @@ public class MovementService {
 		
 		if(debitCardService.existsDebitCard(request.getDebitCard().getNumber(), request.getDebitCard().getSecurityCode())) {
     		DebitCard debitCard = debitCardService.findByNumberAndSecurityCode(request.getDebitCard().getNumber(), request.getDebitCard().getSecurityCode());
-    		clientBalanceBeforeMovement = debitCard.getSavingsAccount().getBalance() - request.getAmount();
+    		clientBalanceBeforeMovement = debitCard.getSavingsAccount().getBalance();
     		movement.setSaExitAccount(debitCard.getSavingsAccount());
     		if(clientBalanceBeforeMovement < 0) {
     			throw new ClientInsuficientFundsException("El cliente no tiene fondos para realizar la operación");
     		}
+    		debitCard.getSavingsAccount().extract(request.getAmount());
     		movement.setExitBalanceBeforeMovement(clientBalanceBeforeMovement);
 		}
     	else {
@@ -270,23 +271,28 @@ public class MovementService {
     	if(checkingService.existsCbu(request.getBusinessCbu())) {
     		businessChecking = checkingService.findByCbu(request.getBusinessCbu());
     		movement.setChEntryAccount(businessChecking);
-    		businessBalanceBeforeMovement = businessChecking.getBalance() + request.getAmount();
-    		legal = legalUserService.findByIdCheckingAccount(businessChecking.getIdAccount());
+    		businessBalanceBeforeMovement = businessChecking.getBalance();
+    		legal = legalUserService.findByCheckingAccount(businessChecking);
+    		businessChecking.deposit(request.getAmount());
     	}
     	else if(savingsService.existsCbu(request.getBusinessCbu())) {
     		businessSavings = savingsService.findByCbu(request.getBusinessCbu());
     		movement.setSaEntryAccount(businessSavings);
-    		businessBalanceBeforeMovement = businessSavings.getBalance() + request.getAmount();
-    		legal = legalUserService.findByIdSavingsAccount(businessSavings.getIdAccount());
+    		businessBalanceBeforeMovement = businessSavings.getBalance();
+    		legal = legalUserService.findBySavingsAccount(businessSavings);
+    		businessSavings.deposit(request.getAmount());
+    		
     	}
     	else {
     		throw new BusinessCBUNotFoundException("El CBU del comercio " + request.getBusinessCbu() + " no existe");
     	}
     	movement.setBusinessName(legal.getBusinessName());
 		movement.setEntryBalanceBeforeMovement(businessBalanceBeforeMovement);
-
+		
 		
 		Movement m = movementRepository.save(movement);
+		
+		
 		transactionId = m.getTransactionId();
 		return transactionId;
 	}

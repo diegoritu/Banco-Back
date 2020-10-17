@@ -227,11 +227,11 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         return legalRepository.existsByCuitCuilCdi(cuitCuilCdi);
     }
 	
-	public Legal findByIdCheckingAccount(int idCheckingAccount) {
-		return legalRepository.findByChecking(idCheckingAccount);
+	public Legal findByCheckingAccount(Checking checkingAccount) {
+		return legalRepository.findByChecking(checkingAccount);
 	}
 	
-	public Legal findByIdSavingsAccount(int idSavingsAccount) {
-		return legalRepository.findBySavings(idSavingsAccount);
+	public Legal findBySavingsAccount(Savings savingsAccount) {
+		return legalRepository.findBySavings(savingsAccount);
 	}
 }
