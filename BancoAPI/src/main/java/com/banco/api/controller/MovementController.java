@@ -7,6 +7,7 @@ import com.banco.api.model.ServicePayment;
 import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +23,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.banco.api.dto.movement.MovementDTO;
+import com.banco.api.dto.movement.request.CreditEntityDebitClientsRequest;
 import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
 import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.dto.movement.request.ServicePaymentRequest;
 import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
 import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
 import com.banco.api.dto.others.APIErrorMessageDTO;
+import com.banco.api.dto.others.CreditEntityDebitClientsFailures;
+import com.banco.api.dto.others.CreditEntityDebitClientsResponseDTO;
+import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
 import com.banco.api.dto.others.TransactionIdDTO;
 import com.banco.api.exception.BusinessCBUNotFoundException;
 import com.banco.api.exception.ClientInsuficientFundsException;
@@ -413,6 +418,30 @@ public class MovementController {
     		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
     	}
     }
+    
+    
+    @PostMapping("/creditEntityDebitClients")
+    public ResponseEntity creditEntityDebitClients(@RequestBody CreditEntityDebitClientsRequest request){
+    	
+    	try {
+    		CreditEntityDebitClientsResponseWithFailuresDTO result = movementService.creditEntityDebitClients(request);
+    		
+    		if(result.getFailures().size() == 0) {
+    			CreditEntityDebitClientsResponseDTO response = new CreditEntityDebitClientsResponseDTO(result.getTransactionIds());
+        		return new ResponseEntity<CreditEntityDebitClientsResponseDTO> (response, HttpStatus.CREATED);
+    		}
+    		else {
+    			//Devuelve la lista de errores
+        		return new ResponseEntity<CreditEntityDebitClientsResponseWithFailuresDTO> (result, HttpStatus.MULTI_STATUS);
+
+    		}
+    	}
+    	catch(BusinessCBUNotFoundException ex) {
+    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "CREDIT_ENTITY_CBU_NOT_FOUND", "El CBU de la entidad crediticia " + request.getCreditEntityCBU() + " no existe.");
+    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
+    	}
+    }
+
 
 }
 

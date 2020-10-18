@@ -13,7 +13,8 @@ public enum MovementType {
     TRANSFER_BETWEEN_OWN_ACCOUNTS(5),
     TRANSFER_TO_OTHER_ACCOUNTS(6),
     INTERESTS(7),
-    DEBIT_CARD_PAYMENT(8);
+    DEBIT_CARD_PAYMENT(8),
+	CREDIT_ENTITY_DEBIT_CLIENT(9);
 
     private final int value;
     private static final Map<Integer, MovementType> map = new HashMap<>();

@@ -2,7 +2,11 @@ package com.banco.api.service.others;
 
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.MovementType;
+import com.banco.api.dto.movement.request.CreditEntityDebitClientsRequest;
 import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
+import com.banco.api.dto.others.CreditEntityDebitClientsFailures;
+import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
+import com.banco.api.dto.others.request.CreditEntityDebitClientTransaction;
 import com.banco.api.exception.BusinessCBUNotFoundException;
 import com.banco.api.exception.ClientInsuficientFundsException;
 import com.banco.api.exception.DebitCardNotFoundException;
@@ -26,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class MovementService {
@@ -223,11 +228,11 @@ public class MovementService {
 		Savings savings;
 		if(accountType == 0) {
 			checking = checkingService.findByAccountNumber(accountNumber);
-			movements = movementRepository.findByChEntryAccountIdAccountOrChExitAccountIdAccountOrderByDayAndHourDesc(checking.getIdAccount(), checking.getIdAccount());
+			movements = movementRepository.findByChEntryAccountIdAccountOrChExitAccountIdAccountOrderByDayAndHourDescIdMovementDesc(checking.getIdAccount(), checking.getIdAccount());
 		}
 		else {
 			savings = savingsService.findByAccountNumber(accountNumber);
-			movements = movementRepository.findBySaEntryAccountIdAccountOrSaExitAccountIdAccountOrderByDayAndHourDesc(savings.getIdAccount(),savings.getIdAccount());
+			movements = movementRepository.findBySaEntryAccountIdAccountOrSaExitAccountIdAccountOrderByDayAndHourDescIdMovementDesc(savings.getIdAccount(),savings.getIdAccount());
 		}
 		for(Movement m : movements) {
 			result.add(m.toView());
@@ -259,7 +264,7 @@ public class MovementService {
     		DebitCard debitCard = debitCardService.findByNumberAndSecurityCode(request.getDebitCard().getNumber(), request.getDebitCard().getSecurityCode());
     		clientBalanceBeforeMovement = debitCard.getSavingsAccount().getBalance();
     		movement.setSaExitAccount(debitCard.getSavingsAccount());
-    		if(clientBalanceBeforeMovement < 0) {
+    		if(clientBalanceBeforeMovement < request.getAmount()) {
     			throw new ClientInsuficientFundsException("El cliente no tiene fondos para realizar la operación");
     		}
     		debitCard.getSavingsAccount().extract(request.getAmount());
@@ -296,6 +301,122 @@ public class MovementService {
 		transactionId = m.getIdMovement();
 		return transactionId;
 	}
+	
+	
+	public CreditEntityDebitClientsResponseWithFailuresDTO creditEntityDebitClients(CreditEntityDebitClientsRequest request) {
+		Checking creditEntityChecking = null;
+		Savings creditEntitySavings = null;
+		Legal creditEntity = null;
+		List <CreditEntityDebitClientsFailures> failures = new ArrayList<>();
+		List <Integer> transactionIds = new ArrayList<>();
+		float creditEntityBalance = 0;
+		Checking clientChecking = null;
+		Savings clientSavings = null;
+		Movement movement = null;
+		Date now = new Date();
+		
+
+		if(checkingService.existsCbu(request.getCreditEntityCBU())) {
+			creditEntityChecking = checkingService.findByCbu(request.getCreditEntityCBU());
+    		creditEntity = legalUserService.findByCheckingAccount(creditEntityChecking);
+    		creditEntityBalance = creditEntityChecking.getBalance();
+		}
+    	else if(savingsService.existsCbu(request.getCreditEntityCBU())) {
+    		creditEntitySavings = savingsService.findByCbu(request.getCreditEntityCBU());
+    		creditEntity = legalUserService.findBySavingsAccount(creditEntitySavings);
+    		creditEntityBalance = creditEntitySavings.getBalance();
+    	}
+    	
+    	if(creditEntityChecking != null || creditEntitySavings != null) 
+    	{
+    		List<CreditEntityDebitClientTransaction> transactions = request.getTransactions();
+    		for(CreditEntityDebitClientTransaction t: transactions) {
+    			if(checkingService.existsCbu(t.getDebtorCBU())){
+    				clientChecking = checkingService.findByCbu(t.getDebtorCBU());
+    				
+    				if(clientChecking.getBalance() < t.getDebtAmount()) {
+        				CreditEntityDebitClientsFailures failure = new CreditEntityDebitClientsFailures(t.getDebtorCBU(), 409, "DEBTOR_ACCOUNT_INSUFFICIENT_FUNDS", "La cuenta CBU " + t.getDebtorCBU() + " posee fondos insuficientes.");
+        				failures.add(failure);
+    				}
+    				else {
+    					movement = new Movement();
+    					movement.setAmount(t.getDebtAmount());
+    					movement.setDayAndHour(now);
+    					movement.setMovementType(9);
+    					movement.setChExitAccount(clientChecking);
+    			    	movement.setBusinessName(creditEntity.getBusinessName());
+    					movement.setExitBalanceBeforeMovement(clientChecking.getBalance());
+
+    					clientChecking.extract(t.getDebtAmount());
+    					if(creditEntityChecking != null) {
+    						creditEntityChecking.deposit(t.getDebtAmount());
+        					movement.setChEntryAccount(creditEntityChecking);
+        					movement.setEntryBalanceBeforeMovement(creditEntityBalance);
+        					creditEntityBalance += t.getDebtAmount();
+    					}
+    					else {
+    						creditEntitySavings.deposit(t.getDebtAmount());
+        					movement.setSaEntryAccount(creditEntitySavings);
+        					movement.setEntryBalanceBeforeMovement(creditEntityBalance);
+        					creditEntityBalance += t.getDebtAmount();
+
+    					}    					
+    					
+    					movementRepository.save(movement);
+        			}
+
+    			}
+    			else if(savingsService.existsCbu(t.getDebtorCBU())){
+    				clientSavings = savingsService.findByCbu(t.getDebtorCBU());
+    				
+    				if(clientSavings.getBalance() < t.getDebtAmount()) {
+        				CreditEntityDebitClientsFailures failure = new CreditEntityDebitClientsFailures(t.getDebtorCBU(), 409, "DEBTOR_ACCOUNT_INSUFFICIENT_FUNDS", "La cuenta CBU " + t.getDebtorCBU() + " posee fondos insuficientes.");
+        				failures.add(failure);
+    				}
+    				else {
+    					movement = new Movement();
+    					movement.setAmount(t.getDebtAmount());
+    					movement.setDayAndHour(now);
+    					movement.setMovementType(9);
+    					movement.setSaExitAccount(clientSavings);
+    			    	movement.setBusinessName(creditEntity.getBusinessName());
+    					movement.setExitBalanceBeforeMovement(clientSavings.getBalance());
+
+    					clientSavings.extract(t.getDebtAmount());
+    					if(creditEntityChecking != null) {
+    						creditEntityChecking.deposit(t.getDebtAmount());
+        					movement.setChEntryAccount(creditEntityChecking);
+        					movement.setEntryBalanceBeforeMovement(creditEntityBalance);
+        					creditEntityBalance += t.getDebtAmount();
+
+    					}
+    					else {
+    						creditEntitySavings.deposit(t.getDebtAmount());
+        					movement.setSaEntryAccount(creditEntitySavings);
+        					movement.setEntryBalanceBeforeMovement(creditEntityBalance);
+        					creditEntityBalance += t.getDebtAmount();
+
+    					}    					
+    					
+    					Movement m = movementRepository.save(movement);
+    					transactionIds.add(m.getIdMovement());
+    				}
+    			}
+    			else {
+    				CreditEntityDebitClientsFailures failure = new CreditEntityDebitClientsFailures(t.getDebtorCBU(), 404, "DEBTOR_CBU_NOT_FOUND", "La cuenta de deudor " + t.getDebtorCBU() + " no existe.");
+    				failures.add(failure);
+    			}
+    		}
+    		
+    	}
+    	else {
+    		throw new BusinessCBUNotFoundException("El CBU de la entidad crediticia " + request.getCreditEntityCBU() + " no existe");
+    	}
+		
+		CreditEntityDebitClientsResponseWithFailuresDTO response = new CreditEntityDebitClientsResponseWithFailuresDTO(transactionIds, failures);
+		return response;
+	}
+	
 
 	
 }
