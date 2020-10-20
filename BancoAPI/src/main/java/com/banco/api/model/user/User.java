@@ -1,20 +1,14 @@
 package com.banco.api.model.user;
 
-import java.math.BigInteger;
+import javax.persistence.*;
+import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.persistence.*;
-import javax.xml.bind.DatatypeConverter;
 
 
 @Entity

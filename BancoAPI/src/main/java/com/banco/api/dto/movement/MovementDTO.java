@@ -11,11 +11,11 @@ public class MovementDTO {
 	private int movementType;
 	private String dayAndHour;
 	private String concept;
-	private float amount;
+	private Float amount;
     private ServiceDTO service;
     private String reference;
-    private float entryBalanceBeforeMovement;
-    private float exitBalanceBeforeMovement;
+    private Float entryBalanceBeforeMovement;
+    private Float exitBalanceBeforeMovement;
     private CheckingDTO chEntryAccount;
     private CheckingDTO chExitAccount;
     private SavingsDTO saEntryAccount;
@@ -25,8 +25,8 @@ public class MovementDTO {
     
     public MovementDTO() {}
 
-	public MovementDTO(int movementType, String dayAndHour, String concept, float amount, 
-			ServiceDTO service, String reference, float entryBalanceBeforeMovement,
+	public MovementDTO(int movementType, String dayAndHour, String concept, Float amount,
+			ServiceDTO service, String reference, Float entryBalanceBeforeMovement,
 			float exitBalanceBeforeMovement, CheckingDTO chEntryAccount, CheckingDTO chExitAccount,
 			AccountDTO entryAccount, AccountDTO exitAccount, SavingsDTO saEntryAccount, SavingsDTO saExitAccount, int idMovement, String businessName) {
 		super();
@@ -79,11 +79,11 @@ public class MovementDTO {
 		this.concept = concept;
 	}
 
-	public float getAmount() {
+	public Float getAmount() {
 		return amount;
 	}
 
-	public void setAmount(float amount) {
+	public void setAmount(Float amount) {
 		this.amount = amount;
 	}
 
@@ -103,19 +103,19 @@ public class MovementDTO {
 		this.reference = reference;
 	}
 
-	public float getEntryBalanceBeforeMovement() {
+	public Float getEntryBalanceBeforeMovement() {
 		return entryBalanceBeforeMovement;
 	}
 
-	public void setEntryBalanceBeforeMovement(float entryBalanceBeforeMovement) {
+	public void setEntryBalanceBeforeMovement(Float entryBalanceBeforeMovement) {
 		this.entryBalanceBeforeMovement = entryBalanceBeforeMovement;
 	}
 
-	public float getExitBalanceBeforeMovement() {
+	public Float getExitBalanceBeforeMovement() {
 		return exitBalanceBeforeMovement;
 	}
 
-	public void setExitBalanceBeforeMovement(float exitBalanceBeforeMovement) {
+	public void setExitBalanceBeforeMovement(Float exitBalanceBeforeMovement) {
 		this.exitBalanceBeforeMovement = exitBalanceBeforeMovement;
 	}
 

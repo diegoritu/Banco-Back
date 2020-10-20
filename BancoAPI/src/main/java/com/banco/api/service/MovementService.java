@@ -1,5 +1,6 @@
-package com.banco.api.service.others;
+package com.banco.api.service;
 
+import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.MovementType;
 import com.banco.api.dto.movement.request.CreditEntityDebitClientsRequest;
@@ -7,6 +8,7 @@ import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
 import com.banco.api.dto.others.CreditEntityDebitClientsFailures;
 import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
 import com.banco.api.dto.others.request.CreditEntityDebitClientTransaction;
+import com.banco.api.exception.AccountCBUNotFoundException;
 import com.banco.api.exception.BusinessCBUNotFoundException;
 import com.banco.api.exception.ClientInsuficientFundsException;
 import com.banco.api.exception.DebitCardNotFoundException;
@@ -21,12 +23,10 @@ import com.banco.api.repository.MovementRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.user.LegalUserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -44,24 +44,24 @@ public class MovementService {
     DebitCardService debitCardService;
 	@Autowired
 	LegalUserService legalUserService;
-	
-	public MovementDTO depositAndExtract(float amount, float balanceBeforeMovement, int accountType, Savings savings, Checking checking, MovementType movementType) {
+	/*
+	public MovementDTO depositAndExtract(float amount, float balanceBeforeMovement, AccountType accountType, Savings savings, Checking checking, MovementType movementType) {
 		MovementDTO movementDTO = new MovementDTO();
 		Movement result = new Movement();
         Date now = new Date();
 		movementDTO.setMovementType(movementType.getValue());
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setAmount(amount);
-		
+
 		result.setMovementType(movementType.getValue());
 		result.setDayAndHour(now);
 		result.setAmount(amount);
-		if(MovementType.DEPOSIT.equals(movementType) || MovementType.INTERESTS.equals(movementType)) {
-			if(accountType == 0) {
+		if (MovementType.DEPOSIT.equals(movementType) || MovementType.INTERESTS.equals(movementType) || MovementType.SALARY_PAYMENT.equals(movementType)) {
+			if(AccountType.SAVINGS.equals(accountType)) {
 				movementDTO.setSaEntryAccount(savings.toView());
 				movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovement);
 				result.setSaEntryAccount(savings);
-				result.setEntryBalanceBeforeMovement(balanceBeforeMovement);				
+				result.setEntryBalanceBeforeMovement(balanceBeforeMovement);
 			}
 			else {
 				movementDTO.setChEntryAccount(checking.toView());
@@ -71,11 +71,11 @@ public class MovementService {
 			}
 		}
 		else {
-			if(accountType == 0) {
+			if(AccountType.SAVINGS.equals(accountType)) {
 				movementDTO.setSaExitAccount(savings.toView());
 				movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovement);
 				result.setSaExitAccount(savings);
-				result.setExitBalanceBeforeMovement(balanceBeforeMovement);				
+				result.setExitBalanceBeforeMovement(balanceBeforeMovement);
 			}
 			else {
 				movementDTO.setChExitAccount(checking.toView());
@@ -84,27 +84,76 @@ public class MovementService {
 				result.setExitBalanceBeforeMovement(balanceBeforeMovement);
 			}
 		}
-		movementRepository.save(result);		
+		movementRepository.save(result);
 		return movementDTO;
 	}
-	
+	*/
+
+	public MovementDTO deposit(float amount, float balanceBeforeMovement, Savings savings, MovementType movementType) {
+		return deposit(amount, balanceBeforeMovement, AccountType.SAVINGS, savings, null, movementType);
+	}
+
+	public MovementDTO deposit(float amount, float balanceBeforeMovement, Checking checking, MovementType movementType) {
+		return deposit(amount, balanceBeforeMovement, AccountType.CHECKING, null, checking, movementType);
+	}
+
+	public MovementDTO extract(float amount, float balanceBeforeMovement, Savings savings, MovementType movementType) {
+		return extract(amount, balanceBeforeMovement, AccountType.SAVINGS, savings, null, movementType);
+	}
+
+	public MovementDTO extract(float amount, float balanceBeforeMovement, Checking checking, MovementType movementType) {
+		return extract(amount, balanceBeforeMovement, AccountType.CHECKING, null, checking, movementType);
+	}
+
+	private MovementDTO deposit(float amount, float balanceBeforeMovement, AccountType accountType, Savings savings, Checking checking, MovementType movementType) {
+		Movement result = new Movement();
+		result.setMovementType(movementType.getValue());
+		result.setDayAndHour(new Date());
+		result.setAmount(amount);
+
+		if (AccountType.SAVINGS.equals(accountType)) {
+			result.setSaEntryAccount(savings);
+		} else {
+			result.setChEntryAccount(checking);
+		}
+		result.setEntryBalanceBeforeMovement(balanceBeforeMovement);
+		movementRepository.save(result);
+		return result.toView();
+	}
+
+	private MovementDTO extract(float amount, float balanceBeforeMovement, AccountType accountType, Savings savings, Checking checking, MovementType movementType) {
+		Movement result = new Movement();
+		result.setMovementType(movementType.getValue());
+		result.setDayAndHour(new Date());
+		result.setAmount(amount);
+
+		if (AccountType.SAVINGS.equals(accountType)) {
+			result.setSaExitAccount(savings);
+		} else {
+			result.setChExitAccount(checking);
+		}
+		result.setExitBalanceBeforeMovement(balanceBeforeMovement);
+		movementRepository.save(result);
+		return result.toView();
+	}
+
 	public MovementDTO transferBetweenOwnAccounts(float amount, float balanceBeforeMovementFrom, float balanceBeforeMovementTo, Savings savingsFrom, Savings savingsTo, Checking checkingFrom, Checking checkingTo, boolean accountTypes) {
 		MovementDTO movementDTO = new MovementDTO();
 		Movement result = new Movement();
 		Date now = new Date();
-		
+
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setAmount(amount);
 		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		movementDTO.setMovementType(5);
-		
+
 		result.setMovementType(5);
 		result.setDayAndHour(now);
 		result.setAmount(amount);
 		result.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		result.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
-		
+
 		if(accountTypes) { //From savings to checking
 			movementDTO.setSaExitAccount(savingsFrom.toView());
 			movementDTO.setChEntryAccount(checkingTo.toView());
@@ -117,30 +166,30 @@ public class MovementService {
 			result.setChExitAccount(checkingFrom);
 			result.setSaEntryAccount(savingsTo);
 		}
-		
-		movementRepository.save(result);		
+
+		movementRepository.save(result);
 		return movementDTO;
 	}
-	
+
 	public MovementDTO transferToOtherAccounts(float amount, float balanceBeforeMovementFrom, float balanceBeforeMovementTo, Savings savingsFrom, Savings savingsTo, Checking checkingFrom, Checking checkingTo, int whereFrom, String reference) {
 		MovementDTO movementDTO = new MovementDTO();
 		Movement result = new Movement();
 		Date now = new Date();
-		
+
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setAmount(amount);
 		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		movementDTO.setMovementType(6);
 		movementDTO.setReference(reference);
-		
+
 		result.setReference(reference);
 		result.setMovementType(6);
 		result.setDayAndHour(now);
 		result.setAmount(amount);
 		result.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		result.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
-		
+
 		switch (whereFrom) {
 		case 1: //From savings to savings
 			movementDTO.setSaExitAccount(savingsFrom.toView());
@@ -148,33 +197,33 @@ public class MovementService {
 			result.setSaEntryAccount(savingsTo);
 			result.setSaExitAccount(savingsFrom);
 			break;
-		
+
 		case 2: //From savings to checking
 			movementDTO.setSaExitAccount(savingsFrom.toView());
 			movementDTO.setChEntryAccount(checkingTo.toView());
 			result.setSaExitAccount(savingsFrom);
 			result.setChEntryAccount(checkingTo);
 			break;
-		
+
 		case 3: //From checking to savings
 			movementDTO.setChExitAccount(checkingFrom.toView());
 			movementDTO.setSaEntryAccount(savingsTo.toView());
 			result.setChExitAccount(checkingFrom);
 			result.setSaEntryAccount(savingsTo);
 			break;
-		
+
 		case 4: //From checking to checking
 			movementDTO.setChExitAccount(checkingFrom.toView());
 			movementDTO.setChEntryAccount(checkingTo.toView());
 			result.setChExitAccount(checkingFrom);
 			result.setChEntryAccount(checkingTo);
 			break;
-			
+
 		default:
 			break;
 		}
-		
-		movementRepository.save(result);		
+
+		movementRepository.save(result);
 		return movementDTO;
 	}
 
@@ -182,23 +231,23 @@ public class MovementService {
 		MovementDTO movementDTO = new MovementDTO();
 		Movement result = new Movement();
 		Date now = new Date();
-		
+
 		servicePayment.setPaid(true);
-		
+
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		movementDTO.setAmount(servicePayment.getAmount());
 		movementDTO.setMovementType(4);
 		movementDTO.setService(servicePayment.toView());
-		
+
 		result.setDayAndHour(now);
 		result.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		result.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		result.setAmount(servicePayment.getAmount());
 		result.setMovementType(4);
 		result.setService(servicePayment);
-		
+
 		if(whereFrom == 0) {
 			result.setChExitAccount(checkingFrom);
 			movementDTO.setChExitAccount(checkingFrom.toView());
@@ -215,9 +264,9 @@ public class MovementService {
 			result.setSaEntryAccount(servicePayment.getVendorSavings());
 			movementDTO.setSaEntryAccount(servicePayment.getVendorSavings().toView());
 		}
-		
+
 		movementRepository.save(result);
-		
+
 		return movementDTO;
 	}
 
@@ -237,7 +286,7 @@ public class MovementService {
 		for(Movement m : movements) {
 			result.add(m.toView());
 		}
-		
+
 		return result;
 	}
 
@@ -254,12 +303,12 @@ public class MovementService {
 		Savings businessSavings = null;
 		Legal legal = null;
 		Date now = new Date();
-		
+
 		movement.setAmount(request.getAmount());
 		movement.setConcept(request.getConcept());
 		movement.setDayAndHour(now);
 		movement.setMovementType(8);
-		
+
 		if(debitCardService.existsDebitCard(request.getDebitCard().getNumber(), request.getDebitCard().getSecurityCode())) {
     		DebitCard debitCard = debitCardService.findByNumberAndSecurityCode(request.getDebitCard().getNumber(), request.getDebitCard().getSecurityCode());
     		clientBalanceBeforeMovement = debitCard.getSavingsAccount().getBalance();
@@ -286,23 +335,23 @@ public class MovementService {
     		businessBalanceBeforeMovement = businessSavings.getBalance();
     		legal = legalUserService.findBySavingsAccount(businessSavings);
     		businessSavings.deposit(request.getAmount());
-    		
+
     	}
     	else {
     		throw new BusinessCBUNotFoundException("El CBU del comercio " + request.getBusinessCbu() + " no existe");
     	}
     	movement.setBusinessName(legal.getBusinessName());
 		movement.setEntryBalanceBeforeMovement(businessBalanceBeforeMovement);
-		
-		
+
+
 		Movement m = movementRepository.save(movement);
-		
-		
+
+
 		transactionId = m.getIdMovement();
 		return transactionId;
 	}
-	
-	
+
+
 	public CreditEntityDebitClientsResponseWithFailuresDTO creditEntityDebitClients(CreditEntityDebitClientsRequest request) {
 		Checking creditEntityChecking = null;
 		Savings creditEntitySavings = null;
@@ -314,7 +363,7 @@ public class MovementService {
 		Savings clientSavings = null;
 		Movement movement = null;
 		Date now = new Date();
-		
+
 
 		if(checkingService.existsCbu(request.getCreditEntityCBU())) {
 			creditEntityChecking = checkingService.findByCbu(request.getCreditEntityCBU());
@@ -326,14 +375,14 @@ public class MovementService {
     		creditEntity = legalUserService.findBySavingsAccount(creditEntitySavings);
     		creditEntityBalance = creditEntitySavings.getBalance();
     	}
-    	
-    	if(creditEntityChecking != null || creditEntitySavings != null) 
+
+    	if(creditEntityChecking != null || creditEntitySavings != null)
     	{
     		List<CreditEntityDebitClientTransaction> transactions = request.getTransactions();
     		for(CreditEntityDebitClientTransaction t: transactions) {
     			if(checkingService.existsCbu(t.getDebtorCBU())){
     				clientChecking = checkingService.findByCbu(t.getDebtorCBU());
-    				
+
     				if(clientChecking.getBalance() < t.getDebtAmount()) {
         				CreditEntityDebitClientsFailures failure = new CreditEntityDebitClientsFailures(t.getDebtorCBU(), 409, "DEBTOR_ACCOUNT_INSUFFICIENT_FUNDS", "La cuenta CBU " + t.getDebtorCBU() + " posee fondos insuficientes.");
         				failures.add(failure);
@@ -360,15 +409,15 @@ public class MovementService {
         					movement.setEntryBalanceBeforeMovement(creditEntityBalance);
         					creditEntityBalance += t.getDebtAmount();
 
-    					}    					
-    					
+    					}
+
     					movementRepository.save(movement);
         			}
 
     			}
     			else if(savingsService.existsCbu(t.getDebtorCBU())){
     				clientSavings = savingsService.findByCbu(t.getDebtorCBU());
-    				
+
     				if(clientSavings.getBalance() < t.getDebtAmount()) {
         				CreditEntityDebitClientsFailures failure = new CreditEntityDebitClientsFailures(t.getDebtorCBU(), 409, "DEBTOR_ACCOUNT_INSUFFICIENT_FUNDS", "La cuenta CBU " + t.getDebtorCBU() + " posee fondos insuficientes.");
         				failures.add(failure);
@@ -396,8 +445,8 @@ public class MovementService {
         					movement.setEntryBalanceBeforeMovement(creditEntityBalance);
         					creditEntityBalance += t.getDebtAmount();
 
-    					}    					
-    					
+    					}
+
     					Movement m = movementRepository.save(movement);
     					transactionIds.add(m.getIdMovement());
     				}
@@ -407,16 +456,40 @@ public class MovementService {
     				failures.add(failure);
     			}
     		}
-    		
+
     	}
     	else {
     		throw new BusinessCBUNotFoundException("El CBU de la entidad crediticia " + request.getCreditEntityCBU() + " no existe");
     	}
-		
+
 		CreditEntityDebitClientsResponseWithFailuresDTO response = new CreditEntityDebitClientsResponseWithFailuresDTO(transactionIds, failures);
 		return response;
 	}
-	
 
-	
+
+	public void transferBetweenTwoAccountsByCBU(String originCBU, String destinationCBU, float amount,
+												MovementType originMovementType, MovementType destinationMovementType) throws AccountCBUNotFoundException {
+		Savings originSavings = savingsService.findByCbu(originCBU);
+		if (originSavings != null) {
+			extract(amount, originSavings.getBalance(), originSavings, originMovementType);
+		} else {
+			Checking originChecking = checkingService.findByCbu(originCBU);
+			if (originChecking == null)
+				throw new AccountCBUNotFoundException(String.format("%s account CBU not found", originCBU));
+
+			extract(amount, originChecking.getBalance(), originChecking, originMovementType);
+		}
+
+		Savings destinationSavings = savingsService.findByCbu(destinationCBU);
+		if (destinationSavings != null) {
+			deposit(amount, destinationSavings.getBalance(), destinationSavings, destinationMovementType);
+		} else {
+			Checking destinationChecking = checkingService.findByCbu(destinationCBU);
+			if (destinationChecking == null)
+				throw new AccountCBUNotFoundException(String.format("%s account CBU not found", destinationCBU));
+
+			deposit(amount, destinationChecking.getBalance(), destinationChecking, destinationMovementType);
+		}
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.banco.api.model;
 
+import com.banco.api.adapter.Externalizable;
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -11,7 +12,7 @@ import java.util.Date;
 @Entity
 @Table(name = "movements")
 @SequenceGenerator(name="transactionId", initialValue=10000, allocationSize=100)
-public class Movement {
+public class Movement implements Externalizable<MovementDTO> {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idMovement;
@@ -226,6 +227,7 @@ public class Movement {
 				+ ", businessName=" + businessName + "]";
 	}
 
+	@Override
 	public MovementDTO toView() {
 		MovementDTO result = new MovementDTO();
 		result.setAmount(this.getAmount());

@@ -13,9 +13,9 @@ import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import com.banco.api.repository.user.LegalRepository;
+import com.banco.api.service.DebitCardService;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
-import com.banco.api.service.others.DebitCardService;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +25,6 @@ import org.springframework.stereotype.Service;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -213,6 +211,16 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         Legal saved = legalRepository.save(user);
 
         return result;
+    }
+
+    public boolean existsByCBU(String cbu) {
+        Checking checking = checkingService.findByCbu(cbu);
+        if (checking != null && legalRepository.existsByActiveTrueAnAndChecking(checking)) {
+            return true;
+        } else {
+            Savings savings = savingsService.findByCbu(cbu);
+            return savings != null && legalRepository.existsByActiveTrueAndSavings(savings);
+        }
     }
 
     public boolean vendorExists(String vendorId) {

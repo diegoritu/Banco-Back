@@ -1,6 +1,5 @@
 package com.banco.api.dto.others;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CreditEntityDebitClientsResponseWithFailuresDTO {

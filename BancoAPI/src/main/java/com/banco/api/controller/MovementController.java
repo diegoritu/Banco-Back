@@ -1,13 +1,10 @@
 package com.banco.api.controller;
 
+import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.movement.MovementType;
-import com.banco.api.model.DebitCard;
 import com.banco.api.model.ServicePayment;
 
-import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
-
 import java.util.Collection;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +27,6 @@ import com.banco.api.dto.movement.request.ServicePaymentRequest;
 import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
 import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
 import com.banco.api.dto.others.APIErrorMessageDTO;
-import com.banco.api.dto.others.CreditEntityDebitClientsFailures;
 import com.banco.api.dto.others.CreditEntityDebitClientsResponseDTO;
 import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
 import com.banco.api.dto.others.TransactionIdDTO;
@@ -43,9 +39,8 @@ import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
-import com.banco.api.service.others.MovementService;
-import com.banco.api.service.others.BillService;
-import com.banco.api.service.others.DebitCardService;
+import com.banco.api.service.MovementService;
+import com.banco.api.service.BillService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 
@@ -78,14 +73,18 @@ public class MovementController {
     		Savings savingsEntry = savingsService.findByAccountNumber(request.getAccountNumberEntryAccount());
     		balanceBeforeMovement = savingsEntry.getBalance();
     		savingsEntry.deposit(request.getAmount());
-    		return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request.getAmount(), balanceBeforeMovement, 0, savingsEntry, null, MovementType.DEPOSIT),HttpStatus.OK);
+    		return new ResponseEntity<MovementDTO>(movementService.deposit(request.getAmount(), balanceBeforeMovement,
+                    savingsEntry, MovementType.DEPOSIT), HttpStatus.OK);
+//    		return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request.getAmount(), balanceBeforeMovement, AccountType.SAVINGS, savingsEntry, null, MovementType.DEPOSIT),HttpStatus.OK);
     	}
     	
     	else if(checkingService.existsAccountNumber(request.getAccountNumberEntryAccount())){
     		Checking checkingEntry = checkingService.findByAccountNumber(request.getAccountNumberEntryAccount());
     		balanceBeforeMovement = checkingEntry.getBalance();
     		checkingEntry.deposit(request.getAmount());
-    		return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request.getAmount(), balanceBeforeMovement, 1, null, checkingEntry, MovementType.DEPOSIT),HttpStatus.OK);
+    		return new ResponseEntity<MovementDTO>(movementService.deposit(request.getAmount(), balanceBeforeMovement,
+                    checkingEntry, MovementType.DEPOSIT), HttpStatus.OK);
+//    		return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request.getAmount(), balanceBeforeMovement, AccountType.CHECKING, null, checkingEntry, MovementType.DEPOSIT),HttpStatus.OK);
     	}
     	
     	else {
@@ -103,7 +102,9 @@ public class MovementController {
     		balanceBeforeMovement = savingsExit.getBalance();
     		canBePerformed = savingsExit.extract(request.getAmount());
     		if(canBePerformed) {
-    			return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request.getAmount(), balanceBeforeMovement, 0, savingsExit, null, MovementType.EXTRACTION),HttpStatus.OK);
+    		    return new ResponseEntity<MovementDTO>(movementService.extract(request.getAmount(), balanceBeforeMovement,
+                        savingsExit, MovementType.EXTRACTION), HttpStatus.OK);
+//    			return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request.getAmount(), balanceBeforeMovement, AccountType.SAVINGS, savingsExit, null, MovementType.EXTRACTION),HttpStatus.OK);
     		}
     		else {
     			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
@@ -115,7 +116,9 @@ public class MovementController {
     		balanceBeforeMovement = checkingExit.getBalance();
     		canBePerformed = checkingExit.extract(request.getAmount());
     		if(canBePerformed) {
-    			return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request.getAmount(), balanceBeforeMovement, 1, null, checkingExit, MovementType.EXTRACTION),HttpStatus.OK);
+    		    return new ResponseEntity<MovementDTO>(movementService.extract(request.getAmount(), balanceBeforeMovement,
+                        checkingExit, MovementType.EXTRACTION), HttpStatus.OK);
+//    			return new ResponseEntity<MovementDTO>(movementService.depositAndExtract(request.getAmount(), balanceBeforeMovement, AccountType.CHECKING, null, checkingExit, MovementType.EXTRACTION),HttpStatus.OK);
     		}
     		else {
     			return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);

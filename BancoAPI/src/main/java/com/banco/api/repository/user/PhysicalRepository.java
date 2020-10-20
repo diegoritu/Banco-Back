@@ -1,5 +1,7 @@
 package com.banco.api.repository.user;
 
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Physical;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,8 @@ public interface PhysicalRepository extends UserBaseRepository<Physical> {
 	Physical findByUsernameAndUserTypeNumberAndActive(String username, int userTypeNumber, boolean active);
 
 	boolean existsByDni(String dni);
+
+	boolean existsByActiveTrueAnAndChecking(Checking checking);
+
+	boolean existsByActiveTrueAndSavings(Savings savings);
 }

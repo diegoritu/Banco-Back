@@ -13,9 +13,9 @@ import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Physical;
 import com.banco.api.repository.user.PhysicalRepository;
+import com.banco.api.service.DebitCardService;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
-import com.banco.api.service.others.DebitCardService;
 import com.banco.api.utils.DateUtils;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
@@ -239,6 +239,16 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         
 		return result;
 	}
+
+    public boolean existsByCBU(String cbu) {
+        Checking checking = checkingService.findByCbu(cbu);
+        if (checking != null && physicalRepository.existsByActiveTrueAnAndChecking(checking)) {
+            return true;
+        } else {
+            Savings savings = savingsService.findByCbu(cbu);
+            return savings != null && physicalRepository.existsByActiveTrueAndSavings(savings);
+        }
+    }
 
 	public boolean existsByCuitCuilCdi(String cuitCuilCdi) {
         return physicalRepository.existsByCuitCuilCdi(cuitCuilCdi);

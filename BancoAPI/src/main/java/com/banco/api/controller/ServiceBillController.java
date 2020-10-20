@@ -3,11 +3,8 @@ package com.banco.api.controller;
 import com.banco.api.dto.others.ServiceCreatedDTO;
 import com.banco.api.dto.others.ServiceCsvDTO;
 import com.banco.api.dto.others.ServiceDTO;
-import com.banco.api.dto.others.request.CreateServiceBillRequest;
-import com.banco.api.exception.InvalidServiceBillCreationRequestException;
-import com.banco.api.exception.VendorNotFoundException;
 import com.banco.api.model.ServicePayment;
-import com.banco.api.service.others.BillService;
+import com.banco.api.service.BillService;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
@@ -18,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import static com.banco.api.controller.ResponseEntityFactory.createErrorResponseEntity;
 
 import java.io.BufferedReader;
 import java.io.IOException;

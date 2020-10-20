@@ -25,4 +25,8 @@ public interface LegalRepository extends UserBaseRepository<Legal> {
 	Legal findByChecking(Checking checkingAccount);
 	
 	Legal findBySavings(Savings savingsAccount);
+
+	boolean existsByActiveTrueAnAndChecking(Checking checking);
+
+	boolean existsByActiveTrueAndSavings(Savings savings);
 }

@@ -1,8 +1,9 @@
 package com.banco.api.service.account;
 
+import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.movement.MovementType;
 import com.banco.api.model.account.Savings;
-import com.banco.api.service.others.MovementService;
+import com.banco.api.service.MovementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,8 @@ public class InterestsService {
             savings.deposit(monthInterests);
             savingsService.update(savings);
 
-            movementService.depositAndExtract(monthInterests, oldBalance, 0, savings, null, MovementType.INTERESTS);
+            movementService.deposit(monthInterests, oldBalance, savings, MovementType.INTERESTS);
+//            movementService.depositAndExtract(monthInterests, oldBalance, AccountType.SAVINGS, savings, null, MovementType.INTERESTS);
 
             LOGGER.info("Savings account number {} month interests deposited. Month interests: {}, New balance: {}",
                     savings.getAccountNumber(), monthInterests, savings.getBalance());
