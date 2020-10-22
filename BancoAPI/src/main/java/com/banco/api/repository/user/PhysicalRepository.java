@@ -20,7 +20,7 @@ public interface PhysicalRepository extends UserBaseRepository<Physical> {
 
 	boolean existsByDni(String dni);
 
-	boolean existsByActiveTrueAnAndChecking(Checking checking);
+	boolean existsByActiveTrueAndChecking(Checking checking);
 
 	boolean existsByActiveTrueAndSavings(Savings savings);
 }

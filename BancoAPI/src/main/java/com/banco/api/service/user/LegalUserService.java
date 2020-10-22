@@ -215,7 +215,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 
     public boolean existsByCBU(String cbu) {
         Checking checking = checkingService.findByCbu(cbu);
-        if (checking != null && legalRepository.existsByActiveTrueAnAndChecking(checking)) {
+        if (checking != null && legalRepository.existsByActiveTrueAndChecking(checking)) {
             return true;
         } else {
             Savings savings = savingsService.findByCbu(cbu);

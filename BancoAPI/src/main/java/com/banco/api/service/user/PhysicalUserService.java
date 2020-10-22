@@ -242,7 +242,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 
     public boolean existsByCBU(String cbu) {
         Checking checking = checkingService.findByCbu(cbu);
-        if (checking != null && physicalRepository.existsByActiveTrueAnAndChecking(checking)) {
+        if (checking != null && physicalRepository.existsByActiveTrueAndChecking(checking)) {
             return true;
         } else {
             Savings savings = savingsService.findByCbu(cbu);
