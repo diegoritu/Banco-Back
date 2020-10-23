@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.request.CreditEntityDebitClientsRequest;
+import com.banco.api.dto.movement.request.CreditEntityDepositCommerceRequest;
 import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
 import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
 import com.banco.api.dto.movement.request.ServicePaymentRequest;
@@ -32,6 +33,8 @@ import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
 import com.banco.api.dto.others.TransactionIdDTO;
 import com.banco.api.exception.BusinessCBUNotFoundException;
 import com.banco.api.exception.ClientInsuficientFundsException;
+import com.banco.api.exception.CommerceCBUNotFoundException;
+import com.banco.api.exception.CreditEntityAccountInsuficientFundsException;
 import com.banco.api.exception.DebitCardNotFoundException;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -441,6 +444,25 @@ public class MovementController {
     	}
     	catch(BusinessCBUNotFoundException ex) {
     		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "CREDIT_ENTITY_CBU_NOT_FOUND", "El CBU de la entidad crediticia " + request.getCreditEntityCBU() + " no existe.");
+    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
+    	}
+    }
+    @PostMapping("/creditEntityDepositCommerce")
+    public ResponseEntity creditEntityDepositCommerce(@RequestBody CreditEntityDepositCommerceRequest request){
+    	try {
+    		movementService.creditEntityDepositCommerce(request);
+    		return new ResponseEntity<Void> (HttpStatus.NO_CONTENT);
+    	}
+    	catch(CreditEntityAccountInsuficientFundsException ex){
+    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(409, "CREDIT_ENTITY_ACCOUNT_INSUFFICIENT_FUNDS", ex.getLocalizedMessage());
+    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.CONFLICT);
+    	}
+    	catch(BusinessCBUNotFoundException ex) {
+    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "CREDIT_ENTITY_CBU_NOT_FOUND", ex.getLocalizedMessage());
+    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
+    	}
+    	catch(CommerceCBUNotFoundException ex) {
+    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "BUSINESS_CBU_NOT_FOUND", ex.getLocalizedMessage());
     		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
     	}
     }

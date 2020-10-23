@@ -15,7 +15,8 @@ public enum MovementType {
     INTERESTS(7),
     DEBIT_CARD_PAYMENT(8),
 	CREDIT_ENTITY_DEBIT_CLIENT(9),
-    SALARY_PAYMENT(10);
+    SALARY_PAYMENT(10),
+    CREDIT_ENTITY_DEPOSIT_COMMERCE(11);
 
     private final int value;
     private static final Map<Integer, MovementType> map = new HashMap<>();

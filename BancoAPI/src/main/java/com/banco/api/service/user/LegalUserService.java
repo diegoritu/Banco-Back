@@ -70,9 +70,6 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         Savings savingsAccount = savingsService.createAccount();
         user.setSavings(savingsAccount);
         
-        DebitCard debitCard = debitCardService.createDebitCard(savingsAccount.getAccountNumber());
-        user.setDebitCard(debitCard);
-        
         if (request.isWithCheckingAccount()) {
             Checking checkingAccount = checkingService.createAccount(request.getMaxOverdraft());
             user.setChecking(checkingAccount);

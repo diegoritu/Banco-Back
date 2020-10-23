@@ -9,17 +9,15 @@ public class LegalUserDTO extends UserDTO {
     private String businessName;
     private SavingsDTO savings; //Caja de Ahorro
     private CheckingDTO checking; //Cuenta Corriente
-    private DebitCardDTO debitCard;
     private boolean firstLogin;
     private String password;
     
-	public LegalUserDTO(String businessName, SavingsDTO savings, CheckingDTO checking, DebitCardDTO debitCard, boolean firstLogin,
+	public LegalUserDTO(String businessName, SavingsDTO savings, CheckingDTO checking, boolean firstLogin,
 			String password) {
 		super();
 		this.businessName = businessName;
 		this.savings = savings;
 		this.checking = checking;
-		this.debitCard = debitCard;
 		this.firstLogin = firstLogin;
 		this.password = password;
 	}
@@ -45,12 +43,6 @@ public class LegalUserDTO extends UserDTO {
 	public void setChecking(CheckingDTO checking) {
 		this.checking = checking;
 	}
-	public DebitCardDTO getDebitCard() {
-		return debitCard;
-	}
-	public void setDebitCard(DebitCardDTO debitCard) {
-		this.debitCard = debitCard;
-	}
 	public boolean isFirstLogin() {
 		return firstLogin;
 	}
@@ -66,6 +58,6 @@ public class LegalUserDTO extends UserDTO {
 	@Override
 	public String toString() {
 		return "LegalUserDTO [businessName=" + businessName + ", savings=" + savings + ", checking=" + checking
-				+ ", debitCard=" + debitCard + ", firstLogin=" + firstLogin + ", password=" + password + "]";
+				+ ", firstLogin=" + firstLogin + ", password=" + password + "]";
 	}
 }

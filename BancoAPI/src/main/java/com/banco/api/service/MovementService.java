@@ -4,10 +4,12 @@ import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.MovementType;
 import com.banco.api.dto.movement.request.CreditEntityDebitClientsRequest;
+import com.banco.api.dto.movement.request.CreditEntityDepositCommerceRequest;
 import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
 import com.banco.api.dto.others.CreditEntityDebitClientsFailures;
 import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
 import com.banco.api.dto.others.request.CreditEntityDebitClientTransaction;
+import com.banco.api.dto.others.request.CreditEntityDepositCommerceTransaction;
 import com.banco.api.exception.*;
 import com.banco.api.model.DebitCard;
 import com.banco.api.model.Movement;
@@ -495,6 +497,109 @@ public class MovementService {
 
 			deposit(amount, destinationChecking.getBalance(), destinationChecking, destinationMovementType);
 		}
+	}
+	
+	public void creditEntityDepositCommerce(CreditEntityDepositCommerceRequest request) {
+		Checking creditEntityChecking = null;
+		Savings creditEntitySavings = null;
+		Checking businessChecking = null;
+		Savings businessSavings = null;
+		Legal creditEntity = null;
+		List<Movement> movementsBeforeSaving = new ArrayList<Movement>();
+		float entryBalanceBeforeMovement = 0;
+		float exitBalanceBeforeMovement = 0;
+		final float CREDIT_ENTITY_BALANCE;
+		float totalAmount = 0;
+		Date now = new Date();
+
+		
+		if(checkingService.existsCbu(request.getCreditEntityCBU())) {
+			creditEntityChecking = checkingService.findByCbu(request.getCreditEntityCBU());
+    		creditEntity = legalUserService.findByCheckingAccount(creditEntityChecking);
+    		CREDIT_ENTITY_BALANCE = creditEntityChecking.getBalance();
+		}
+    	else if(savingsService.existsCbu(request.getCreditEntityCBU())) {
+    		creditEntitySavings = savingsService.findByCbu(request.getCreditEntityCBU());
+    		creditEntity = legalUserService.findBySavingsAccount(creditEntitySavings);
+    		CREDIT_ENTITY_BALANCE = creditEntitySavings.getBalance();
+    	}
+    	else {
+    		throw new BusinessCBUNotFoundException("El CBU de la entidad crediticia " + request.getCreditEntityCBU() + " no existe");
+    	}
+		
+		for(CreditEntityDepositCommerceTransaction transaction : request.getTransactions()) {
+			
+			totalAmount += transaction.getAmount();
+			
+			Movement movement = new Movement();
+			
+			movement.setAmount(transaction.getAmount());
+			movement.setDayAndHour(now);
+			movement.setMovementType(11);
+			
+			if(creditEntityChecking != null) {
+				System.out.println("AMOUNT: " + totalAmount + "; balance: " + CREDIT_ENTITY_BALANCE + "; maxOverdraft: " + creditEntityChecking.getMaxOverdraft());
+				System.out.println("ES: " + Float.toString(CREDIT_ENTITY_BALANCE - totalAmount));
+				movement.setChExitAccount(creditEntityChecking);
+				exitBalanceBeforeMovement = creditEntityChecking.getBalance();
+				creditEntityChecking.extract(transaction.getAmount());
+				float dif = CREDIT_ENTITY_BALANCE - totalAmount;
+				
+				if(dif < 0 && Math.abs(dif) > creditEntityChecking.getMaxOverdraft()) {
+					throw new CreditEntityAccountInsuficientFundsException("La cuenta CBU " + request.getCreditEntityCBU() + " de la entidad crediticia posee fondos insuficientes");
+				}
+				if(checkingService.existsCbu(transaction.getBusinessCBU())) {
+					businessChecking = checkingService.findByCbu(transaction.getBusinessCBU());
+					entryBalanceBeforeMovement = businessChecking.getBalance();
+					businessChecking.deposit(transaction.getAmount());
+					movement.setChEntryAccount(businessChecking);
+				}
+				else if(savingsService.existsCbu(transaction.getBusinessCBU())) {
+					businessSavings = savingsService.findByCbu(transaction.getBusinessCBU());
+					entryBalanceBeforeMovement = businessSavings.getBalance();
+					businessSavings.deposit(transaction.getAmount());
+					movement.setSaEntryAccount(businessSavings);
+				}
+				else {
+					throw new CommerceCBUNotFoundException("El CBU del negocio " + transaction.getBusinessCBU() + " no existe");
+				}
+			}
+			
+			else if(creditEntitySavings != null) {
+				System.out.println("AMOUNT: " + transaction.getAmount() + "; balance: " + creditEntitySavings.getBalance());
+
+				movement.setSaExitAccount(creditEntitySavings);
+				exitBalanceBeforeMovement = creditEntitySavings.getBalance();
+				creditEntitySavings.extract(transaction.getAmount());
+				
+				if(CREDIT_ENTITY_BALANCE - totalAmount < 0) {
+					throw new CreditEntityAccountInsuficientFundsException("La cuenta CBU " + request.getCreditEntityCBU() + " de la entidad crediticia posee fondos insuficientes");
+				}
+				if(checkingService.existsCbu(transaction.getBusinessCBU())) {
+					businessChecking = checkingService.findByCbu(transaction.getBusinessCBU());
+					entryBalanceBeforeMovement = businessChecking.getBalance();
+					businessChecking.deposit(transaction.getAmount());
+					movement.setChEntryAccount(businessChecking);
+				}
+				else if(savingsService.existsCbu(transaction.getBusinessCBU())) {
+					businessSavings = savingsService.findByCbu(transaction.getBusinessCBU());
+					entryBalanceBeforeMovement = businessChecking.getBalance();
+					businessSavings.deposit(transaction.getAmount());
+					movement.setChEntryAccount(businessChecking);
+				}
+				else {
+					throw new BusinessCBUNotFoundException("El CBU del negocio " + transaction.getBusinessCBU() + " no existe");
+				}
+			}
+			
+			movement.setEntryBalanceBeforeMovement(entryBalanceBeforeMovement);
+			movement.setExitBalanceBeforeMovement(exitBalanceBeforeMovement);
+			movementsBeforeSaving.add(movement);
+		}
+		for(Movement m : movementsBeforeSaving) {
+			movementRepository.save(m);
+		}
+		
 	}
 
 }
