@@ -14,7 +14,8 @@ import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
-import com.banco.published.controller.request.SalaryPaymentRequest;
+import com.banco.api.utils.DateUtils;
+import com.banco.api.published.request.SalaryPaymentRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +43,11 @@ public class SalaryService {
     @Autowired
     private MovementService movementService;
 
-    public void processSalaryRequest(SalaryPaymentRequest request) {
+    public void saveSalaryRequest(SalaryPaymentRequest request) {
         validateSalaryRequest(request);
 
+        Date scheduledDate = getScheduledDate();
         String employerCBU = request.getEmployerCBU();
-        Date scheduledDate = new Date(); //TODO calcular 48hs posteriores
         request.getSalaries().forEach(salary -> {
                     SalaryPayment salaryPayment = new SalaryPayment(employerCBU, salary.getEmployeeCBU(),
                             salary.getSalary(), scheduledDate);
@@ -56,25 +57,28 @@ public class SalaryService {
         );
     }
 
-    //TODO: scheduled task diario llamará este método cuando encuentre un salario pendiente y en fecha de pago
     public void paySalary(SalaryPayment salaryPayment) {
         LOGGER.info("Paying salary: {}", salaryPayment.toString());
         try {
             movementService.transferBetweenTwoAccountsByCBU(salaryPayment.getEmployerCBU(), salaryPayment.getEmployeeCBU(),
                     salaryPayment.getSalary(), MovementType.EXTRACTION, MovementType.SALARY_PAYMENT);
             salaryPayment.setStatus(ScheduledTransactionStatus.DONE);
-        } catch (AccountCBUNotFoundException ex) { //TODO: diferenciar CBU empleado de empleador, ¿origin/destination cbu not found?
-            LOGGER.error(ex.getMessage());
+
+        } catch (AccountCBUNotFoundException ex) {
+            LOGGER.error(ex.getLocalizedMessage());
             salaryPayment.setStatus(ScheduledTransactionStatus.ERROR);
-            //TODO: add failure
+            salaryPayment.setFailureCode("CBU_NOT_FOUND");
+            salaryPayment.setFailureMessage(ex.getLocalizedMessage());
+
         } catch (InsufficientBalanceException ex) {
-            LOGGER.error(ex.getMessage());
+            LOGGER.error(ex.getLocalizedMessage());
             salaryPayment.setStatus(ScheduledTransactionStatus.ERROR);
-            salaryPayment.setFailure("BUSINESS_ACCOUNT_INSUFFICIENT_FUNDS",
-                    "La cuenta CBU del negocio no posee fondos suficientes");
+            salaryPayment.setFailureCode("BUSINESS_ACCOUNT_INSUFFICIENT_FUNDS");
+            salaryPayment.setFailureMessage("La cuenta CBU del negocio no posee fondos suficientes");
+
         } finally {
             salaryPaymentRepository.save(salaryPayment);
-            LOGGER.info("Scheduled salary payment successfully processed - id: {}", salaryPayment.getId());
+            LOGGER.info("Scheduled payment processed - id: {}", salaryPayment.getId());
         }
     }
 
@@ -110,5 +114,10 @@ public class SalaryService {
         }
 
         return balance >= totalSalaryAmount;
+    }
+
+    private Date getScheduledDate() {
+        Date currentDatePlusTwoDays = DateUtils.plusDays(new Date(), 2);
+        return DateUtils.atStartOfDay(currentDatePlusTwoDays);
     }
 }

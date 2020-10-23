@@ -10,9 +10,6 @@ import java.util.Date;
 @Table(name = "salary_payment")
 public class SalaryPayment extends ScheduledTransaction {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String employerCBU;
     private String employeeCBU;
     private Float salary;
@@ -22,11 +19,7 @@ public class SalaryPayment extends ScheduledTransaction {
         this.employerCBU = employerCBU;
         this.salary = salary;
         this.scheduledDate = scheduledDate;
-        this.status = ScheduledTransactionStatus.PENDING;
-    }
-
-    public int getId() {
-        return id;
+        this.setStatus(ScheduledTransactionStatus.PENDING);
     }
 
     public String getEmployeeCBU() {
@@ -44,13 +37,13 @@ public class SalaryPayment extends ScheduledTransaction {
     @Override
     public String toString() {
         return "SalaryPayment{" +
-                "id=" + id +
-                ", employerCBU='" + employerCBU + '\'' +
+                "employerCBU='" + employerCBU + '\'' +
                 ", employeeCBU='" + employeeCBU + '\'' +
                 ", salary=" + salary +
                 ", scheduledDate=" + scheduledDate +
                 ", status=" + status +
-                ", failure=" + failure +
+                ", failureCode='" + failureCode + '\'' +
+                ", failureMessage='" + failureMessage + '\'' +
                 '}';
     }
 }

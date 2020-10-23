@@ -1,6 +1,5 @@
 package com.banco.api.service.account;
 
-import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.movement.MovementType;
 import com.banco.api.model.account.Savings;
 import com.banco.api.service.MovementService;
@@ -24,7 +23,7 @@ public class InterestsService {
     private MovementService movementService;
 
     // First day of the month at 02:00:00 (2020-10-01 02:00:00; 2020-11-01 02:00:00, etc.)
-    @Scheduled(cron = "0 0 2 1 1/1 ? *")
+    @Scheduled(cron = "0 0 2 1 * ?")
     public void applyInterestRate() {
         LOGGER.info("Savings account monthly interests process started");
         List<Savings> savingsAccounts = savingsService.findAll();

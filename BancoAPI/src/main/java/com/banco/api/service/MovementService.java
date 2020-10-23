@@ -8,10 +8,7 @@ import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
 import com.banco.api.dto.others.CreditEntityDebitClientsFailures;
 import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
 import com.banco.api.dto.others.request.CreditEntityDebitClientTransaction;
-import com.banco.api.exception.AccountCBUNotFoundException;
-import com.banco.api.exception.BusinessCBUNotFoundException;
-import com.banco.api.exception.ClientInsuficientFundsException;
-import com.banco.api.exception.DebitCardNotFoundException;
+import com.banco.api.exception.*;
 import com.banco.api.model.DebitCard;
 import com.banco.api.model.Movement;
 import com.banco.api.model.ServicePayment;
@@ -26,7 +23,6 @@ import com.banco.api.service.user.LegalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -34,6 +30,9 @@ import java.util.List;
 
 @Service
 public class MovementService {
+
+    private static final String INSUFFICIENT_BALANCE_MESSAGE = "La cuenta origen no posee monto suficiente";
+
 	@Autowired
 	MovementRepository movementRepository;
 	@Autowired
@@ -471,11 +470,17 @@ public class MovementService {
 												MovementType originMovementType, MovementType destinationMovementType) throws AccountCBUNotFoundException {
 		Savings originSavings = savingsService.findByCbu(originCBU);
 		if (originSavings != null) {
+		    if (originSavings.getBalance() < amount)
+		        throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
+
 			extract(amount, originSavings.getBalance(), originSavings, originMovementType);
 		} else {
 			Checking originChecking = checkingService.findByCbu(originCBU);
 			if (originChecking == null)
-				throw new AccountCBUNotFoundException(String.format("%s account CBU not found", originCBU));
+				throw new AccountCBUNotFoundException(String.format("Account CBU %s not found", originCBU));
+
+			if (originChecking.getBalance() < amount)
+			    throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
 
 			extract(amount, originChecking.getBalance(), originChecking, originMovementType);
 		}
@@ -486,7 +491,7 @@ public class MovementService {
 		} else {
 			Checking destinationChecking = checkingService.findByCbu(destinationCBU);
 			if (destinationChecking == null)
-				throw new AccountCBUNotFoundException(String.format("%s account CBU not found", destinationCBU));
+				throw new AccountCBUNotFoundException(String.format("Account CBU %s not found", destinationCBU));
 
 			deposit(amount, destinationChecking.getBalance(), destinationChecking, destinationMovementType);
 		}

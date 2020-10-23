@@ -1,4 +1,4 @@
-package com.banco.published.controller.request;
+package com.banco.api.published.request;
 
 import java.util.List;
 

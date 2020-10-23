@@ -1,7 +1,7 @@
-package com.banco.published.controller;
+package com.banco.api.published.controller;
 
+import com.banco.api.published.request.SalaryPaymentRequest;
 import com.banco.api.service.SalaryService;
-import com.banco.published.controller.request.SalaryPaymentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class SalaryController {
 
     @PostMapping("/payment")
     public ResponseEntity salaryPayment(@RequestBody SalaryPaymentRequest request) {
-        salaryService.processSalaryRequest(request);
+        salaryService.saveSalaryRequest(request);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

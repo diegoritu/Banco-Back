@@ -6,12 +6,16 @@ import org.slf4j.LoggerFactory;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class DateUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DateUtils.class);
 
+    private static final ZoneId ZONE_ID = ZoneId.of("America/Buenos_Aires");
     private static final String DATE_PATTERN = "yyyy-MM-dd";
     private static DateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
 
@@ -53,4 +57,18 @@ public class DateUtils {
     	}
     }
 
+    public static Date plusDays(Date date, long days) {
+        LocalDateTime localDateTime = date.toInstant().atZone(ZONE_ID).toLocalDateTime();
+        LocalDateTime datePlusDays = localDateTime.plusDays(days);
+        return Date.from(datePlusDays.atZone(ZONE_ID).toInstant());
+    }
+
+    public static Date atStartOfDay(Date date) {
+        LocalDate localDate = date.toInstant().atZone(ZONE_ID).toLocalDate();
+        return Date.from(localDate.atStartOfDay(ZONE_ID).toInstant());
+    }
+
+    public static ZoneId getZoneId() {
+        return ZONE_ID;
+    }
 }
