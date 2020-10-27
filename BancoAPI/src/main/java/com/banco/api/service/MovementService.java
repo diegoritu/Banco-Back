@@ -468,34 +468,50 @@ public class MovementService {
 	}
 
 
+	//Realiza la extraccion del monto de la cuenta origen y el deposito del mismo en la cuenta destino, creando un movimiento para cada operacion
 	public void transferBetweenTwoAccountsByCBU(String originCBU, String destinationCBU, float amount,
 												MovementType originMovementType, MovementType destinationMovementType) {
 		Savings originSavings = savingsService.findByCbu(originCBU);
 		if (originSavings != null) {
-			if (originSavings.getBalance() < amount)
-				throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
 
-			extract(amount, originSavings.getBalance(), originSavings, originMovementType);
+			float balanceBeforeExtraction = originSavings.getBalance();
+			boolean couldBeExtracted = originSavings.extract(amount);
+			if (!couldBeExtracted) {
+				throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
+			} else {
+				savingsService.update(originSavings);
+				extract(amount, balanceBeforeExtraction, originSavings, originMovementType);
+			}
 		} else {
 			Checking originChecking = checkingService.findByCbu(originCBU);
 			if (originChecking == null)
-				throw new AccountCBUNotFoundException(String.format("Account CBU %s not found", originCBU));
+				throw new AccountCBUNotFoundException(String.format("Cuenta CBU %s no encontrada", originCBU));
 
-			if (originChecking.getBalance() < amount)
+			float balanceBeforeExtraction = originChecking.getBalance();
+			boolean couldBeExtracted = originChecking.extract(amount);
+			if (!couldBeExtracted) {
 				throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
-
-			extract(amount, originChecking.getBalance(), originChecking, originMovementType);
+			} else {
+				checkingService.update(originChecking);
+				extract(amount, balanceBeforeExtraction, originChecking, originMovementType);
+			}
 		}
 
 		Savings destinationSavings = savingsService.findByCbu(destinationCBU);
 		if (destinationSavings != null) {
-			deposit(amount, destinationSavings.getBalance(), destinationSavings, destinationMovementType);
+			float balanceBeforeDeposit = destinationSavings.getBalance();
+			destinationSavings.deposit(amount);
+			savingsService.update(destinationSavings);
+			deposit(amount, balanceBeforeDeposit, destinationSavings, destinationMovementType);
 		} else {
 			Checking destinationChecking = checkingService.findByCbu(destinationCBU);
 			if (destinationChecking == null)
-				throw new AccountCBUNotFoundException(String.format("Account CBU %s not found", destinationCBU));
+				throw new AccountCBUNotFoundException(String.format("Cuenta CBU %s no encontrada", destinationCBU));
 
-			deposit(amount, destinationChecking.getBalance(), destinationChecking, destinationMovementType);
+			float balanceBeforeDeposit = destinationChecking.getBalance();
+			destinationChecking.deposit(amount);
+			checkingService.update(destinationChecking);
+			deposit(amount, balanceBeforeDeposit, destinationChecking, destinationMovementType);
 		}
 	}
 	

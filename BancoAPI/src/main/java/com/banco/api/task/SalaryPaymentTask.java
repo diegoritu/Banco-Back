@@ -36,7 +36,7 @@ public class SalaryPaymentTask implements MyTask {
     public void execute() {
         LOGGER.info("Executing Salary Payment Task");
         List<SalaryPayment> salaryPayments = salaryPaymentRepository
-                .findAllByScheduledDateBeforeAndStatus(new Date(), ScheduledTransactionStatus.PENDING.getValue());
+                .findAllByStatusAndScheduledDate(ScheduledTransactionStatus.PENDING.getValue(), new Date());
 
         LOGGER.info("Pending salary payments scheduled for today: {}", salaryPayments != null ? salaryPayments.size() : 0);
 

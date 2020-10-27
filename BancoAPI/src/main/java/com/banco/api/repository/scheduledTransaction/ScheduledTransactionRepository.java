@@ -14,5 +14,5 @@ public interface ScheduledTransactionRepository<T extends ScheduledTransaction> 
 
     List<T> findAllByStatus(int status);
 
-    List<T> findAllByScheduledDateBeforeAndStatus(Date date, int status);
+    List<T> findAllByStatusAndScheduledDate(int status, Date date);
 }

@@ -14,6 +14,9 @@ public class SalaryPayment extends ScheduledTransaction {
     private String employeeCbu;
     private Float salary;
 
+    public SalaryPayment() {
+    }
+
     public SalaryPayment(String employerCbu, String employeeCBU, Float salary, Date scheduledDate) {
         this.employeeCbu = employeeCBU;
         this.employerCbu = employerCbu;

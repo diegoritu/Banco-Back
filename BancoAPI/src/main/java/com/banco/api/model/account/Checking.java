@@ -35,7 +35,6 @@ public class Checking extends Account implements Externalizable<CheckingDTO> {
     @Override
     public void deposit(float amount) {
     	setBalance(balance + amount);
-
     }
 
     @Override

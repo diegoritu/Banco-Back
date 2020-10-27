@@ -4,6 +4,7 @@ import com.banco.api.dto.movement.MovementType;
 import com.banco.api.exception.*;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
+import com.banco.api.model.scheduledTransaction.ScheduledTransaction;
 import com.banco.api.model.scheduledTransaction.ScheduledTransactionStatus;
 import com.banco.api.model.scheduledTransaction.salary.SalaryPayment;
 import com.banco.api.published.response.salaryPaymentFailure.Resource;
@@ -81,7 +82,11 @@ public class SalaryService {
 
         } finally {
             salaryPaymentRepository.save(salaryPayment);
-            LOGGER.info("Scheduled payment processed - id: {}", salaryPayment.getId());
+            if (ScheduledTransactionStatus.ERROR.equals(salaryPayment.getStatus())) {
+                LOGGER.warn("Could not pay salary id: {}", salaryPayment.getId());
+            } else {
+                LOGGER.info("Succesfully payed salary id: {}", salaryPayment.getId());
+            }
         }
     }
 
