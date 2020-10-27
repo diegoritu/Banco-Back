@@ -8,7 +8,6 @@ import com.banco.api.dto.user.request.modification.LegalUserModificationRequest;
 import com.banco.api.exception.CheckingAccountRequestException;
 import com.banco.api.exception.DuplicatedUserException;
 import com.banco.api.exception.InvalidUserRequestException;
-import com.banco.api.model.DebitCard;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;

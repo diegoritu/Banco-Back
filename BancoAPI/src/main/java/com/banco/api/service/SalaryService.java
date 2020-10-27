@@ -1,14 +1,13 @@
 package com.banco.api.service;
 
 import com.banco.api.dto.movement.MovementType;
-import com.banco.api.exception.AccountCBUNotFoundException;
-import com.banco.api.exception.BusinessCBUNotFoundException;
-import com.banco.api.exception.EmployeeCBUNotFoundException;
-import com.banco.api.exception.InsufficientBalanceException;
+import com.banco.api.exception.*;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.scheduledTransaction.ScheduledTransactionStatus;
 import com.banco.api.model.scheduledTransaction.salary.SalaryPayment;
+import com.banco.api.published.response.salaryPaymentFailure.Resource;
+import com.banco.api.published.response.salaryPaymentFailure.SalaryPaymentFailure;
 import com.banco.api.repository.scheduledTransaction.SalaryPaymentRepository;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
@@ -16,12 +15,16 @@ import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import com.banco.api.utils.DateUtils;
 import com.banco.api.published.request.SalaryPaymentRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -60,7 +63,7 @@ public class SalaryService {
     public void paySalary(SalaryPayment salaryPayment) {
         LOGGER.info("Paying salary: {}", salaryPayment.toString());
         try {
-            movementService.transferBetweenTwoAccountsByCBU(salaryPayment.getEmployerCBU(), salaryPayment.getEmployeeCBU(),
+            movementService.transferBetweenTwoAccountsByCBU(salaryPayment.getEmployerCbu(), salaryPayment.getEmployeeCbu(),
                     salaryPayment.getSalary(), MovementType.EXTRACTION, MovementType.SALARY_PAYMENT);
             salaryPayment.setStatus(ScheduledTransactionStatus.DONE);
 
@@ -119,5 +122,29 @@ public class SalaryService {
     private Date getScheduledDate() {
         Date currentDatePlusTwoDays = DateUtils.plusDays(new Date(), 2);
         return DateUtils.atStartOfDay(currentDatePlusTwoDays);
+    }
+
+    public List<SalaryPaymentFailure> getFailures(String employerCBU, String fromDate) {
+        if (!legalUserService.existsByCBU(employerCBU))
+            throw new BusinessCBUNotFoundException("CBU de empleador no encontrado");
+
+        if (StringUtils.isNotEmpty(fromDate) && !DateUtils.isValid(fromDate))
+            throw new InvalidDateFormatException("Formato de fecha inválido. El formato debe ser yyyy-MM-dd");
+
+        List<SalaryPayment> payments;
+        if (StringUtils.isEmpty(fromDate)) {
+            payments = salaryPaymentRepository.findAllByStatus(ScheduledTransactionStatus.ERROR.getValue());
+        } else {
+            //TODO buscar por date before
+            //mock
+            payments = new ArrayList<>();
+        }
+
+        return payments.stream()
+                .map(payment -> {
+                    Resource resource = new Resource(payment.getEmployeeCbu(), DateUtils.format(payment.getScheduledDate()));
+                    return new SalaryPaymentFailure(resource, payment.getFailureCode(), payment.getFailureMessage());
+                })
+                .collect(Collectors.toList());
     }
 }

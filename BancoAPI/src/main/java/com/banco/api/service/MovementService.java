@@ -469,11 +469,11 @@ public class MovementService {
 
 
 	public void transferBetweenTwoAccountsByCBU(String originCBU, String destinationCBU, float amount,
-												MovementType originMovementType, MovementType destinationMovementType) throws AccountCBUNotFoundException {
+												MovementType originMovementType, MovementType destinationMovementType) {
 		Savings originSavings = savingsService.findByCbu(originCBU);
 		if (originSavings != null) {
-		    if (originSavings.getBalance() < amount)
-		        throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
+			if (originSavings.getBalance() < amount)
+				throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
 
 			extract(amount, originSavings.getBalance(), originSavings, originMovementType);
 		} else {
@@ -482,7 +482,7 @@ public class MovementService {
 				throw new AccountCBUNotFoundException(String.format("Account CBU %s not found", originCBU));
 
 			if (originChecking.getBalance() < amount)
-			    throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
+				throw new InsufficientBalanceException(INSUFFICIENT_BALANCE_MESSAGE);
 
 			extract(amount, originChecking.getBalance(), originChecking, originMovementType);
 		}

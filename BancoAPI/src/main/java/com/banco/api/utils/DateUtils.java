@@ -23,6 +23,7 @@ public class DateUtils {
     	if(dateStr != null)
     	{
 	        try {
+	            dateFormatter.setLenient(false);
 	            dateFormatter.parse(dateStr);
 	        } catch (ParseException ex) {
 	            return false;

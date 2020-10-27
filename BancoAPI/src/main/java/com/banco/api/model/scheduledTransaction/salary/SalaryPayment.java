@@ -10,24 +10,24 @@ import java.util.Date;
 @Table(name = "salary_payment")
 public class SalaryPayment extends ScheduledTransaction {
 
-    private String employerCBU;
-    private String employeeCBU;
+    private String employerCbu;
+    private String employeeCbu;
     private Float salary;
 
-    public SalaryPayment(String employerCBU, String employeeCBU, Float salary, Date scheduledDate) {
-        this.employeeCBU = employeeCBU;
-        this.employerCBU = employerCBU;
+    public SalaryPayment(String employerCbu, String employeeCBU, Float salary, Date scheduledDate) {
+        this.employeeCbu = employeeCBU;
+        this.employerCbu = employerCbu;
         this.salary = salary;
         this.scheduledDate = scheduledDate;
         this.setStatus(ScheduledTransactionStatus.PENDING);
     }
 
-    public String getEmployeeCBU() {
-        return employeeCBU;
+    public String getEmployeeCbu() {
+        return employeeCbu;
     }
 
-    public String getEmployerCBU() {
-        return employerCBU;
+    public String getEmployerCbu() {
+        return employerCbu;
     }
 
     public Float getSalary() {
@@ -37,8 +37,8 @@ public class SalaryPayment extends ScheduledTransaction {
     @Override
     public String toString() {
         return "SalaryPayment{" +
-                "employerCBU='" + employerCBU + '\'' +
-                ", employeeCBU='" + employeeCBU + '\'' +
+                "employerCbu='" + employerCbu + '\'' +
+                ", employeeCbu='" + employeeCbu + '\'' +
                 ", salary=" + salary +
                 ", scheduledDate=" + scheduledDate +
                 ", status=" + status +

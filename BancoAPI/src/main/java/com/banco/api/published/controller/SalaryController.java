@@ -3,6 +3,7 @@ package com.banco.api.published.controller;
 import com.banco.api.exception.BusinessCBUNotFoundException;
 import com.banco.api.exception.EmployeeCBUNotFoundException;
 import com.banco.api.exception.InsufficientBalanceException;
+import com.banco.api.exception.InvalidDateFormatException;
 import com.banco.api.published.request.SalaryPaymentRequest;
 import com.banco.api.service.SalaryService;
 import org.slf4j.Logger;
@@ -10,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.banco.api.published.response.PublishedErrorResponseFactory.createPublishedErrorResponse;
 
@@ -26,19 +24,23 @@ public class SalaryController {
     private static final String EMPLOYEE_CBU_NOT_FOUND = "EMPLOYEE_CBU_NOT_FOUND";
     private static final String EMPLOYER_INSUFFICIENT_FUNDS = "EMPLOYER_INSUFFICIENT_FUNDS";
 
+    private static final String BUSINESS_CBU_NOT_FOUND = "BUSINESS_CBU_NOT_FOUND";
+    private static final String INVALID_DATE_FORMAT = "INVALID_DATE_FORMAT";
+
     @Autowired
     private SalaryService salaryService;
 
     @PostMapping("/payment")
-    public ResponseEntity salaryPayment(@RequestBody SalaryPaymentRequest request) {
+    public ResponseEntity createSalaryPayment(@RequestBody SalaryPaymentRequest request) {
+        LOGGER.info("Salary payment request: {}", request.toString());
         try {
             salaryService.saveSalaryRequest(request);
         } catch (BusinessCBUNotFoundException ex) {
-            return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, EMPLOYER_CBU_NOT_FOUND,
+            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, EMPLOYER_CBU_NOT_FOUND,
                     ex.getLocalizedMessage());
 
         } catch (EmployeeCBUNotFoundException ex) {
-            return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, EMPLOYEE_CBU_NOT_FOUND,
+            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, EMPLOYEE_CBU_NOT_FOUND,
                     ex.getLocalizedMessage());
 
         } catch (InsufficientBalanceException ex) {
@@ -47,5 +49,21 @@ public class SalaryController {
         }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /*
+    fromDate format: yyyy-mm-dd
+     */
+    @GetMapping("/payment/failures")
+    public ResponseEntity getFailures(@RequestParam(required = true) String employerCBU,
+                                      @RequestParam(required = false) String fromDate) {
+        try {
+            return new ResponseEntity<>(salaryService.getFailures(employerCBU, fromDate), HttpStatus.OK);
+        } catch (BusinessCBUNotFoundException ex) {
+            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, BUSINESS_CBU_NOT_FOUND, ex.getLocalizedMessage());
+
+        } catch (InvalidDateFormatException ex) {
+            return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, INVALID_DATE_FORMAT, ex.getLocalizedMessage());
+        }
     }
 }
