@@ -1,51 +1,33 @@
 package com.banco.api.controller;
 
-import com.banco.api.dto.account.AccountType;
+import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.MovementType;
+import com.banco.api.dto.movement.request.*;
+import com.banco.api.dto.others.CreditEntityDebitClientsResponseDTO;
+import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
+import com.banco.api.dto.others.TransactionIdDTO;
+import com.banco.api.exception.*;
 import com.banco.api.model.ServicePayment;
-
-import java.util.Collection;
-
+import com.banco.api.model.account.Checking;
+import com.banco.api.model.account.Savings;
+import com.banco.api.model.user.Legal;
+import com.banco.api.model.user.Physical;
+import com.banco.api.service.BillService;
+import com.banco.api.service.MovementService;
+import com.banco.api.service.account.CheckingService;
+import com.banco.api.service.account.SavingsService;
+import com.banco.api.service.user.LegalUserService;
+import com.banco.api.service.user.PhysicalUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.banco.api.dto.movement.MovementDTO;
-import com.banco.api.dto.movement.request.CreditEntityDebitClientsRequest;
-import com.banco.api.dto.movement.request.CreditEntityDepositCommerceRequest;
-import com.banco.api.dto.movement.request.DebitCardPaymentRequest;
-import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
-import com.banco.api.dto.movement.request.ServicePaymentRequest;
-import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
-import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
-import com.banco.api.dto.others.APIErrorMessageDTO;
-import com.banco.api.dto.others.CreditEntityDebitClientsResponseDTO;
-import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
-import com.banco.api.dto.others.TransactionIdDTO;
-import com.banco.api.exception.BusinessCBUNotFoundException;
-import com.banco.api.exception.ClientInsuficientFundsException;
-import com.banco.api.exception.CommerceCBUNotFoundException;
-import com.banco.api.exception.CreditEntityAccountInsuficientFundsException;
-import com.banco.api.exception.DebitCardNotFoundException;
-import com.banco.api.model.account.Checking;
-import com.banco.api.model.account.Savings;
-import com.banco.api.model.user.Legal;
-import com.banco.api.model.user.Physical;
-import com.banco.api.service.account.CheckingService;
-import com.banco.api.service.account.SavingsService;
-import com.banco.api.service.MovementService;
-import com.banco.api.service.BillService;
-import com.banco.api.service.user.LegalUserService;
-import com.banco.api.service.user.PhysicalUserService;
+import java.util.Collection;
+
+import static com.banco.api.published.response.PublishedErrorResponseFactory.createPublishedErrorResponse;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -412,16 +394,16 @@ public class MovementController {
     		return new ResponseEntity<TransactionIdDTO> (response, HttpStatus.OK);
     	}
     	catch(ClientInsuficientFundsException ex){
-    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(409, "CLIENT_INSUFFICIENT_FUNDS", "El cliente no tiene fondos para realizar la operación");
-    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.CONFLICT);
+    		return createPublishedErrorResponse(HttpStatus.CONFLICT, "CLIENT_INSUFFICIENT_FUNDS",
+					"El cliente no tiene fondos para realizar la operación");
     	}
     	catch(DebitCardNotFoundException ex) {
-    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "DEBIT_CARD_NOT_FOUND", "La tarjeta de débito " + request.getDebitCard().getNumber() + " no existe o se ingresó mal algún dato adicional de la misma.");
-    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
+    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "DEBIT_CARD_NOT_FOUND",
+					"La tarjeta de débito " + request.getDebitCard().getNumber() + " no existe o se ingresó mal algún dato adicional de la misma.");
     	}
     	catch(BusinessCBUNotFoundException ex) {
-    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "BUSINESS_CBU_NOT_FOUND", "El CBU del comercio " + request.getBusinessCbu() + " no existe.");
-    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
+    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "BUSINESS_CBU_NOT_FOUND",
+					"El CBU del comercio " + request.getBusinessCbu() + " no existe.");
     	}
     }
     
@@ -443,8 +425,8 @@ public class MovementController {
     		}
     	}
     	catch(BusinessCBUNotFoundException ex) {
-    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "CREDIT_ENTITY_CBU_NOT_FOUND", "El CBU de la entidad crediticia " + request.getCreditEntityCBU() + " no existe.");
-    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
+    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "CREDIT_ENTITY_CBU_NOT_FOUND",
+					"El CBU de la entidad crediticia " + request.getCreditEntityCBU() + " no existe.");
     	}
     }
     @PostMapping("/creditEntityDepositCommerce")
@@ -454,16 +436,13 @@ public class MovementController {
     		return new ResponseEntity<Void> (HttpStatus.NO_CONTENT);
     	}
     	catch(CreditEntityAccountInsuficientFundsException ex){
-    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(409, "CREDIT_ENTITY_ACCOUNT_INSUFFICIENT_FUNDS", ex.getLocalizedMessage());
-    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.CONFLICT);
+    		return createPublishedErrorResponse(HttpStatus.CONFLICT, "CREDIT_ENTITY_ACCOUNT_INSUFFICIENT_FUNDS", ex.getLocalizedMessage());
     	}
     	catch(BusinessCBUNotFoundException ex) {
-    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "CREDIT_ENTITY_CBU_NOT_FOUND", ex.getLocalizedMessage());
-    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
+    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "CREDIT_ENTITY_CBU_NOT_FOUND", ex.getLocalizedMessage());
     	}
     	catch(CommerceCBUNotFoundException ex) {
-    		APIErrorMessageDTO errorMessage = new APIErrorMessageDTO(404, "BUSINESS_CBU_NOT_FOUND", ex.getLocalizedMessage());
-    		return new ResponseEntity<APIErrorMessageDTO> (errorMessage, HttpStatus.NOT_FOUND);
+    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "BUSINESS_CBU_NOT_FOUND", ex.getLocalizedMessage());
     	}
     }
 
