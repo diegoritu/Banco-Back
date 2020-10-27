@@ -140,9 +140,8 @@ public class SalaryService {
         if (StringUtils.isEmpty(fromDate)) {
             payments = salaryPaymentRepository.findAllByStatus(ScheduledTransactionStatus.ERROR.getValue());
         } else {
-            //TODO buscar por date before
-            //mock
-            payments = new ArrayList<>();
+            payments = salaryPaymentRepository.findAllByStatusFromScheduledDate(ScheduledTransactionStatus.ERROR.getValue(),
+                    DateUtils.parse(fromDate));
         }
 
         return payments.stream()

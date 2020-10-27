@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.banco.api.published.response.PublishedErrorResponseFactory.createPublishedErrorResponse;
 
 @RestController
-@RequestMapping("/salary")
+@RequestMapping("/salary-payment")
 public class SalaryController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalaryController.class);
@@ -30,7 +30,7 @@ public class SalaryController {
     @Autowired
     private SalaryService salaryService;
 
-    @PostMapping("/payment")
+    @PostMapping()
     public ResponseEntity createSalaryPayment(@RequestBody SalaryPaymentRequest request) {
         LOGGER.info("Salary payment request: {}", request.toString());
         try {
@@ -54,7 +54,7 @@ public class SalaryController {
     /*
     fromDate format: yyyy-mm-dd
      */
-    @GetMapping("/payment/failures")
+    @GetMapping("/failures")
     public ResponseEntity getFailures(@RequestParam(required = true) String employerCBU,
                                       @RequestParam(required = false) String fromDate) {
         try {
