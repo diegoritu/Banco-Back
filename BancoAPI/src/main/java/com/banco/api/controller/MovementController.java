@@ -2,11 +2,10 @@ package com.banco.api.controller;
 
 import com.banco.api.dto.movement.MovementDTO;
 import com.banco.api.dto.movement.MovementType;
-import com.banco.api.dto.movement.request.*;
-import com.banco.api.dto.others.CreditEntityDebitClientsResponseDTO;
-import com.banco.api.dto.others.CreditEntityDebitClientsResponseWithFailuresDTO;
-import com.banco.api.dto.others.TransactionIdDTO;
-import com.banco.api.exception.*;
+import com.banco.api.dto.movement.request.DepositAndExtractionRequest;
+import com.banco.api.dto.movement.request.ServicePaymentRequest;
+import com.banco.api.dto.movement.request.TransferBetweenOwnAccountsRequest;
+import com.banco.api.dto.movement.request.TransferToOtherAccountsRequest;
 import com.banco.api.model.ServicePayment;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
@@ -26,8 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-
-import static com.banco.api.published.response.PublishedErrorResponseFactory.createPublishedErrorResponse;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -385,67 +382,6 @@ public class MovementController {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
     }
-    
-    @PostMapping("/debitCardPayment")
-    public ResponseEntity debitCardPayment(@RequestBody DebitCardPaymentRequest request){
-    	try {
-    		TransactionIdDTO response = new TransactionIdDTO();
-    		response.setTransactionId(movementService.debitCardPayment(request));
-    		return new ResponseEntity<TransactionIdDTO> (response, HttpStatus.OK);
-    	}
-    	catch(ClientInsuficientFundsException ex){
-    		return createPublishedErrorResponse(HttpStatus.CONFLICT, "CLIENT_INSUFFICIENT_FUNDS",
-					"El cliente no tiene fondos para realizar la operación");
-    	}
-    	catch(DebitCardNotFoundException ex) {
-    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "DEBIT_CARD_NOT_FOUND",
-					"La tarjeta de débito " + request.getDebitCard().getNumber() + " no existe o se ingresó mal algún dato adicional de la misma.");
-    	}
-    	catch(BusinessCBUNotFoundException ex) {
-    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "BUSINESS_CBU_NOT_FOUND",
-					"El CBU del comercio " + request.getBusinessCbu() + " no existe.");
-    	}
-    }
-    
-    
-    @PostMapping("/creditEntityDebitClients")
-    public ResponseEntity creditEntityDebitClients(@RequestBody CreditEntityDebitClientsRequest request){
-    	
-    	try {
-    		CreditEntityDebitClientsResponseWithFailuresDTO result = movementService.creditEntityDebitClients(request);
-    		
-    		if(result.getFailures().size() == 0) {
-    			CreditEntityDebitClientsResponseDTO response = new CreditEntityDebitClientsResponseDTO(result.getTransactionIds());
-        		return new ResponseEntity<CreditEntityDebitClientsResponseDTO> (response, HttpStatus.CREATED);
-    		}
-    		else {
-    			//Devuelve la lista de errores
-        		return new ResponseEntity<CreditEntityDebitClientsResponseWithFailuresDTO> (result, HttpStatus.MULTI_STATUS);
-
-    		}
-    	}
-    	catch(BusinessCBUNotFoundException ex) {
-    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "CREDIT_ENTITY_CBU_NOT_FOUND",
-					"El CBU de la entidad crediticia " + request.getCreditEntityCBU() + " no existe.");
-    	}
-    }
-    @PostMapping("/creditEntityDepositCommerce")
-    public ResponseEntity creditEntityDepositCommerce(@RequestBody CreditEntityDepositCommerceRequest request){
-    	try {
-    		movementService.creditEntityDepositCommerce(request);
-    		return new ResponseEntity<Void> (HttpStatus.NO_CONTENT);
-    	}
-    	catch(CreditEntityAccountInsuficientFundsException ex){
-    		return createPublishedErrorResponse(HttpStatus.CONFLICT, "CREDIT_ENTITY_ACCOUNT_INSUFFICIENT_FUNDS", ex.getLocalizedMessage());
-    	}
-    	catch(BusinessCBUNotFoundException ex) {
-    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "CREDIT_ENTITY_CBU_NOT_FOUND", ex.getLocalizedMessage());
-    	}
-    	catch(CommerceCBUNotFoundException ex) {
-    		return createPublishedErrorResponse(HttpStatus.NOT_FOUND, "BUSINESS_CBU_NOT_FOUND", ex.getLocalizedMessage());
-    	}
-    }
-
 
 }
 
