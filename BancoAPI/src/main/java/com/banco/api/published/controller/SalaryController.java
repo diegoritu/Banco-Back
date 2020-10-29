@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.banco.api.published.response.PublishedErrorResponseFactory.createPublishedErrorResponse;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/salary-payment")
 public class SalaryController {
