@@ -1,5 +1,14 @@
-### IntelliJ IDEA ###
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
 .idea
 *.iws
 *.iml
 *.ipr
+
+# Maven
+log/
+target/
