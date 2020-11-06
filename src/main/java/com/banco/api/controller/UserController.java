@@ -153,7 +153,7 @@ public class UserController {
     
     @PostMapping("/changePassword")
     public ResponseEntity changePassword(@RequestBody ChangePasswordRequest request){
-    	if(legalUserService.existsUser(request.getUsername())) {
+    	if(legalUserService.existsByUsername(request.getUsername())) {
     		legalUserService.changePassword(request);
     		LOGGER.info("Successfully changed password: {}", request.toString());
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -279,7 +279,7 @@ public class UserController {
 		    	return new ResponseEntity<>(result, HttpStatus.OK);
     		}
     	}
-    	else if(legalUserService.existsUser(username))
+    	else if(legalUserService.existsByUsername(username))
     	{
     		Legal legal = legalUserService.findByUsername(username);
 
@@ -325,7 +325,7 @@ public class UserController {
     		PhysicalUserDTO result = physicalUserService.resetPassword(username);
 		    return new ResponseEntity<>(result, HttpStatus.OK);
     	}
-    	else if(legalUserService.existsUser(username))
+    	else if(legalUserService.existsByUsername(username))
     	{
     		LegalUserDTO result = legalUserService.resetPassword(username);
 		    return new ResponseEntity<>(result, HttpStatus.OK);

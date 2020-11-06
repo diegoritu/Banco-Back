@@ -29,7 +29,7 @@ public class AdministrativeUserService extends UserService<Administrative, Admin
 	
 	public AdministrativeUserDTO createUser(AdministrativeUserRequest request) {
         if (existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
-				|| legalUserService.existsUser(request.getUsername())) {
+				|| legalUserService.existsByUsername(request.getUsername())) {
             throw new DuplicatedUserException("El nombre de usuario ya existe");
         }
 

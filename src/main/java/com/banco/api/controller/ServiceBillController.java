@@ -4,7 +4,8 @@ import com.banco.api.dto.others.ServiceCreatedDTO;
 import com.banco.api.dto.others.ServiceCsvDTO;
 import com.banco.api.dto.others.ServiceDTO;
 import com.banco.api.model.ServicePayment;
-import com.banco.api.service.BillService;
+import com.banco.api.service.billService.BillService;
+import com.banco.api.service.billService.CreateBillServiceResult;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
@@ -38,7 +39,7 @@ public class ServiceBillController {
     public ResponseEntity createServiceBills(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("vendorUsername") String vendorUsername, @RequestParam("vendorAccountType") String vendorAccountType){
 		Collection<ServicePayment> services = new ArrayList<ServicePayment>();
 		ArrayList<String> repeatedIds;
-		ServiceCreatedDTO s = new ServiceCreatedDTO();
+		ServiceCreatedDTO serviceCreatedDTO = new ServiceCreatedDTO();
 		if(file.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
@@ -50,14 +51,16 @@ public class ServiceBillController {
 						.withIgnoreLeadingWhiteSpace(true)
 						.build();
 				List<ServiceCsvDTO> servicesCsv = csvToBean.parse();
-				repeatedIds = billService.createService(servicesCsv, name, vendorUsername, vendorAccountType);
-				s.setVendorId(repeatedIds.get(0));
-				repeatedIds.remove(0);
-				s.setIds(repeatedIds);
-				if(repeatedIds.size() == servicesCsv.size()) {
+
+				CreateBillServiceResult createServiceResult = billService.createService(servicesCsv, name, vendorUsername,
+						vendorAccountType);
+
+				serviceCreatedDTO.setVendorId(createServiceResult.getVendorId());
+				serviceCreatedDTO.setIds(createServiceResult.getRepeatedIds());
+				if (createServiceResult.getRepeatedIds().size() == servicesCsv.size()) {
 					return new ResponseEntity<>(HttpStatus.IM_USED); //Todos los ids pasados existen
 				}
-				return new ResponseEntity<>(s, HttpStatus.CREATED);
+				return new ResponseEntity<>(serviceCreatedDTO, HttpStatus.CREATED);
 				
 			} catch (IOException e) {
 				e.printStackTrace();

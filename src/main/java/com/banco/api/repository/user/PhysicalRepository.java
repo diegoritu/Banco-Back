@@ -18,6 +18,10 @@ public interface PhysicalRepository extends UserBaseRepository<Physical> {
 
 	Physical findByUsernameAndUserTypeNumberAndActive(String username, int userTypeNumber, boolean active);
 
+	Physical findByActiveTrueAndChecking_Cbu(String cbu);
+
+	Physical findByActiveTrueAndSavings_Cbu(String cbu);
+
 	boolean existsByDni(String dni);
 
 	boolean existsByActiveTrueAndChecking(Checking checking);

@@ -44,7 +44,7 @@ public class AccountController {
 		Float maxOverdraft = request.getMaxOverdraft();
 		Checking checking;
 		try {
-			if (legalUserService.existsUser(username)) {
+			if (legalUserService.existsByUsername(username)) {
 				checking = legalUserService.openCheckingAccount(username, maxOverdraft);
 			} else if (physicalUserService.existsUser(username)) {
 				checking = physicalUserService.openCheckingAccount(username, maxOverdraft);
@@ -82,7 +82,7 @@ public class AccountController {
     @DeleteMapping("/checking/close-account")
     public ResponseEntity<CheckingDTO> closeChecking(@RequestParam String username) {
 
-		boolean existsUserLegal = legalUserService.existsUser(username);
+		boolean existsUserLegal = legalUserService.existsByUsername(username);
 		boolean existsUserPhysical = physicalUserService.existsUser(username);
 
 

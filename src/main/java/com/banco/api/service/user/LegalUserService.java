@@ -12,7 +12,6 @@ import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.user.Legal;
 import com.banco.api.repository.user.LegalRepository;
-import com.banco.api.service.DebitCardService;
 import com.banco.api.service.account.CheckingService;
 import com.banco.api.service.account.SavingsService;
 import com.google.common.collect.Sets;
@@ -43,12 +42,10 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
     private SavingsService savingsService;
     @Autowired
     private CheckingService checkingService;
-    @Autowired
-    private DebitCardService debitCardService;
 
     @Override
     public LegalUserDTO createUser(LegalUserRequest request) {
-        if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
+        if (this.existsByUsername(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
                 || administrativeUserService.existsUser(request.getUsername())) {
             throw new DuplicatedUserException("El nombre de usuario ya existe");
         }
@@ -81,18 +78,18 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         return result;
     }
 
-    public boolean existsUser(String username) {
-        Legal result = findByUsername(username);
-        return result != null;
-    }
-
     public Legal findByUsername(String username) {
         Legal legalUser = legalRepository.findByUsernameAndUserTypeNumber(username, UserType.LEGAL.getValue());
         return legalUser;
     }
+
     public Legal findByActiveUsername(String username) {
         Legal legalUser = legalRepository.findByUsernameAndUserTypeNumberAndActive(username, UserType.LEGAL.getValue(), true);
         return legalUser;
+    }
+
+    public Legal findByBusinessName(String businessName) {
+        return legalRepository.findByActiveTrueAndBusinessName(businessName);
     }
 
     public LegalUserDTO update(Legal legal) {
@@ -148,7 +145,7 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 
     public LegalUserDTO modify(LegalUserModificationRequest request) {
         if (!request.getUsername().equals(request.getOldUsername())) {
-            if (this.existsUser(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
+            if (this.existsByUsername(request.getUsername()) || physicalUserService.existsUser(request.getUsername())
                     || administrativeUserService.existsUser(request.getUsername())) {
                 throw new DuplicatedUserException("El nombre de usuario ya existe");
             }
@@ -209,6 +206,32 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         return result;
     }
 
+    public List<Legal> findAllLegals() {
+        return legalRepository.findByActiveTrue();
+    }
+
+    public Legal findByCheckingAccount(Checking checkingAccount) {
+        return legalRepository.findByChecking(checkingAccount);
+    }
+
+    public Legal findBySavingsAccount(Savings savingsAccount) {
+        return legalRepository.findBySavings(savingsAccount);
+    }
+
+    public boolean existsByUsername(String username) {
+        Legal result = findByUsername(username);
+        return result != null;
+    }
+
+    public Legal findByCBU(String cbu) {
+        Legal user = legalRepository.findByActiveTrueAndSavings_Cbu(cbu);
+        if (user != null) {
+            return user;
+        } else {
+            return legalRepository.findByActiveTrueAndChecking_Cbu(cbu);
+        }
+    }
+
     public boolean existsByCBU(String cbu) {
         Checking checking = checkingService.findByCbu(cbu);
         if (checking != null && legalRepository.existsByActiveTrueAndChecking(checking)) {
@@ -219,23 +242,15 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
         }
     }
 
-    public boolean vendorExists(String vendorId) {
-        return legalRepository.existsByVendorId(vendorId);
+    public boolean existsByVendorId(String vendorId) {
+        return legalRepository.existsByActiveTrueAndVendorId(vendorId);
     }
-
-	public List<Legal> findAllLegals() {
-		return legalRepository.findByActiveTrue();
-	}
 
 	public boolean existsByCuitCuilCdi(String cuitCuilCdi) {
         return legalRepository.existsByCuitCuilCdi(cuitCuilCdi);
     }
-	
-	public Legal findByCheckingAccount(Checking checkingAccount) {
-		return legalRepository.findByChecking(checkingAccount);
-	}
-	
-	public Legal findBySavingsAccount(Savings savingsAccount) {
-		return legalRepository.findBySavings(savingsAccount);
-	}
+
+	public boolean existsByBusinessName(String businessName) {
+        return legalRepository.existsByActiveTrueAndBusinessName(businessName);
+    }
 }

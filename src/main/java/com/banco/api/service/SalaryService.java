@@ -4,7 +4,6 @@ import com.banco.api.dto.movement.MovementType;
 import com.banco.api.exception.*;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
-import com.banco.api.model.scheduledTransaction.ScheduledTransaction;
 import com.banco.api.model.scheduledTransaction.ScheduledTransactionStatus;
 import com.banco.api.model.scheduledTransaction.salary.SalaryPayment;
 import com.banco.api.published.response.salaryPaymentFailure.Resource;
@@ -15,14 +14,13 @@ import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import com.banco.api.utils.DateUtils;
-import com.banco.api.published.request.SalaryPaymentRequest;
+import com.banco.api.published.request.salaryPayment.SalaryPaymentRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,7 +83,7 @@ public class SalaryService {
             if (ScheduledTransactionStatus.ERROR.equals(salaryPayment.getStatus())) {
                 LOGGER.warn("Could not pay salary id: {}", salaryPayment.getId());
             } else {
-                LOGGER.info("Succesfully payed salary id: {}", salaryPayment.getId());
+                LOGGER.info("Successfully payed salary id: {}", salaryPayment.getId());
             }
         }
     }

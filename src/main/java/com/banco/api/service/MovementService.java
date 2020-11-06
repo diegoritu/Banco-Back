@@ -228,7 +228,7 @@ public class MovementService {
 		return movementDTO;
 	}
 
-	public MovementDTO payServices(byte whereFrom, Checking checkingFrom, Savings savingsFrom, ServicePayment servicePayment, Physical physicalWhoPays, Legal legalWhoPays, byte whereTo, Checking checkingTo, Savings savingsTo, float balanceBeforeMovementFrom, float balanceBeforeMovementTo) {
+	public MovementDTO payServices(byte whereFrom, Checking checkingFrom, Savings savingsFrom, ServicePayment servicePayment, byte whereTo, Checking checkingTo, Savings savingsTo, float balanceBeforeMovementFrom, float balanceBeforeMovementTo) {
 		MovementDTO movementDTO = new MovementDTO();
 		Movement result = new Movement();
 		Date now = new Date();
@@ -239,14 +239,14 @@ public class MovementService {
 		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		movementDTO.setAmount(servicePayment.getAmount());
-		movementDTO.setMovementType(4);
+		movementDTO.setMovementType(MovementType.SERVICES_PAYMENT.getValue());
 		movementDTO.setService(servicePayment.toView());
 
 		result.setDayAndHour(now);
 		result.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		result.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
 		result.setAmount(servicePayment.getAmount());
-		result.setMovementType(4);
+		result.setMovementType(MovementType.SERVICES_PAYMENT.getValue());
 		result.setService(servicePayment);
 
 		if(whereFrom == 0) {

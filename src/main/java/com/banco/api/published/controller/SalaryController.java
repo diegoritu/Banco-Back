@@ -4,7 +4,7 @@ import com.banco.api.exception.BusinessCBUNotFoundException;
 import com.banco.api.exception.EmployeeCBUNotFoundException;
 import com.banco.api.exception.InsufficientBalanceException;
 import com.banco.api.exception.InvalidDateFormatException;
-import com.banco.api.published.request.SalaryPaymentRequest;
+import com.banco.api.published.request.salaryPayment.SalaryPaymentRequest;
 import com.banco.api.service.SalaryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,16 +37,13 @@ public class SalaryController {
         try {
             salaryService.saveSalaryRequest(request);
         } catch (BusinessCBUNotFoundException ex) {
-            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, EMPLOYER_CBU_NOT_FOUND,
-                    ex.getLocalizedMessage());
+            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, EMPLOYER_CBU_NOT_FOUND, ex.getLocalizedMessage());
 
         } catch (EmployeeCBUNotFoundException ex) {
-            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, EMPLOYEE_CBU_NOT_FOUND,
-                    ex.getLocalizedMessage());
+            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, EMPLOYEE_CBU_NOT_FOUND, ex.getLocalizedMessage());
 
         } catch (InsufficientBalanceException ex) {
-            return createPublishedErrorResponse(HttpStatus.CONFLICT, EMPLOYER_INSUFFICIENT_FUNDS,
-                    ex.getLocalizedMessage());
+            return createPublishedErrorResponse(HttpStatus.CONFLICT, EMPLOYER_INSUFFICIENT_FUNDS, ex.getLocalizedMessage());
         }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

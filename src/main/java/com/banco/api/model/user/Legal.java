@@ -24,7 +24,6 @@ import javax.persistence.OneToOne;
 public class Legal extends User implements Externalizable<LegalUserDTO> {
 
     private String businessName;
-    private boolean isVendor;
     private String vendorId;
     
     @OneToOne
@@ -48,7 +47,6 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
         this.savings = savings;
         this.checking = checking;
         this.userTypeNumber = UserType.LEGAL.getValue();
-        this.isVendor = false;
     }
 
     public String getBusinessName() {
@@ -74,13 +72,6 @@ public class Legal extends User implements Externalizable<LegalUserDTO> {
 	public void setChecking(Checking checking) {
         this.checking = checking;
     }
-    public boolean isVendor() {
-		return isVendor;
-	}
-
-	public void setVendor(boolean isVendor) {
-		this.isVendor = isVendor;
-	}
 
 	public String getVendorId() {
 		return vendorId;

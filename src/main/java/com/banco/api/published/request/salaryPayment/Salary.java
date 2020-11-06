@@ -1,15 +1,15 @@
-package com.banco.api.model.scheduledTransaction.salary;
+package com.banco.api.published.request.salaryPayment;
 
 public class Salary {
 
     private String employeeCBU;
-    private String salary;
+    private Float salary;
 
     public String getEmployeeCBU() {
         return employeeCBU;
     }
 
-    public String getSalary() {
+    public Float getSalary() {
         return salary;
     }
 

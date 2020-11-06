@@ -16,17 +16,23 @@ public interface LegalRepository extends UserBaseRepository<Legal> {
 
 	Legal findByUsernameAndUserTypeNumberAndActive(String username, int userTypeNumber, boolean active);
 
-	Legal findByVendorId(String vendorId);
-
-	boolean existsByVendorId(String vendorId);
+	Legal findByActiveTrueAndBusinessName(String businessName);
 
 	List<Legal> findByActiveTrue();
-	
+
 	Legal findByChecking(Checking checkingAccount);
-	
+
 	Legal findBySavings(Savings savingsAccount);
+
+	Legal findByActiveTrueAndChecking_Cbu(String cbu);
+
+	Legal findByActiveTrueAndSavings_Cbu(String cbu);
+
+	boolean existsByActiveTrueAndVendorId(String vendorId);
 
 	boolean existsByActiveTrueAndChecking(Checking checking);
 
 	boolean existsByActiveTrueAndSavings(Savings savings);
+
+	boolean existsByActiveTrueAndBusinessName(String businessName);
 }

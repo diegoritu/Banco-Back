@@ -1,4 +1,4 @@
-package com.banco.api.published.request;
+package com.banco.api.published.request.salaryPayment;
 
 import java.util.List;
 

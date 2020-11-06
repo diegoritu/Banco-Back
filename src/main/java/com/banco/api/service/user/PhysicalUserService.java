@@ -50,7 +50,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 
     @Override
     public PhysicalUserDTO createUser(PhysicalUserRequest request) {
-        if (existsUser(request.getUsername()) || legalUserService.existsUser(request.getUsername())
+        if (existsUser(request.getUsername()) || legalUserService.existsByUsername(request.getUsername())
                 || administrativeUserService.existsUser(request.getUsername())) {
             throw new DuplicatedUserException("El nombre de usuario ya existe");
         }
@@ -174,7 +174,7 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
 
 	public PhysicalUserDTO modify(PhysicalUserModificationRequest request) {
 		if(!request.getUsername().equals(request.getOldUsername())) {
-			if (existsUser(request.getUsername()) || legalUserService.existsUser(request.getUsername())
+			if (existsUser(request.getUsername()) || legalUserService.existsByUsername(request.getUsername())
                     || administrativeUserService.existsUser(request.getUsername())) {
 	            throw new DuplicatedUserException("El nombre de usuario ya existe");
 	        }
@@ -239,6 +239,15 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         
 		return result;
 	}
+
+	public Physical findByCBU(String cbu) {
+        Physical user = physicalRepository.findByActiveTrueAndSavings_Cbu(cbu);
+        if (user != null) {
+            return user;
+        } else {
+            return physicalRepository.findByActiveTrueAndChecking_Cbu(cbu);
+        }
+    }
 
     public boolean existsByCBU(String cbu) {
         Checking checking = checkingService.findByCbu(cbu);
