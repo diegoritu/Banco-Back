@@ -18,7 +18,9 @@ public class ScheduledTransactionTaskExecutor {
     private List<MyTask> tasks;
 
     //00 00 1 * * ? = Everyday at 01:00:00
-    @Scheduled(cron = "00 00 1 * * ?")
+    //@Scheduled(cron = "00 00 1 * * ?")
+    
+    @Scheduled(cron = "00 0/5 * * * ?")
     public void executeTasks() {
         LOGGER.info("Executing scheduled transaction tasks process started");
         if (CollectionUtils.isNotEmpty(tasks)) {
