@@ -16,4 +16,6 @@ public interface UserBaseRepository<T extends User> extends CrudRepository<T, In
     List<T> findByActiveTrueAndCuitCuilCdi(String cuitCuilCdi);
 
     boolean existsByCuitCuilCdi(String cuitCuildCdi);
+
+    boolean existsByActiveTrueAndCuitCuilCdi(String cuitCuildCdi);
 }

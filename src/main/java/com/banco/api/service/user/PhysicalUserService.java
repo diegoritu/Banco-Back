@@ -263,6 +263,10 @@ public class PhysicalUserService extends UserService<Physical, PhysicalUserDTO, 
         return physicalRepository.existsByCuitCuilCdi(cuitCuilCdi);
     }
 
+    public boolean existsActiveByCuitCuilCdi(String cuitCuilCdi) {
+        return physicalRepository.existsByActiveTrueAndCuitCuilCdi(cuitCuilCdi);
+    }
+
     public boolean existsByDni(String dni) {
         return physicalRepository.existsByDni(dni);
     }

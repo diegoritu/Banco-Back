@@ -3,9 +3,8 @@ package com.banco.api.service.billService;
 import com.banco.api.dto.account.AccountType;
 import com.banco.api.dto.movement.MovementType;
 import com.banco.api.dto.others.ServiceCsvDTO;
-import com.banco.api.exception.BusinessCBUNotFoundException;
-import com.banco.api.exception.InsufficientBalanceException;
-import com.banco.api.exception.VendorNotFoundException;
+import com.banco.api.exception.*;
+import com.banco.api.model.Movement;
 import com.banco.api.model.ServicePayment;
 import com.banco.api.model.scheduledTransaction.ScheduledTransactionStatus;
 import com.banco.api.model.scheduledTransaction.billService.ScheduledCollectService;
@@ -19,6 +18,7 @@ import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import com.banco.api.utils.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +26,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Service
 public class BillService {
@@ -62,7 +64,7 @@ public class BillService {
 			}
 			for(ServiceCsvDTO s : servicesCsv) {
 				ServicePayment serv = new ServicePayment();
-				
+
 				if(serviceRepository.existsByServicePaymentIdAndVendorIdUser(s.getServicePaymentId(), vendor.getId())) {
 					repeatedIds.add(s.getServicePaymentId());
 				}
@@ -90,22 +92,10 @@ public class BillService {
 	}
 
 	public void createPublishedBillServices(CollectServiceRequest collectServiceRequest) {
+		validateCollectServiceRequest(collectServiceRequest);
+
 		String serviceProviderCBU = collectServiceRequest.getServiceProviderCBU();
-
-		if (!legalUserService.existsByCBU(serviceProviderCBU) && !physicalUserService.existsByCBU(serviceProviderCBU)) {
-			throw new BusinessCBUNotFoundException("La cuenta del proveedor no existe");
-		}
-
-		if (!legalUserService.existsByBusinessName(collectServiceRequest.getServiceProviderName())) {
-			throw new VendorNotFoundException("El nombre de proveedor no existe");
-		}
-
-		if (CollectionUtils.isEmpty(collectServiceRequest.getCollectServices())) {
-			throw new IllegalArgumentException("El listado de servicios está vacío");
-		}
-
 		collectServiceRequest.getCollectServices().forEach(collectService -> {
-			//TODO: validacion de existe clientcuit, existe clientcbu (solo cuando no es null), duplicatedId+date, validar formato de dueDate. Validar monto mayor a cero y campos obligatorios
 
 			Legal serviceProvider = legalUserService.findByBusinessName(collectServiceRequest.getServiceProviderName());
 
@@ -134,6 +124,55 @@ public class BillService {
 		});
 	}
 
+	private void validateCollectServiceRequest(CollectServiceRequest collectServiceRequest) {
+		String serviceProviderCBU = collectServiceRequest.getServiceProviderCBU();
+		if (!legalUserService.existsByCBU(serviceProviderCBU) && !physicalUserService.existsByCBU(serviceProviderCBU)) {
+			throw new BusinessCBUNotFoundException("La cuenta del proveedor no existe");
+		}
+
+		if (!legalUserService.existsByBusinessName(collectServiceRequest.getServiceProviderName())) {
+			throw new VendorNotFoundException("El nombre de proveedor no existe");
+		}
+
+		if (CollectionUtils.isEmpty(collectServiceRequest.getCollectServices())) {
+			throw new IllegalArgumentException("El listado de servicios no debe estar vacío");
+		}
+
+		collectServiceRequest.getCollectServices().forEach(s -> {
+			if (s.getAmount() == null || s.getAmount() <= 0)
+				throw new IllegalArgumentException("El monto debe ser mayor a cero");
+
+			if (isEmpty(s.getServiceId()))
+				throw new IllegalArgumentException("serviceId no debe estar vacío");
+
+			if (!DateUtils.isValid(s.getDueDate()))
+				throw new InvalidDateFormatException(format("Fecha %s inválida", s.getDueDate()));
+
+			if (!existsByServicePaymentIdAndDue(s.getServiceId(), DateUtils.parse(s.getDueDate())))
+				throw new DuplicatedServiceIdException(format("El servicio ID %s con fecha de vencimiento %s ya existe",
+						s.getServiceId(), s.getDueDate()));
+
+			if (isEmpty(s.getName()))
+				throw new IllegalArgumentException("name no debe estar vacío");
+
+			if (!physicalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()))
+				throw new ClientNotFoundException(format("El cliente %s no existe", s.getClientCUIT()));
+
+			if (s.getClientCBU() != null && !physicalUserService.existsByCBU(s.getClientCBU()))
+				throw new ClientCBUNotFoundException(format("La cuenta de cliente CBU %s no existe", s.getClientCBU()));
+		});
+
+		collectServiceRequest.getCollectServices().forEach(s1 ->
+				collectServiceRequest.getCollectServices().forEach(s2 -> {
+					if (s1.getServiceId().equals(s2.getServiceId()) && s1.getDueDate().equals(s2.getDueDate())) {
+						String message = format("Servicio ID %s con fecha de vencimiento %s duplicado en request", s1.getServiceId(),
+								s1.getDueDate());
+						throw new IllegalArgumentException(message);
+					}
+				})
+		);
+	}
+
 	public void collectService(ScheduledCollectService scheduledCollectService) {
 		LOGGER.info("Collecting service: {}", scheduledCollectService.toString());
 		ServicePayment servicePayment = scheduledCollectService.getServicePayment();
@@ -146,15 +185,16 @@ public class BillService {
 				Legal legalWhoPays = legalUserService.findByCBU(clientCbu);
 				servicePayment.setLegalWhoPays(legalWhoPays);
 			}
-			movementService.transferBetweenTwoAccountsByCBU(clientCbu, scheduledCollectService.getServiceProviderCBU(),
-					servicePayment.getAmount(), MovementType.SERVICES_PAYMENT, MovementType.SERVICES_PAYMENT);
+			movementService.collectScheduledService(clientCbu, scheduledCollectService.getServiceProviderCBU(),
+					servicePayment);
 			servicePayment.setPaid(true);
-			scheduledCollectService.setStatus(ScheduledTransactionStatus.DONE);
+            serviceRepository.save(servicePayment);
+            scheduledCollectService.setStatus(ScheduledTransactionStatus.DONE);
 
 		} catch (InsufficientBalanceException ex) {
 			LOGGER.warn(ex.getLocalizedMessage());
 			scheduledCollectService.setStatus(ScheduledTransactionStatus.ERROR);
-			scheduledCollectService.setFailureCode("CLIENT_ACCOUNT_INSUFFICIENT_FUNDS");
+			scheduledCollectService.setFailureCode("CLIENT_INSUFFICIENT_FUNDS");
 			scheduledCollectService.setFailureMessage(format("La cuenta CBU %s del cliente no posee fondos suficientes", clientCbu));
 
 		} finally {
@@ -175,42 +215,17 @@ public class BillService {
 
 		return serviceRepository.findByServicePaymentIdAndPaid(servicePaymentId, false);
 	}
-	
-	public ServicePayment findServiceByServicePaymentId(String servicePaymentId){
-		return serviceRepository.findByServicePaymentId(servicePaymentId);
-	}
-
-	public boolean existsByServicePaymentId(String servicePaymentId) {
-		return findServiceByServicePaymentId(servicePaymentId) != null;
-	}
 
 	public ServicePayment findServiceByServicePaymentId(String idServicePayment, String vendorId) {
 		return serviceRepository.findByServicePaymentId(idServicePayment);
 	}
-	
-	public boolean existsServiceByservicePaymentIdAndVendorId(String idServicePayment, String vendorId) {
-		return findServiceByServicePaymentId(idServicePayment, vendorId) != null;
+
+	public boolean existsByServicePaymentIdAndDue(String idServicePayment, Date dueDate) {
+		return serviceRepository.existsByServicePaymentIdAndDue(idServicePayment, dueDate);
 	}
-
-	/*private void validateRequest(CreateServiceBillRequest request) {
-		if (!DateUtils.isValid(request.getDueDate()))
-			throw new InvalidServiceBillCreationRequestException("Formato inválido de fecha de vencimiento");
-
-		if (request.getAmountOfIds() <= 0)
-			throw new InvalidServiceBillCreationRequestException("La cantidad de ids debe ser mayor a cero");
-
-		if (request.getAmount() <= 0)
-			throw new InvalidServiceBillCreationRequestException("El monto a pagar debe ser mayor a cero");
-
-		if (StringUtils.isEmpty(request.getVendorUsername()))
-			throw new InvalidServiceBillCreationRequestException("Debe especificar el dueño del servicio");
-
-		if (StringUtils.isEmpty(request.getVendorAccountNumber()))
-			throw new InvalidServiceBillCreationRequestException("Debe especificar el número de cuenta de cobro del vendedor");
-	}*/
 
 	private AccountType stringToAccountType(String accountType) {
 		return AccountType.valueOf(accountType.toUpperCase());
 	}
-	
+
 }

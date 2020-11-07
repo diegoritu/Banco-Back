@@ -1,11 +1,11 @@
 package com.banco.api.service;
 
-import com.banco.api.dto.movement.MovementType;
 import com.banco.api.exception.*;
 import com.banco.api.model.account.Checking;
 import com.banco.api.model.account.Savings;
 import com.banco.api.model.scheduledTransaction.ScheduledTransactionStatus;
 import com.banco.api.model.scheduledTransaction.salary.SalaryPayment;
+import com.banco.api.published.request.salaryPayment.SalaryPaymentRequest;
 import com.banco.api.published.response.salaryPaymentFailure.Resource;
 import com.banco.api.published.response.salaryPaymentFailure.SalaryPaymentFailure;
 import com.banco.api.repository.scheduledTransaction.SalaryPaymentRepository;
@@ -14,7 +14,6 @@ import com.banco.api.service.account.SavingsService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import com.banco.api.utils.DateUtils;
-import com.banco.api.published.request.salaryPayment.SalaryPaymentRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +61,8 @@ public class SalaryService {
     public void paySalary(SalaryPayment salaryPayment) {
         LOGGER.info("Paying salary: {}", salaryPayment.toString());
         try {
-            movementService.transferBetweenTwoAccountsByCBU(salaryPayment.getEmployerCbu(), salaryPayment.getEmployeeCbu(),
-                    salaryPayment.getSalary(), MovementType.EXTRACTION, MovementType.SALARY_PAYMENT);
+            movementService.payScheduledSalary(salaryPayment.getEmployerCbu(), salaryPayment.getEmployeeCbu(),
+                    salaryPayment.getSalary());
             salaryPayment.setStatus(ScheduledTransactionStatus.DONE);
 
         } catch (AccountCBUNotFoundException ex) {
