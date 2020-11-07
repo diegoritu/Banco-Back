@@ -10,7 +10,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "scheduled_collect_service")
+@Table(name = "collect_service")
 public class ScheduledCollectService extends ScheduledTransaction {
 
     @OneToOne

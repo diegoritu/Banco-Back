@@ -3,6 +3,7 @@ package com.banco.api.published.controller;
 import com.banco.api.exception.*;
 import com.banco.api.published.request.collectService.CollectServiceRequest;
 import com.banco.api.service.billService.BillService;
+import com.banco.api.task.CollectServiceTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import static com.banco.api.published.response.PublishedErrorResponseFactory.cre
 public class CollectServiceController {
 
     private static final String SERVICE_PROVIDER_ACCOUNT_NOT_FOUND = "SERVICE_PROVIDER_ACCOUNT_NOT_FOUND";
-    private static final String SERVICE_PROVIDER_NOT_FOUND = "SERVICE_PROVIDER_NOT_FOUND";
     private static final String ILLEGAL_ARGUMENT = "ILLEGAL_ARGUMENT";
     private static final String INVALID_DATE = "INVALID_DATE";
     private static final String CLIENT_NOT_FOUND = "CLIENT_NOT_FOUND";
@@ -25,9 +25,11 @@ public class CollectServiceController {
 
     @Autowired
     private BillService billService;
+    @Autowired
+    private CollectServiceTask collectServiceTask;
 
     @PostMapping
-    public ResponseEntity creditEntityDebitClients(@RequestBody CollectServiceRequest request) {
+    public ResponseEntity createBillServices(@RequestBody CollectServiceRequest request) {
         try {
             billService.createPublishedBillServices(request);
 
@@ -36,9 +38,6 @@ public class CollectServiceController {
 
         } catch (BusinessCBUNotFoundException ex) {
             return createPublishedErrorResponse(HttpStatus.NOT_FOUND, SERVICE_PROVIDER_ACCOUNT_NOT_FOUND, ex.getLocalizedMessage());
-
-        } catch (VendorNotFoundException ex) {
-            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, SERVICE_PROVIDER_NOT_FOUND, ex.getLocalizedMessage());
 
         } catch (ClientNotFoundException ex) {
             return createPublishedErrorResponse(HttpStatus.NOT_FOUND, CLIENT_NOT_FOUND, ex.getLocalizedMessage());
@@ -53,6 +52,12 @@ public class CollectServiceController {
             return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, INVALID_DATE, ex.getLocalizedMessage());
         }
 
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/force")
+    private ResponseEntity executeCollectServiceTask() {
+        collectServiceTask.execute();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -97,10 +97,10 @@ public class BillService {
 		String serviceProviderCBU = collectServiceRequest.getServiceProviderCBU();
 		collectServiceRequest.getCollectServices().forEach(collectService -> {
 
-			Legal serviceProvider = legalUserService.findByBusinessName(collectServiceRequest.getServiceProviderName());
+			Legal serviceProvider = legalUserService.findByCBU(collectServiceRequest.getServiceProviderCBU());
 
 			ServicePayment servicePayment = new ServicePayment();
-			servicePayment.setName(serviceProvider.getBusinessName());
+			servicePayment.setName(collectService.getName());
 			servicePayment.setAmount(collectService.getAmount());
 			servicePayment.setServicePaymentId(collectService.getServiceId());
 			servicePayment.setPaid(false);
@@ -130,10 +130,6 @@ public class BillService {
 			throw new BusinessCBUNotFoundException("La cuenta del proveedor no existe");
 		}
 
-		if (!legalUserService.existsByBusinessName(collectServiceRequest.getServiceProviderName())) {
-			throw new VendorNotFoundException("El nombre de proveedor no existe");
-		}
-
 		if (CollectionUtils.isEmpty(collectServiceRequest.getCollectServices())) {
 			throw new IllegalArgumentException("El listado de servicios no debe estar vacío");
 		}
@@ -148,7 +144,7 @@ public class BillService {
 			if (!DateUtils.isValid(s.getDueDate()))
 				throw new InvalidDateFormatException(format("Fecha %s inválida", s.getDueDate()));
 
-			if (!existsByServicePaymentIdAndDue(s.getServiceId(), DateUtils.parse(s.getDueDate())))
+			if (existsByServicePaymentIdAndDue(s.getServiceId(), DateUtils.parse(s.getDueDate())))
 				throw new DuplicatedServiceIdException(format("El servicio ID %s con fecha de vencimiento %s ya existe",
 						s.getServiceId(), s.getDueDate()));
 
@@ -164,7 +160,7 @@ public class BillService {
 
 		collectServiceRequest.getCollectServices().forEach(s1 ->
 				collectServiceRequest.getCollectServices().forEach(s2 -> {
-					if (s1.getServiceId().equals(s2.getServiceId()) && s1.getDueDate().equals(s2.getDueDate())) {
+					if (s1 != s2 && s1.getServiceId().equals(s2.getServiceId()) && s1.getDueDate().equals(s2.getDueDate())) {
 						String message = format("Servicio ID %s con fecha de vencimiento %s duplicado en request", s1.getServiceId(),
 								s1.getDueDate());
 						throw new IllegalArgumentException(message);

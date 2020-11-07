@@ -100,6 +100,9 @@ public class SalaryService {
             request.getSalaries().forEach(salary -> {
                 if (!physicalUserService.existsByCBU(salary.getEmployeeCBU()))
                     throw new EmployeeCBUNotFoundException(format("El CBU del empleado %s no existe", salary.getEmployeeCBU()));
+
+                if (salary.getSalary() == null || salary.getSalary() <= 0)
+                    throw new InvalidAmountException("El salario debe ser mayor a 0");
             });
         }
     }

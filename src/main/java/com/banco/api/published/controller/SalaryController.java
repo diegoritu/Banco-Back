@@ -1,11 +1,9 @@
 package com.banco.api.published.controller;
 
-import com.banco.api.exception.BusinessCBUNotFoundException;
-import com.banco.api.exception.EmployeeCBUNotFoundException;
-import com.banco.api.exception.InsufficientBalanceException;
-import com.banco.api.exception.InvalidDateFormatException;
+import com.banco.api.exception.*;
 import com.banco.api.published.request.salaryPayment.SalaryPaymentRequest;
 import com.banco.api.service.SalaryService;
+import com.banco.api.task.SalaryPaymentTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +22,15 @@ public class SalaryController {
     private static final String EMPLOYER_CBU_NOT_FOUND = "EMPLOYER_CBU_NOT_FOUND";
     private static final String EMPLOYEE_CBU_NOT_FOUND = "EMPLOYEE_CBU_NOT_FOUND";
     private static final String EMPLOYER_INSUFFICIENT_FUNDS = "EMPLOYER_INSUFFICIENT_FUNDS";
+    private static final String INVALID_AMOUNT = "INVALID_AMOUNT";
 
     private static final String BUSINESS_CBU_NOT_FOUND = "BUSINESS_CBU_NOT_FOUND";
     private static final String INVALID_DATE_FORMAT = "INVALID_DATE_FORMAT";
 
     @Autowired
     private SalaryService salaryService;
+    @Autowired
+    private SalaryPaymentTask salaryPaymentTask;
 
     @PostMapping()
     public ResponseEntity createSalaryPayment(@RequestBody SalaryPaymentRequest request) {
@@ -44,6 +45,9 @@ public class SalaryController {
 
         } catch (InsufficientBalanceException ex) {
             return createPublishedErrorResponse(HttpStatus.CONFLICT, EMPLOYER_INSUFFICIENT_FUNDS, ex.getLocalizedMessage());
+
+        } catch (InvalidAmountException ex) {
+            return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, INVALID_AMOUNT, ex.getLocalizedMessage());
         }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -63,5 +67,11 @@ public class SalaryController {
         } catch (InvalidDateFormatException ex) {
             return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, INVALID_DATE_FORMAT, ex.getLocalizedMessage());
         }
+    }
+
+    @GetMapping("/force")
+    public ResponseEntity executeSalaryPaymentTask() {
+        salaryPaymentTask.execute();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
