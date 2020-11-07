@@ -125,7 +125,8 @@ public class SalaryService {
     }
 
     private Date getScheduledDate() {
-        Date currentDatePlusTwoDays = DateUtils.plusDays(new Date(), 2);
+        //Date currentDatePlusTwoDays = DateUtils.plusDays(new Date(), 2);
+        Date currentDatePlusTwoDays = new Date();        
         return DateUtils.atStartOfDay(currentDatePlusTwoDays);
     }
 
