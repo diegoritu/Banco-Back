@@ -95,7 +95,7 @@ public class BillService {
 		validateCollectServiceRequest(collectServiceRequest);
 
 		String serviceProviderCBU = collectServiceRequest.getServiceProviderCBU();
-		collectServiceRequest.getCollectServices().forEach(collectService -> {
+		collectServiceRequest.getServices().forEach(collectService -> {
 
 			Legal serviceProvider = legalUserService.findByCBU(collectServiceRequest.getServiceProviderCBU());
 
@@ -130,11 +130,11 @@ public class BillService {
 			throw new BusinessCBUNotFoundException("La cuenta del proveedor no existe");
 		}
 
-		if (CollectionUtils.isEmpty(collectServiceRequest.getCollectServices())) {
+		if (CollectionUtils.isEmpty(collectServiceRequest.getServices())) {
 			throw new IllegalArgumentException("El listado de servicios no debe estar vacío");
 		}
 
-		collectServiceRequest.getCollectServices().forEach(s -> {
+		collectServiceRequest.getServices().forEach(s -> {
 			if (s.getAmount() == null || s.getAmount() <= 0)
 				throw new IllegalArgumentException("El monto debe ser mayor a cero");
 
@@ -158,8 +158,8 @@ public class BillService {
 				throw new ClientCBUNotFoundException(format("La cuenta de cliente CBU %s no existe", s.getClientCBU()));
 		});
 
-		collectServiceRequest.getCollectServices().forEach(s1 ->
-				collectServiceRequest.getCollectServices().forEach(s2 -> {
+		collectServiceRequest.getServices().forEach(s1 ->
+				collectServiceRequest.getServices().forEach(s2 -> {
 					if (s1 != s2 && s1.getServiceId().equals(s2.getServiceId()) && s1.getDueDate().equals(s2.getDueDate())) {
 						String message = format("Servicio ID %s con fecha de vencimiento %s duplicado en request", s1.getServiceId(),
 								s1.getDueDate());

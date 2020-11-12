@@ -7,7 +7,7 @@ public class CollectServiceRequest {
     private List<CollectService> services;
     private String serviceProviderCBU;
 
-    public List<CollectService> getCollectServices() {
+    public List<CollectService> getServices() {
         return services;
     }
 
