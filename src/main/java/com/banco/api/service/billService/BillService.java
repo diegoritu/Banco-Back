@@ -154,7 +154,7 @@ public class BillService {
 			if (!physicalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()) && !legalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()))
 				throw new ClientNotFoundException(format("El cliente %s no existe", s.getClientCUIT()));
 
-			if (s.getClientCBU() != null && !physicalUserService.existsByCBU(s.getClientCBU())  && !legalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()))
+			if (s.getClientCBU() != null && !physicalUserService.existsByCBU(s.getClientCBU())  && !legalUserService.existsByCBU(s.getClientCUIT()))
 				throw new ClientCBUNotFoundException(format("La cuenta de cliente CBU %s no existe", s.getClientCBU()));
 		});
 
