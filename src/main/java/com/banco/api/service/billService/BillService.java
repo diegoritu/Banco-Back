@@ -151,10 +151,10 @@ public class BillService {
 			if (isEmpty(s.getName()))
 				throw new IllegalArgumentException("name no debe estar vacío");
 
-			if (!physicalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()) && !legalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()))
+			if (!physicalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()))
 				throw new ClientNotFoundException(format("El cliente %s no existe", s.getClientCUIT()));
 
-			if (s.getClientCBU() != null && !physicalUserService.existsByCBU(s.getClientCBU())  && !legalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()))
+			if (s.getClientCBU() != null && !physicalUserService.existsByCBU(s.getClientCBU()))
 				throw new ClientCBUNotFoundException(format("La cuenta de cliente CBU %s no existe", s.getClientCBU()));
 		});
 

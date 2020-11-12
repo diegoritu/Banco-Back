@@ -253,8 +253,4 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 	public boolean existsByBusinessName(String businessName) {
         return legalRepository.existsByActiveTrueAndBusinessName(businessName);
     }
-
-	public boolean existsActiveByCuitCuilCdi(String cuitCuilCdi) {
-        return legalRepository.existsByActiveTrueAndCuitCuilCdi(cuitCuilCdi);
-	}
 }
