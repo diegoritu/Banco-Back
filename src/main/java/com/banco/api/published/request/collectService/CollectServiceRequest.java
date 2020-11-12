@@ -4,11 +4,11 @@ import java.util.List;
 
 public class CollectServiceRequest {
 
-    private List<CollectService> collectServices;
+    private List<CollectService> services;
     private String serviceProviderCBU;
 
     public List<CollectService> getCollectServices() {
-        return collectServices;
+        return services;
     }
 
     public String getServiceProviderCBU() {
@@ -18,7 +18,7 @@ public class CollectServiceRequest {
     @Override
     public String toString() {
         return "CollectServiceRequest{" +
-                "collectServices=" + collectServices +
+                "services=" + services +
                 ", serviceProviderCBU='" + serviceProviderCBU + '\'' +
                 '}';
     }
