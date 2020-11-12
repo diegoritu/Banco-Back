@@ -130,7 +130,7 @@ public class BillService {
 			throw new BusinessCBUNotFoundException("La cuenta del proveedor no existe");
 		}
 
-		if (CollectionUtils.isEmpty(collectServiceRequest.getCollectServices())) {
+		if (collectServiceRequest.getCollectServices().isEmpty()) {
 			throw new IllegalArgumentException("El listado de servicios no debe estar vacío");
 		}
 
