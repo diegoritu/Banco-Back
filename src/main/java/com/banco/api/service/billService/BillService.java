@@ -278,8 +278,8 @@ public class BillService {
 		
 	}
 
-	public ServicePayment findServiceByServicePaymentId(String idServicePayment, String vendorId) {
-		return serviceRepository.findByServicePaymentId(idServicePayment);
+	public ServicePayment findServiceByServicePaymentId(String idServicePayment, int vendorIdUser) {
+		return serviceRepository.findByVendorIdUserAndServicePaymentIdAndPaid(vendorIdUser, idServicePayment, false);
 	}
 
 	public boolean existsByServicePaymentIdAndDue(String idServicePayment, Date dueDate) {

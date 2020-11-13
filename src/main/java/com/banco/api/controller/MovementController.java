@@ -290,7 +290,8 @@ public class MovementController {
     public ResponseEntity<MovementDTO> payServices(@RequestBody ServicePaymentRequest request){
 		Savings savingsFrom;
 		Checking checkingFrom;
-		ServicePayment servicePayment = billService.findServiceByServicePaymentId(request.getIdServicePayment(), request.getVendorId());
+		Legal serviceCreator = legalUserService.findByVendorId(request.getVendorId());
+		ServicePayment servicePayment = billService.findServiceByServicePaymentId(request.getIdServicePayment(), serviceCreator.getId());
 		Physical physicalWhoPays;
 		Legal legalWhoPays;
 		float balanceBeforeMovementFrom;
@@ -322,7 +323,7 @@ public class MovementController {
 				canBePerformed = checkingFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
 					
-					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, checkingFrom, null, servicePayment, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, checkingFrom, null, servicePayment, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo, serviceCreator.getBusinessName()),HttpStatus.OK);
 				}
 				else {
 					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
@@ -334,7 +335,7 @@ public class MovementController {
 				canBePerformed = savingsFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
 					
-					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)1, null, savingsFrom, servicePayment, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)1, null, savingsFrom, servicePayment, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo, serviceCreator.getBusinessName()),HttpStatus.OK);
 				}
 				else {
 					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
@@ -353,7 +354,7 @@ public class MovementController {
 				canBePerformed = checkingFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
 					
-					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, checkingFrom, null, servicePayment, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte)0, checkingFrom, null, servicePayment, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo, serviceCreator.getBusinessName()),HttpStatus.OK);
 				}
 				else {
 					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
@@ -365,7 +366,7 @@ public class MovementController {
 				canBePerformed = savingsFrom.extract(servicePayment.getAmount());
 				if(canBePerformed) {
 					
-					return new ResponseEntity<MovementDTO>(movementService.payServices((byte) 1, null, savingsFrom, servicePayment, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo),HttpStatus.OK);
+					return new ResponseEntity<MovementDTO>(movementService.payServices((byte) 1, null, savingsFrom, servicePayment, whereTo, checkingTo, savingsTo, balanceBeforeMovementFrom, balanceBeforeMovementTo, serviceCreator.getBusinessName()),HttpStatus.OK);
 				}
 				else {
 					return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT); //Sin saldo.
