@@ -28,6 +28,8 @@ public interface LegalRepository extends UserBaseRepository<Legal> {
 
 	Legal findByActiveTrueAndSavings_Cbu(String cbu);
 
+	Legal findByActiveTrueAndVendorId(String vendorId);
+
 	boolean existsByActiveTrueAndVendorId(String vendorId);
 
 	boolean existsByActiveTrueAndChecking(Checking checking);

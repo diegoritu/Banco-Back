@@ -20,6 +20,7 @@ public class ServicePayment implements Externalizable<ServiceDTO> {
     private String servicePaymentId;
     private boolean paid;
     private String cuitCuilCdi;
+    private boolean automatic;
     
     @ManyToOne
     private Checking vendorChecking;
@@ -43,14 +44,6 @@ public class ServicePayment implements Externalizable<ServiceDTO> {
     private int idService;
 
     public ServicePayment() {}
-    
-    public ServicePayment(String name, float amount) {
-        super();
-        this.name = name;
-        this.amount = amount;
-        this.paid = false;
-        //setServicePaymentId();
-    }
     
     public String getServicePaymentId() {
 		return servicePaymentId;
@@ -145,12 +138,31 @@ public class ServicePayment implements Externalizable<ServiceDTO> {
 		this.cuitCuilCdi = cuitCuilCdi;
 	}
 
+	public boolean isAutomatic() {
+		return automatic;
+	}
+
+	public void setAutomatic(boolean automatic) {
+		this.automatic = automatic;
+	}
+
 	@Override
 	public String toString() {
-		return "ServicePayment [name=" + name + ", amount=" + amount + ", servicePaymentId=" + servicePaymentId
-				+ ", paid=" + paid + ", cuitCuilCdi=" + cuitCuilCdi + ", vendorChecking=" + vendorChecking
-				+ ", vendorSavings=" + vendorSavings + ", legalWhoPays=" + legalWhoPays + ", physicalWhoPays="
-				+ physicalWhoPays + ", vendor=" + vendor + ", due=" + due + ", idService=" + idService + "]";
+		return "ServicePayment{" +
+				"name='" + name + '\'' +
+				", amount=" + amount +
+				", servicePaymentId='" + servicePaymentId + '\'' +
+				", paid=" + paid +
+				", cuitCuilCdi='" + cuitCuilCdi + '\'' +
+				", automatic=" + automatic +
+				", vendorChecking=" + vendorChecking +
+				", vendorSavings=" + vendorSavings +
+				", legalWhoPays=" + legalWhoPays +
+				", physicalWhoPays=" + physicalWhoPays +
+				", vendor=" + vendor +
+				", due=" + due +
+				", idService=" + idService +
+				'}';
 	}
 
 	@Override

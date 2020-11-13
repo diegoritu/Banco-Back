@@ -1,10 +1,8 @@
 package com.banco.api.service.billService;
 
 import com.banco.api.dto.account.AccountType;
-import com.banco.api.dto.movement.MovementType;
 import com.banco.api.dto.others.ServiceCsvDTO;
 import com.banco.api.exception.*;
-import com.banco.api.model.Movement;
 import com.banco.api.model.ServicePayment;
 import com.banco.api.model.scheduledTransaction.ScheduledTransactionStatus;
 import com.banco.api.model.scheduledTransaction.billService.ScheduledCollectService;
@@ -12,16 +10,17 @@ import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
 import com.banco.api.published.request.collectService.CollectServiceRequest;
 import com.banco.api.published.response.collectService.CollectServiceResponse;
+import com.banco.api.published.response.collectService.list.CollectServiceError;
 import com.banco.api.published.response.collectService.list.CollectServiceItem;
+import com.banco.api.published.response.collectService.list.CollectServiceResource;
+import com.banco.api.published.response.collectService.list.CollectServiceStatus;
 import com.banco.api.repository.ServiceRepository;
 import com.banco.api.repository.scheduledTransaction.ScheduledCollectServiceRepository;
 import com.banco.api.service.MovementService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import com.banco.api.utils.DateUtils;
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +30,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Service
@@ -102,7 +103,6 @@ public class BillService {
 		if (serviceProvider.getVendorId() == null) {
 			serviceProvider.setVendorId();
 		}
-
 		collectServiceRequest.getServices().forEach(collectService -> {
 
 			ServicePayment servicePayment = new ServicePayment();
@@ -120,9 +120,11 @@ public class BillService {
 				servicePayment.setVendorChecking(serviceProvider.getChecking());
 			}
 
+			boolean automatic = collectService.getClientCBU() != null;
+			servicePayment.setAutomatic(automatic);
 			ServicePayment saveResult = serviceRepository.save(servicePayment);
 
-			if (collectService.getClientCBU() != null) {
+			if (automatic) {
 				ScheduledCollectService scheduledCollectService = new ScheduledCollectService(saveResult,
 						serviceProviderCBU, collectService.getClientCBU());
 				scheduledCollectServiceRepository.save(scheduledCollectService);
@@ -212,13 +214,56 @@ public class BillService {
 		}
 	}
 
-	public List<CollectServiceItem> getCollectServices(String serviceProviderId, String dueDate) {
-		if (dueDate != null && !DateUtils.isValid(dueDate)) {
-			throw new InvalidDateFormatException(format("Fecha %s inválida", dueDate));
-		}
+	public List<CollectServiceItem> getCollectServices(String serviceProviderId, String fromDateParam) {
+		if (!legalUserService.existsByVendorId(serviceProviderId))
+			throw new VendorNotFoundException("Proveedor no encontrado");
 
-		List<CollectServiceItem> result = Lists.newArrayList();
-		return result;
+		if (fromDateParam != null && !DateUtils.isValid(fromDateParam))
+			throw new InvalidDateFormatException(format("Fecha %s inválida", fromDateParam));
+
+		Date fromDueDate = DateUtils.parse(fromDateParam);
+
+		List<ScheduledCollectService> scheduledCollectServices = scheduledCollectServiceRepository
+				.findAllByVendorIdFromScheduledDate(serviceProviderId, fromDueDate);
+
+		Stream<CollectServiceItem> automaticServiceItems = scheduledCollectServices.stream()
+				.map(s -> {
+					String serviceId = s.getServicePayment().getServicePaymentId();
+					String dueDate = DateUtils.format(s.getScheduledDate());
+					boolean automatic = s.getServicePayment().isAutomatic();
+					CollectServiceResource resource = new CollectServiceResource(serviceId, dueDate, automatic);
+
+					CollectServiceError error = ScheduledTransactionStatus.ERROR.equals(s.getStatus()) ?
+							new CollectServiceError(s.getFailureCode(), s.getFailureMessage()) : null;
+
+					String status;
+					switch (s.getStatus()) {
+						case PENDING:
+							status = CollectServiceStatus.PENDING;
+							break;
+						case DONE:
+							status = CollectServiceStatus.PAID;
+							break;
+						case ERROR:
+						default:
+							status = CollectServiceStatus.ERROR;
+							break;
+					}
+					return new CollectServiceItem(resource, status, error);
+				});
+
+		List<ServicePayment> manualServicePayments = serviceRepository.findManualByVendorIdFromDueDate(serviceProviderId, fromDueDate);
+		Stream<CollectServiceItem> manualServiceItems = manualServicePayments.stream()
+				.map(s -> {
+					String serviceId = s.getServicePaymentId();
+					String dueDate = DateUtils.format(s.getDue());
+					CollectServiceResource resource = new CollectServiceResource(serviceId, dueDate, s.isAutomatic());
+					String status = s.isPaid() ? CollectServiceStatus.PAID : CollectServiceStatus.PENDING;
+					return new CollectServiceItem(resource, status, null);
+				});
+
+		return Stream.concat(automaticServiceItems, manualServiceItems)
+				.collect(toList());
 	}
 
 	public ServicePayment searchNotPayedServiceBill(String servicePaymentId, String vendorId) {

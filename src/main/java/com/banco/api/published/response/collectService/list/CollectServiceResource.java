@@ -4,13 +4,15 @@ public class CollectServiceResource {
 
     private String serviceId;
     private String dueDate;
+    private boolean automatic;
 
     public CollectServiceResource() {
     }
 
-    public CollectServiceResource(String serviceId, String dueDate) {
+    public CollectServiceResource(String serviceId, String dueDate, boolean automatic) {
         this.serviceId = serviceId;
         this.dueDate = dueDate;
+        this.automatic = automatic;
     }
 
     public String getServiceId() {
@@ -21,11 +23,16 @@ public class CollectServiceResource {
         return dueDate;
     }
 
+    public boolean isAutomatic() {
+        return automatic;
+    }
+
     @Override
     public String toString() {
         return "CollectServiceResource{" +
                 "serviceId='" + serviceId + '\'' +
                 ", dueDate='" + dueDate + '\'' +
+                ", automatic=" + automatic +
                 '}';
     }
 }

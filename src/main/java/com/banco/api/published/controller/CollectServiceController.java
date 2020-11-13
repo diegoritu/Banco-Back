@@ -2,10 +2,11 @@ package com.banco.api.published.controller;
 
 import com.banco.api.exception.*;
 import com.banco.api.published.request.collectService.CollectServiceRequest;
-import com.banco.api.published.response.collectService.CollectServiceResponse;
 import com.banco.api.published.response.collectService.list.CollectServiceItem;
 import com.banco.api.service.billService.BillService;
 import com.banco.api.task.CollectServiceTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,10 @@ public class CollectServiceController {
     private static final String CLIENT_NOT_FOUND = "CLIENT_NOT_FOUND";
     private static final String CLIENT_ACCOUNT_NOT_FOUND = "CLIENT_ACCOUNT_NOT_FOUND";
     private static final String DUPLICATED_SERVICE_ID = "DUPLICATED_SERVICE_ID";
+
+    private static final String PROVIDER_NOT_FOUND = "PROVIDER_NOT_FOUND";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CollectServiceController.class);
 
     @Autowired
     private BillService billService;
@@ -65,10 +70,16 @@ public class CollectServiceController {
 
     @GetMapping("/list")
     private ResponseEntity getCollectServices(@RequestParam(required = true) String serviceProviderId,
-                                                        @RequestParam(required = false) String dueDate) {
+                                              @RequestParam(required = false) String fromDueDate) {
+        LOGGER.info("Listing service payment status items");
         try {
-            List<CollectServiceItem> items = billService.getCollectServices(serviceProviderId, dueDate);
+            List<CollectServiceItem> items = billService.getCollectServices(serviceProviderId, fromDueDate);
+            LOGGER.info("Service payment status items: " + items.size());
             return new ResponseEntity<>(items, HttpStatus.OK);
+
+        } catch (VendorNotFoundException ex) {
+            return createPublishedErrorResponse(HttpStatus.NOT_FOUND, PROVIDER_NOT_FOUND, ex.getLocalizedMessage());
+
         } catch (InvalidDateFormatException ex) {
             return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, INVALID_DATE, ex.getLocalizedMessage());
         }
