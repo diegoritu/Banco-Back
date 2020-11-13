@@ -2,12 +2,16 @@ package com.banco.api.published.controller;
 
 import com.banco.api.exception.*;
 import com.banco.api.published.request.collectService.CollectServiceRequest;
+import com.banco.api.published.response.collectService.CollectServiceResponse;
+import com.banco.api.published.response.collectService.list.CollectServiceItem;
 import com.banco.api.service.billService.BillService;
 import com.banco.api.task.CollectServiceTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.banco.api.published.response.PublishedErrorResponseFactory.createPublishedErrorResponse;
 
@@ -31,7 +35,7 @@ public class CollectServiceController {
     @PostMapping
     public ResponseEntity createBillServices(@RequestBody CollectServiceRequest request) {
         try {
-            billService.createPublishedBillServices(request);
+            return new ResponseEntity<>(billService.createPublishedBillServices(request), HttpStatus.CREATED);
 
         } catch (DuplicatedServiceIdException ex) {
             return createPublishedErrorResponse(HttpStatus.CONFLICT, DUPLICATED_SERVICE_ID, ex.getLocalizedMessage());
@@ -51,13 +55,22 @@ public class CollectServiceController {
         } catch (InvalidDateFormatException ex) {
             return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, INVALID_DATE, ex.getLocalizedMessage());
         }
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/force")
     private ResponseEntity executeCollectServiceTask() {
         collectServiceTask.execute();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/list")
+    private ResponseEntity getCollectServices(@RequestParam(required = true) String serviceProviderId,
+                                                        @RequestParam(required = false) String dueDate) {
+        try {
+            List<CollectServiceItem> items = billService.getCollectServices(serviceProviderId, dueDate);
+            return new ResponseEntity<>(items, HttpStatus.OK);
+        } catch (InvalidDateFormatException ex) {
+            return createPublishedErrorResponse(HttpStatus.BAD_REQUEST, INVALID_DATE, ex.getLocalizedMessage());
+        }
     }
 }

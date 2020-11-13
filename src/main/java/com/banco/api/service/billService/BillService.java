@@ -11,12 +11,15 @@ import com.banco.api.model.scheduledTransaction.billService.ScheduledCollectServ
 import com.banco.api.model.user.Legal;
 import com.banco.api.model.user.Physical;
 import com.banco.api.published.request.collectService.CollectServiceRequest;
+import com.banco.api.published.response.collectService.CollectServiceResponse;
+import com.banco.api.published.response.collectService.list.CollectServiceItem;
 import com.banco.api.repository.ServiceRepository;
 import com.banco.api.repository.scheduledTransaction.ScheduledCollectServiceRepository;
 import com.banco.api.service.MovementService;
 import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import com.banco.api.utils.DateUtils;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -91,13 +94,16 @@ public class BillService {
 		}
 	}
 
-	public void createPublishedBillServices(CollectServiceRequest collectServiceRequest) {
+	public CollectServiceResponse createPublishedBillServices(CollectServiceRequest collectServiceRequest) {
 		validateCollectServiceRequest(collectServiceRequest);
 
 		String serviceProviderCBU = collectServiceRequest.getServiceProviderCBU();
-		collectServiceRequest.getServices().forEach(collectService -> {
+		Legal serviceProvider = legalUserService.findByCBU(serviceProviderCBU);
+		if (serviceProvider.getVendorId() == null) {
+			serviceProvider.setVendorId();
+		}
 
-			Legal serviceProvider = legalUserService.findByCBU(collectServiceRequest.getServiceProviderCBU());
+		collectServiceRequest.getServices().forEach(collectService -> {
 
 			ServicePayment servicePayment = new ServicePayment();
 			servicePayment.setName(collectService.getName());
@@ -122,6 +128,7 @@ public class BillService {
 				scheduledCollectServiceRepository.save(scheduledCollectService);
 			}
 		});
+		return new CollectServiceResponse(serviceProvider.getVendorId());
 	}
 
 	private void validateCollectServiceRequest(CollectServiceRequest collectServiceRequest) {
@@ -203,6 +210,15 @@ public class BillService {
 						servicePayment.getServicePaymentId());
 			}
 		}
+	}
+
+	public List<CollectServiceItem> getCollectServices(String serviceProviderId, String dueDate) {
+		if (dueDate != null && !DateUtils.isValid(dueDate)) {
+			throw new InvalidDateFormatException(format("Fecha %s inválida", dueDate));
+		}
+
+		List<CollectServiceItem> result = Lists.newArrayList();
+		return result;
 	}
 
 	public ServicePayment searchNotPayedServiceBill(String servicePaymentId, String vendorId) {
