@@ -257,4 +257,9 @@ public class LegalUserService extends UserService<Legal, LegalUserDTO, LegalUser
 	public boolean existsActiveByCuitCuilCdi(String cuitCuilCdi) {
         return legalRepository.existsByActiveTrueAndCuitCuilCdi(cuitCuilCdi);
 	}
+
+	public Legal findByVendorId(String vendorId) {
+        return legalRepository.findByActiveTrueAndVendorId(vendorId);
+		
+	}
 }

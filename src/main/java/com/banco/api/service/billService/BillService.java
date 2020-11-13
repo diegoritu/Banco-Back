@@ -268,9 +268,14 @@ public class BillService {
 
 	public ServicePayment searchNotPayedServiceBill(String servicePaymentId, String vendorId) {
 		if (!legalUserService.existsByVendorId(vendorId))
+		{	
 			return null;
-
-		return serviceRepository.findByServicePaymentIdAndPaid(servicePaymentId, false);
+		}
+		else {
+			Legal legalUser = legalUserService.findByVendorId(vendorId);
+			return serviceRepository.findByVendorIdUserAndServicePaymentIdAndPaid(legalUser.getId(), servicePaymentId, false);	
+		}
+		
 	}
 
 	public ServicePayment findServiceByServicePaymentId(String idServicePayment, String vendorId) {
