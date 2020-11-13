@@ -21,7 +21,7 @@ public interface ServiceRepository extends CrudRepository<ServicePayment, Intege
 
 	boolean existsByServicePaymentIdAndVendorIdUser(String servicePaymentId, int vendor);
 
-	boolean existsByServicePaymentIdAndDue(String servicePaymentId, Date due);
+	boolean existsByServicePaymentIdAndDueAndVendor_VendorId(String servicePaymentId, Date due, String vendorId);
 
 	ServicePayment findByVendorIdUserAndServicePaymentIdAndPaid(int id, String servicePaymentId, boolean paid);
 

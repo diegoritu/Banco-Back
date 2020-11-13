@@ -135,7 +135,7 @@ public class BillService {
 
 	private void validateCollectServiceRequest(CollectServiceRequest collectServiceRequest) {
 		String serviceProviderCBU = collectServiceRequest.getServiceProviderCBU();
-		if (!legalUserService.existsByCBU(serviceProviderCBU) && !physicalUserService.existsByCBU(serviceProviderCBU)) {
+		if (!legalUserService.existsByCBU(serviceProviderCBU)) {
 			throw new BusinessCBUNotFoundException("La cuenta del proveedor no existe");
 		}
 
@@ -143,7 +143,8 @@ public class BillService {
 			throw new IllegalArgumentException("El listado de servicios no debe estar vacío");
 		}
 
-		collectServiceRequest.getServices().forEach(s -> {
+        Legal serviceProviderUser = legalUserService.findByCBU(serviceProviderCBU);
+        collectServiceRequest.getServices().forEach(s -> {
 			if (s.getAmount() == null || s.getAmount() <= 0)
 				throw new IllegalArgumentException("El monto debe ser mayor a cero");
 
@@ -153,7 +154,7 @@ public class BillService {
 			if (!DateUtils.isValid(s.getDueDate()))
 				throw new InvalidDateFormatException(format("Fecha %s inválida", s.getDueDate()));
 
-			if (existsByServicePaymentIdAndDue(s.getServiceId(), DateUtils.parse(s.getDueDate())))
+			if (duplicatedServicePaymentId(s.getServiceId(), DateUtils.parse(s.getDueDate()), serviceProviderUser.getVendorId()))
 				throw new DuplicatedServiceIdException(format("El servicio ID %s con fecha de vencimiento %s ya existe",
 						s.getServiceId(), s.getDueDate()));
 
@@ -282,8 +283,10 @@ public class BillService {
 		return serviceRepository.findByVendorIdUserAndServicePaymentIdAndPaid(vendorIdUser, idServicePayment, false);
 	}
 
-	public boolean existsByServicePaymentIdAndDue(String idServicePayment, Date dueDate) {
-		return serviceRepository.existsByServicePaymentIdAndDue(idServicePayment, dueDate);
+	private boolean duplicatedServicePaymentId(String servicePaymentId, Date dueDate, String vendorId) {
+	    if (vendorId == null) return false;
+
+		return serviceRepository.existsByServicePaymentIdAndDueAndVendor_VendorId(servicePaymentId, dueDate, vendorId);
 	}
 
 	private AccountType stringToAccountType(String accountType) {
