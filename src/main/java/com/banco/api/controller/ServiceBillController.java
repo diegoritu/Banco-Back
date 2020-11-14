@@ -6,6 +6,7 @@ import com.banco.api.dto.others.ServiceDTO;
 import com.banco.api.model.ServicePayment;
 import com.banco.api.service.billService.BillService;
 import com.banco.api.service.billService.CreateBillServiceResult;
+import com.banco.api.utils.DateUtils;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
@@ -21,8 +22,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -36,7 +39,7 @@ public class ServiceBillController {
     BillService billService;
 	
 	@PostMapping("/create")
-    public ResponseEntity createServiceBills(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("vendorUsername") String vendorUsername, @RequestParam("vendorAccountType") String vendorAccountType){
+	public ResponseEntity createServiceBills(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("vendorUsername") String vendorUsername, @RequestParam("vendorAccountType") String vendorAccountType){
 		Collection<ServicePayment> services = new ArrayList<ServicePayment>();
 		ArrayList<String> repeatedIds;
 		ServiceCreatedDTO serviceCreatedDTO = new ServiceCreatedDTO();
@@ -67,28 +70,17 @@ public class ServiceBillController {
 				return new ResponseEntity<>(HttpStatus.CONFLICT);
 			}
 		}
-		/*try {
-		ServiceCreatedDTO screated = billService.createService(request);
-		LOGGER.info("Create service bills operation started. {}", request.toString());
-		return new ResponseEntity<>(screated, HttpStatus.CREATED);
-		}
-		catch(VendorNotFoundException ex){
-			LOGGER.warn(ex.getLocalizedMessage());
-			return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.CONFLICT);
-		} catch (InvalidServiceBillCreationRequestException ex ) {
-		    LOGGER.warn(ex.getLocalizedMessage());
-		    return createErrorResponseEntity(ex.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
-        }*/
+		
 	}
 
 	@GetMapping("/search")
-    public ResponseEntity<ServiceDTO> getServiceBill(@RequestParam String servicePaymentId, @RequestParam String vendorId) {
-        ServicePayment servicePayment = billService.searchNotPayedServiceBill(servicePaymentId, vendorId);
-        if (servicePayment != null) {
-            return new ResponseEntity<>(servicePayment.toView(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ServiceDTO> getServiceBill(@RequestParam String servicePaymentId, @RequestParam String vendorId, @RequestParam String dueDate) {
+		ServicePayment servicePayment = billService.searchNotPayedServiceBill(servicePaymentId, vendorId, dueDate);
+	        if (servicePayment != null) {
+	            return new ResponseEntity<>(servicePayment.toView(), HttpStatus.OK);
+	        } else {
+	            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+	        }	
     }
 	
 }

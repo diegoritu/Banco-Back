@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -69,7 +71,7 @@ public class BillService {
 			for(ServiceCsvDTO s : servicesCsv) {
 				ServicePayment serv = new ServicePayment();
 
-				if(serviceRepository.existsByServicePaymentIdAndVendorIdUser(s.getServicePaymentId(), vendor.getId())) {
+				if(duplicatedServicePaymentId(s.getServicePaymentId(), s.getDue(), vendor.getVendorId())) {
 					repeatedIds.add(s.getServicePaymentId());
 				}
 				else {
@@ -267,14 +269,25 @@ public class BillService {
 				.collect(toList());
 	}
 
-	public ServicePayment searchNotPayedServiceBill(String servicePaymentId, String vendorId) {
+	public ServicePayment searchNotPayedServiceBill(String servicePaymentId, String vendorId, String dueDate) {
+		Date dueDateD = null; 
+			try {
+				dueDateD = new SimpleDateFormat("yyyy-MM-dd").parse(dueDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 		if (!legalUserService.existsByVendorId(vendorId))
 		{	
 			return null;
 		}
-		else {
+		else if (dueDateD != null) {
 			Legal legalUser = legalUserService.findByVendorId(vendorId);
-			return serviceRepository.findByVendorIdUserAndServicePaymentIdAndPaid(legalUser.getId(), servicePaymentId, false);	
+			return serviceRepository.findByVendorIdUserAndServicePaymentIdAndPaidAndDue(legalUser.getId(), servicePaymentId, false, dueDateD);	
+		}
+		else {
+			return null;
 		}
 		
 	}
