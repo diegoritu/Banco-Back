@@ -137,7 +137,7 @@ public class BillService {
 
 	private void validateCollectServiceRequest(CollectServiceRequest collectServiceRequest) {
 		String serviceProviderCBU = collectServiceRequest.getServiceProviderCBU();
-		if (!legalUserService.existsByCBU(serviceProviderCBU)) {
+		if (serviceProviderCBU != null && !serviceProviderCBU.equals("") && !legalUserService.existsByCBU(serviceProviderCBU)) {
 			throw new BusinessCBUNotFoundException("La cuenta del proveedor no existe");
 		}
 
