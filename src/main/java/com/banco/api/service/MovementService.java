@@ -191,6 +191,7 @@ public class MovementService {
 
 		servicePayment.setPaid(true);
 
+		movementDTO.setBusinessName(businessName);
 		movementDTO.setDayAndHour(now.toString());
 		movementDTO.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		movementDTO.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
@@ -199,6 +200,7 @@ public class MovementService {
 		movementDTO.setService(servicePayment.toView());
 		movementDTO.setBusinessName(businessName);
 		
+		result.setBusinessName(businessName);
 		result.setDayAndHour(now);
 		result.setEntryBalanceBeforeMovement(balanceBeforeMovementTo);
 		result.setExitBalanceBeforeMovement(balanceBeforeMovementFrom);
