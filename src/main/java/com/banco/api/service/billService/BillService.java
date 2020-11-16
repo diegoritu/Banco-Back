@@ -21,6 +21,7 @@ import com.banco.api.service.user.LegalUserService;
 import com.banco.api.service.user.PhysicalUserService;
 import com.banco.api.utils.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,7 +123,7 @@ public class BillService {
 				servicePayment.setVendorChecking(serviceProvider.getChecking());
 			}
 
-			boolean automatic = (collectService.getClientCBU() != null && !collectService.getClientCBU().equals(""));
+			boolean automatic = StringUtils.isNotEmpty(collectService.getClientCBU());
 			servicePayment.setAutomatic(automatic);
 			ServicePayment saveResult = serviceRepository.save(servicePayment);
 
@@ -166,7 +167,7 @@ public class BillService {
 			if (!physicalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()) && !legalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()))
 				throw new ClientNotFoundException(format("El cliente %s no existe", s.getClientCUIT()));
 
-			if (s.getClientCBU() != null && !s.getClientCBU().equals("") && !physicalUserService.existsByCBU(s.getClientCBU())  && !legalUserService.existsByCBU(s.getClientCUIT()))
+			if (StringUtils.isNotEmpty(s.getClientCBU()) && !physicalUserService.existsByCBU(s.getClientCBU())  && !legalUserService.existsByCBU(s.getClientCUIT()))
 				throw new ClientCBUNotFoundException(format("La cuenta de cliente CBU %s no existe", s.getClientCBU()));
 		});
 
