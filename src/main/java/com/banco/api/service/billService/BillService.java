@@ -137,7 +137,7 @@ public class BillService {
 
 	private void validateCollectServiceRequest(CollectServiceRequest collectServiceRequest) {
 		String serviceProviderCBU = collectServiceRequest.getServiceProviderCBU();
-		if (serviceProviderCBU != null && !serviceProviderCBU.equals("") && !legalUserService.existsByCBU(serviceProviderCBU)) {
+		if (!legalUserService.existsByCBU(serviceProviderCBU)) {
 			throw new BusinessCBUNotFoundException("La cuenta del proveedor no existe");
 		}
 
@@ -166,7 +166,7 @@ public class BillService {
 			if (!physicalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()) && !legalUserService.existsActiveByCuitCuilCdi(s.getClientCUIT()))
 				throw new ClientNotFoundException(format("El cliente %s no existe", s.getClientCUIT()));
 
-			if (s.getClientCBU() != null && !physicalUserService.existsByCBU(s.getClientCBU())  && !legalUserService.existsByCBU(s.getClientCUIT()))
+			if (s.getClientCBU() != null && !s.getClientCBU().equals("") && !physicalUserService.existsByCBU(s.getClientCBU())  && !legalUserService.existsByCBU(s.getClientCUIT()))
 				throw new ClientCBUNotFoundException(format("La cuenta de cliente CBU %s no existe", s.getClientCBU()));
 		});
 
