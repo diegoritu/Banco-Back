@@ -21,11 +21,11 @@ public class Physical
     private String dni;
 
     @OneToOne
-    @JoinColumn(name = "idSavingsAccount")
+    @JoinColumn(name = "savingsAccountId")
     private Savings savings; //Caja de Ahorro
 
     @OneToOne
-    @JoinColumn(name = "idCheckingAccount")
+    @JoinColumn(name = "checkingAccountId")
     private Checking checking; //Cuenta Corriente
 
     @OneToOne
