@@ -122,7 +122,7 @@ public class BillService {
 				servicePayment.setVendorChecking(serviceProvider.getChecking());
 			}
 
-			boolean automatic = collectService.getClientCBU() != null;
+			boolean automatic = (collectService.getClientCBU() != null && !collectService.getClientCBU().equals(""));
 			servicePayment.setAutomatic(automatic);
 			ServicePayment saveResult = serviceRepository.save(servicePayment);
 
