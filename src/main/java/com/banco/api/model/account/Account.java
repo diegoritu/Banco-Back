@@ -38,10 +38,14 @@ public abstract class Account {
 	}
 
     private String generateCbu() {
-		String first = Integer.toString(Math.abs(ThreadLocalRandom.current().nextInt(((99999999 - 10000000) + 1) + 10000000)));
-		String last = Integer.toString(Math.abs(new Random().nextInt(((10-1)+1)+1)));
-		String cbu = first + accountNumber + last;
-		return cbu;
+    	String cbu;
+    	do {
+			String first = Integer.toString(Math.abs(ThreadLocalRandom.current().nextInt(((99999999 - 10000000) + 1) + 10000000)));
+			String last = Integer.toString(Math.abs(new Random().nextInt(((10-1)+1)+1)));
+			cbu = first + accountNumber + last;
+    	}
+    	while(cbu.length() != 22);
+    	return cbu;
 	}
 
 	private String generateAccountNumber() {
