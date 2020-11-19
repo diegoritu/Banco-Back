@@ -537,6 +537,7 @@ public class MovementService {
 			movement.setAmount(transaction.getAmount());
 			movement.setDayAndHour(now);
 			movement.setMovementType(11);
+			movement.setBusinessName(creditEntity.getBusinessName());
 			
 			if(creditEntityChecking != null) {
 				System.out.println("AMOUNT: " + totalAmount + "; balance: " + CREDIT_ENTITY_BALANCE + "; maxOverdraft: " + creditEntityChecking.getMaxOverdraft());
