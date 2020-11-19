@@ -584,9 +584,9 @@ public class MovementService {
 				}
 				else if(savingsService.existsCbu(transaction.getBusinessCBU())) {
 					businessSavings = savingsService.findByCbu(transaction.getBusinessCBU());
-					entryBalanceBeforeMovement = businessChecking.getBalance();
+					entryBalanceBeforeMovement = businessSavings.getBalance();
 					businessSavings.deposit(transaction.getAmount());
-					movement.setChEntryAccount(businessChecking);
+					movement.setSaEntryAccount(businessSavings);
 				}
 				else {
 					throw new BusinessCBUNotFoundException("El CBU del negocio " + transaction.getBusinessCBU() + " no existe");
