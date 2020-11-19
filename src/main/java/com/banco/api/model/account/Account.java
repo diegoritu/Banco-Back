@@ -45,7 +45,11 @@ public abstract class Account {
 	}
 
 	private String generateAccountNumber() {
-		String accountNumber = Long.toString(Math.abs(ThreadLocalRandom.current().nextLong(((9999999999999L - 1000000000000L) + 1) + 1000000000000L)));
+		String accountNumber;
+		do {
+			accountNumber = Long.toString(Math.abs(ThreadLocalRandom.current().nextLong(((9999999999999L - 1000000000000L) + 1) + 1000000000000L)));
+		}
+		while(accountNumber.length() != 13);
 		return accountNumber;
 	}
 
